@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: &name nsenter
+  labels:
+    app: *name
+spec:
+  selector:
+    matchLabels:
+      app: *name
+  template:
+    metadata:
+      labels:
+        app: *name
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: node.kubernetes.io/instance-type
+                operator: In
+                values:
+                - foo # TODO -- NODE_WITH_RDMA?
+      hostNetwork: true
+      hostPID: true
+      containers:
+      - image: foo # TODO: build me! # requires an image with bash, curl, sleep, and nsenter (vanilla ubuntu works)
+        imagePullPolicy: Always
+        name: *name
+        command: ["/entrypoint.sh"] # can reuse from fpga example
+        args: ["installonly"] # if you don't use my image or build one from Dockerfile, set this to "downloadandinstall"
+        resources:
+          requests:
+            {}
+          limits:
+            {}
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: actions
+          mountPath: "/opt/actions"
+        - name: hostmount
+          mountPath: "/mnt/actions"
+        - name: debs
+          mountPath: "/mnt/debs"
+      volumes:
+      - name: debs
+        hostPath:
+          path: /opt/debs
+          type: DirectoryOrCreate
+      - name: hostmount
+        hostPath:
+          path: /opt/actions
+          type: DirectoryOrCreate
+      - name: actions
+        configMap:
+          name: nsenter-actions
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nsenter-actions
+  labels:
+    app: nsenter
+data:
+  installonly: |
+    #!/usr/bin/env bash
+    set -eo pipefail
+
+    # This script should be executed on VM host in the directly as the deb 
+    # will install systemd units and host dependencies.
+
+    ## TODO: add mount iso ++ install drivers ++ some quick validation with e.g ibstat?
+    set -x
+
+    echo "finished successfully!"
+
+  downloadandinstall: |
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # This script should be executed on VM host in the directly as the deb packages
+    # the host will be mounted at /host, the debs will be copied to /mnt
+    # then the container will nsenter and install everything against the host.
+
+    # TODO add iso download -- good for testing on ubuntu 20.04 without rebuilding an image
+    
+---
+# TODO: add device plugin
+---
