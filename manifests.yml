@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: &name nsenter
+  name: &name install
   labels:
     app: *name
 spec:
@@ -21,11 +21,14 @@ spec:
               - key: node.kubernetes.io/instance-type
                 operator: In
                 values:
-                - foo # TODO -- NODE_WITH_RDMA?
+                - standard_hb120rs_v2
+                - Standard_HB120rs_v3
+                - Standard_HB60rs
+                - Standard_HC44rs
       hostNetwork: true
       hostPID: true
       containers:
-      - image: foo # TODO: build me! # requires an image with bash, curl, sleep, and nsenter (vanilla ubuntu works)
+      - image: docker.io/lilypan26/install-mellanox-driver:latest # aksrdma.azurecr.io/lilypan/install-ibdriver:latest # TODO: build me! # requires an image with bash, curl, sleep, and nsenter (vanilla ubuntu works)
         imagePullPolicy: Always
         name: *name
         command: ["/entrypoint.sh"] # can reuse from fpga example
@@ -55,14 +58,14 @@ spec:
           type: DirectoryOrCreate
       - name: actions
         configMap:
-          name: nsenter-actions
+          name: install-actions
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: nsenter-actions
+  name: install-actions
   labels:
-    app: nsenter
+    app: install
 data:
   installonly: |
     #!/usr/bin/env bash
@@ -72,20 +75,43 @@ data:
     # will install systemd units and host dependencies.
 
     ## TODO: add mount iso ++ install drivers ++ some quick validation with e.g ibstat?
+    cd /opt/debs
+    mount -o ro,loop MLNX_OFED_LINUX-5.6-2.0.9.0-ubuntu18.04-x86_64.iso /mnt
+    /mnt/mlnxofedinstall --force -v
+    /etc/init.d/openibd restart
     set -x
 
-    echo "finished successfully!"
+    check_ib="$(ip link | grep ib0)"
+
+    if [ -z "$check_ib" ];
+    then
+      echo "driver installation failed"
+    else
+      echo "driver installation successful"
+    fi
+    
 
   downloadandinstall: |
     #!/usr/bin/env bash
-    set -euo pipefail
-
-    # This script should be executed on VM host in the directly as the deb packages
-    # the host will be mounted at /host, the debs will be copied to /mnt
-    # then the container will nsenter and install everything against the host.
+    set -eo pipefail
 
     # TODO add iso download -- good for testing on ubuntu 20.04 without rebuilding an image
-    
+    apt update && apt install -y curl
+    curl -L https://content.mellanox.com/ofed/MLNX_OFED-5.6-2.0.9.0/MLNX_OFED_LINUX-5.6-2.0.9.0-ubuntu18.04-x86_64.iso -o MLNX_OFED_LINUX-5.6-2.0.9.0-ubuntu18.04-x86_64.iso
+
+    mount -o ro,loop MLNX_OFED_LINUX-5.6-2.0.9.0-ubuntu18.04-x86_64.iso /mnt
+    /mnt/mlnxofedinstall --force -v
+    /etc/init.d/openibd restart
+    set -x
+
+    check_ib="$(ip link | grep ib0)"
+
+    if [ -z "$check_ib" ];
+    then
+      echo "driver installation failed"
+    else
+      echo "driver installation successful"
+    fi    
 ---
 # TODO: add device plugin
 ---
