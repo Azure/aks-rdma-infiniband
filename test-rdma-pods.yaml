@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rdma-pod1
+  # annotations:
+  #   k8s.v1.cni.cncf.io/networks: macvlan-net1
+spec:
+  containers:
+  - name: mofed-test-ctr
+    image: mellanox/rping-test
+    securityContext:
+     capabilities:
+        add: ["IPC_LOCK"]
+    resources:
+      requests:
+        mellanox.com/mlnx_sriov_rdma: 1
+      limits:
+        mellanox.com/mlnx_sriov_rdma: 1
+    command: ["sleep", "infinity"]
+  nodeName: aks-rdmanp-51509875-vmss000000
+  
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rdma-pod2
+  # annotations:
+  #   k8s.v1.cni.cncf.io/networks: macvlan-net1
+spec:
+  containers:
+  - name: mofed-test-ctr
+    image: mellanox/rping-test
+    securityContext:
+     capabilities:
+        add: ["IPC_LOCK"]
+    resources:
+      requests:
+        mellanox.com/mlnx_sriov_rdma: 1
+      limits:
+        mellanox.com/mlnx_sriov_rdma: 1
+    command: ["sleep", "infinity"]
+  nodeName: aks-rdmanp-51509875-vmss000000

@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: rdma-test
+  name: rdma-test
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: rdma-test
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: rdma-test
+    spec:
+      containers:
+      - name: mofed-test-ctr
+        image: mellanox/rping-test
+        securityContext:
+        resources:
+          requests:
+            mellanox.com/mlnx_sriov_rdma: 1
+          limits:
+            mellanox.com/mlnx_sriov_rdma: 1
+        command: ["sleep", "infinity"]
