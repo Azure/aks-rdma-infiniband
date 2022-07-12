@@ -74,7 +74,14 @@ data:
     # This script should be executed on VM host in the directly as the deb 
     # will install systemd units and host dependencies.
 
+    SECONDS=0
     ## TODO: add mount iso ++ install drivers ++ some quick validation with e.g ibstat?
+    apt install -y pciutils
+    pciBusID=$(lspci -v | grep Infiniband | head -n1 | awk '{print $1;}')
+    echo $pciBusID
+    export pciBusID
+    printenv
+
     cd /opt/debs
     mount -o ro,loop MLNX_OFED_LINUX-5.6-2.0.9.0-ubuntu18.04-x86_64.iso /mnt
     /mnt/mlnxofedinstall --force -v
@@ -89,6 +96,7 @@ data:
     else
       echo "driver installation successful"
     fi
+    echo "installation completed in $SECONDS seconds"
     
 
   downloadandinstall: |
@@ -98,6 +106,9 @@ data:
     # TODO add iso download -- good for testing on ubuntu 20.04 without rebuilding an image
     apt update && apt install -y curl
     curl -L https://content.mellanox.com/ofed/MLNX_OFED-5.6-2.0.9.0/MLNX_OFED_LINUX-5.6-2.0.9.0-ubuntu18.04-x86_64.iso -o MLNX_OFED_LINUX-5.6-2.0.9.0-ubuntu18.04-x86_64.iso
+
+    pciBusID=$(lspci -v | grep Infiniband | head -n1 | awk '{print $1;}')
+    export pciBusID
 
     mount -o ro,loop MLNX_OFED_LINUX-5.6-2.0.9.0-ubuntu18.04-x86_64.iso /mnt
     /mnt/mlnxofedinstall --force -v
@@ -112,6 +123,4 @@ data:
     else
       echo "driver installation successful"
     fi    
----
-# TODO: add device plugin
 ---
