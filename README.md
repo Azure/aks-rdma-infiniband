@@ -11,8 +11,11 @@ There are two common use cases which are supported:
 
 ## Prerequisites
 This installation assumes you have the following setup:
-- Azure resource group and cluster
-- A nodepool with RDMA-capable skus:
+- AKS cluster with Infiniband feature flag enabled:
+    - enable flag: `az feature register --name AKSInfinibandSupport --namespace Microsoft.ContainerService`
+    - check status: `az feature list -o table --query "[?contains(name, 'Microsoft.ContainerService/AKSInfinibandSupport')].{Name:name,State:properties.state}"`
+    - register when ready: `az provider register --namespace Microsoft.ContainerService`
+- AKS nodepool with RDMA-capable skus:
     - For SRIOV mode, ensure vms are SRIOV-enabled
     - Refer to the HPC docs: https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-hpc
 
@@ -20,7 +23,7 @@ This installation assumes you have the following setup:
 1. Deploy manifests:
     - SRIOV mode: `kubectl apply -k sriov-images/.`
     - Shared HCA mode: `kubectl apply -f shared-hca-images/.`
-2. Check pod installation logs to confirm completion of driver installation
+2. Check installation logs to confirm driver installation
 3. Deploy MPI workload (refer to example test pods)
 
 ## Contributing
