@@ -3,7 +3,7 @@ kind: Pod
 metadata:
   name: rdma-pod1
   # annotations:
-  #   k8s.v1.cni.cncf.io/networks: macvlan-net1
+  #   k8s.v1.cni.cncf.io/networks: macvlan-net1 
 spec:
   containers:
   - name: mofed-test-ctr

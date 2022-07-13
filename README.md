@@ -5,7 +5,7 @@ To support running HPC workloads using RDMA/Infiniband on AKS, this repo provide
 ## Usage
 There are two common use cases which are supported:
 1. Networking between pods on the same node
-    - Shared HCA mode: If you require connectivity between multiple pods on the same node, use shared hca nodes to enable IB communication between pods. 
+    - Shared HCA mode: If you require connectivity between multiple pods on the same node, use shared HCA mode to enable IB communication between pods. 
 2. MPI workloads on nodes with a single pod
     - SRIOV mode: If you want to give full hardware resources to one pod for maximal performance, used SRIOV to assign the VF to a single pod. 
 
