@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: &name install
+  name: &name install-mlx-driver
   labels:
     app: *name
 spec:

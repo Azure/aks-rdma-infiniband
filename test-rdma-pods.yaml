@@ -17,7 +17,7 @@ spec:
       limits:
         mellanox.com/mlnx_sriov_rdma: 1
     command: ["sleep", "infinity"]
-  nodeName: aks-rdmanp-51509875-vmss000000
+  nodeName: aks-rdmanp-18325759-vmss000000 # For testing purposes if you want to force pods to be on same node in shared hca mode. Change to your node name or comment out if not needed.
   
 ---
 apiVersion: v1
@@ -39,4 +39,4 @@ spec:
       limits:
         mellanox.com/mlnx_sriov_rdma: 1
     command: ["sleep", "infinity"]
-  nodeName: aks-rdmanp-51509875-vmss000000
+  nodeName: aks-rdmanp-18325759-vmss000000  # For testing purposes if you want to force pods to be on same node in shared hca mode. Change to your node name or comment out if not needed.

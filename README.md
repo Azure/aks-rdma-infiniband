@@ -1,14 +1,27 @@
-# Project
+# AKS RDMA/Infiniband Support
+To support running HPC workloads using RDMA/Infiniband on AKS, this repo provides a daemonset to install the necessary drivers and device plugins to enable RDMA on IB capable nodes. 
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
 
-As the maintainer of this project, please make a few updates:
+## Usage
+There are two common use cases which are supported:
+1. Networking between pods on the same node
+    - Shared HCA mode: If you require connectivity between multiple pods on the same node, use shared hca nodes to enable IB communication between pods. 
+2. MPI workloads on nodes with a single pod
+    - SRIOV mode: If you want to give full hardware resources to one pod for maximal performance, used SRIOV to assign the VF to a single pod. 
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+## Prerequisites
+This installation assumes you have the following setup:
+- Azure resource group and cluster
+- A nodepool with RDMA-capable skus:
+    - For SRIOV mode, ensure vms are SRIOV-enabled
+    - Refer to the HPC docs: https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-hpc
+
+## Quickstart
+1. Deploy manifests:
+    - SRIOV mode: `kubectl apply -k sriov-images/.`
+    - Shared HCA mode: `kubectl apply -f shared-hca-images/.`
+2. Check pod installation logs to confirm completion of driver installation
+3. Deploy MPI workload (refer to example test pods)
 
 ## Contributing
 

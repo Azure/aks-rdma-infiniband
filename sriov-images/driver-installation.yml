@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: &name install
+  name: &name install-mlx-driver
   labels:
     app: *name
 spec:
@@ -28,7 +28,7 @@ spec:
       hostNetwork: true
       hostPID: true
       containers:
-      - image: docker.io/lilypan26/install-mellanox-driver:latest # aksrdma.azurecr.io/lilypan/install-ibdriver:latest # TODO: build me! # requires an image with bash, curl, sleep, and nsenter (vanilla ubuntu works)
+      - image: docker.io/lilypan26/install-mellanox-driver:latest # requires an image with bash, curl, sleep, and nsenter (vanilla ubuntu works)
         imagePullPolicy: Always
         name: *name
         command: ["/entrypoint.sh"] # can reuse from fpga example
