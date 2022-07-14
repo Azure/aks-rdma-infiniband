@@ -10,7 +10,7 @@ data:
         "configList": [{
              "resourceName": "mlnx_sriov_rdma",
              "resourcePrefix": "mellanox.com",
-             "rdmaHcaMax": 500,
+             "rdmaHcaMax": 1,
              "devices": ["ib0"]
            }]
     }

@@ -28,7 +28,7 @@ spec:
       hostNetwork: true
       hostPID: true
       containers:
-      - image: docker.io/lilypan26/install-mellanox-driver:latest # requires an image with bash, curl, sleep, and nsenter (vanilla ubuntu works)
+      - image: docker.io/lilypan26/install-mellanox-driver:latest # aksrdma.azurecr.io/lilypan/install-ibdriver:latest # TODO: build me! # requires an image with bash, curl, sleep, and nsenter (vanilla ubuntu works)
         imagePullPolicy: Always
         name: *name
         command: ["/entrypoint.sh"] # can reuse from fpga example
@@ -58,14 +58,14 @@ spec:
           type: DirectoryOrCreate
       - name: actions
         configMap:
-          name: install-actions
+          name: install-driver-actions
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: install-actions
+  name: install-driver-actions
   labels:
-    app: install
+    app: install-mlx-driver
 data:
   installonly: |
     #!/usr/bin/env bash

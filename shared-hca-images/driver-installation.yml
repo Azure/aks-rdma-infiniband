@@ -58,14 +58,14 @@ spec:
           type: DirectoryOrCreate
       - name: actions
         configMap:
-          name: install-actions
+          name: install-driver-actions
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: install-actions
+  name: install-driver-actions
   labels:
-    app: install
+    app: install-mlx-driver
 data:
   installonly: |
     #!/usr/bin/env bash
