@@ -21,10 +21,20 @@ spec:
               - key: node.kubernetes.io/instance-type
                 operator: In
                 values:
+                - standard_h8
+                - standard_h16mr
+                - standard_h8m
+                - standard_h16m
+                - standard_h16r
+                - standard_h16mr
+                - standard_hb60rs
                 - standard_hb120rs_v2
-                - Standard_HB120rs_v3
-                - Standard_HB60rs
-                - Standard_HC44rs
+                - standard_hb120rs_v3
+                - standard_hb120-96rs_v3
+                - standard_hb120-64rs_v3
+                - standard_hb120-32rs_v3
+                - standard_hb120-16rs_v3
+                - standard_hc44rs
       hostNetwork: true
       hostPID: true
       containers:
@@ -32,7 +42,7 @@ spec:
         imagePullPolicy: Always
         name: *name
         command: ["/entrypoint.sh"] # can reuse from fpga example
-        args: ["installonly"] # if you don't use my image or build one from Dockerfile, set this to "downloadandinstall"
+        args: ["downloadandinstall"] # if you don't use my image or build one from Dockerfile, set this to "downloadandinstall"
         resources:
           requests:
             {}
@@ -93,6 +103,7 @@ data:
     if [ -z "$check_ib" ];
     then
       echo "driver installation failed"
+      exit 1
     else
       echo "driver installation successful"
     fi
@@ -103,12 +114,10 @@ data:
     #!/usr/bin/env bash
     set -eo pipefail
 
+    SECONDS=0
     # TODO add iso download -- good for testing on ubuntu 20.04 without rebuilding an image
     apt update && apt install -y curl
     curl -L https://content.mellanox.com/ofed/MLNX_OFED-5.6-2.0.9.0/MLNX_OFED_LINUX-5.6-2.0.9.0-ubuntu18.04-x86_64.iso -o MLNX_OFED_LINUX-5.6-2.0.9.0-ubuntu18.04-x86_64.iso
-
-    pciBusID=$(lspci -v | grep Infiniband | head -n1 | awk '{print $1;}')
-    export pciBusID
 
     mount -o ro,loop MLNX_OFED_LINUX-5.6-2.0.9.0-ubuntu18.04-x86_64.iso /mnt
     /mnt/mlnxofedinstall --force -v
@@ -120,7 +129,9 @@ data:
     if [ -z "$check_ib" ];
     then
       echo "driver installation failed"
+      exit 1
     else
       echo "driver installation successful"
     fi    
+    echo "installation completed in $SECONDS seconds"
 ---

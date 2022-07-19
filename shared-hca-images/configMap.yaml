@@ -14,3 +14,5 @@ data:
              "devices": ["ib0"]
            }]
     }
+# Note: increase rdmaHcaMax to number of pods deployed on each node if greater than 1
+  
