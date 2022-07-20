@@ -22,10 +22,20 @@ spec:
               - key: node.kubernetes.io/instance-type
                 operator: In
                 values:
+                - standard_h8
+                - standard_h16
+                - standard_h8m
+                - standard_h16m
+                - standard_h16r
+                - standard_h16mr
+                - standard_hb60rs
                 - standard_hb120rs_v2
-                - Standard_HB120rs_v3
-                - Standard_HB60rs
-                - Standard_HC44rs
+                - standard_hb120rs_v3
+                - standard_hb120-96rs_v3
+                - standard_hb120-64rs_v3
+                - standard_hb120-32rs_v3
+                - standard_hb120-16rs_v3
+                - standard_hc44rs
       hostNetwork: true
       priorityClassName: system-node-critical
       containers:
