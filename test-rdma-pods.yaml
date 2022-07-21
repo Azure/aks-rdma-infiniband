@@ -13,12 +13,12 @@ spec:
         add: ["IPC_LOCK"]
     resources:
       requests:
-        mellanox.com/mlnx_sriov_rdma: 1
+        mellanox.com/shared_hca_rdma: 1
       limits:
-        mellanox.com/mlnx_sriov_rdma: 1
+        mellanox.com/shared_hca_rdma: 1
     command: ["sleep", "infinity"]
   # nodeName: aks-rdmanp-17508136-vmss000000 # For testing purposes if you want to force pods to be on same node in shared hca mode. Change to your node name or comment out if not needed.
-  
+  #terminatoingraceperiod:0
 ---
 apiVersion: v1
 kind: Pod
@@ -35,8 +35,8 @@ spec:
         add: ["IPC_LOCK"]
     resources:
       requests:
-        mellanox.com/mlnx_sriov_rdma: 1
+        mellanox.com/shared_hca_rdma: 1
       limits:
-        mellanox.com/mlnx_sriov_rdma: 1
+        mellanox.com/shared_hca_rdma: 1
     command: ["sleep", "infinity"]
   # nodeName: aks-rdmanp-17508136-vmss000001  # For testing purposes if you want to force pods to be on same node in shared hca mode. Change to your node name or comment out if not needed.

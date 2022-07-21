@@ -8,7 +8,7 @@ data:
     {
         "periodicUpdateInterval": 300,
         "configList": [{
-             "resourceName": "mlnx_sriov_rdma",
+             "resourceName": "shared_hca_rdma",
              "resourcePrefix": "mellanox.com",
              "rdmaHcaMax": 1,
              "devices": ["ib0"]
