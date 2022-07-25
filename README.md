@@ -9,12 +9,19 @@ This installation assumes you have the following setup:
     - register when ready: `az provider register --namespace Microsoft.ContainerService`
 - AKS nodepool with RDMA-capable skus:
     - Refer to the HPC docs: https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-hpc
+    - Sample command to create AKS nodepool with HPC-sku (assuming aks resource group and cluster already created): 
+        - `az aks nodepool add --resource-group <resource group name> --cluster-name <cluster name> --name rdmanp --node-count 2 --node-vm-size standard_hb120rs_v2`
+    
+
 
 ## Quickstart
 1. Deploy manifests:
     - `kubectl apply -f shared-hca-images/.`
 2. Check installation logs to confirm driver installation
-3. Deploy MPI workload (refer to example test pods)
+    -  `kubectl get pods`
+    -  `kubectl logs <name of installation pod>`
+4. Deploy MPI workload (refer to example test pods on how to pull resources)
+    -  `kubectl apply -f <rdma workload>`
 
 ## Contributing
 
