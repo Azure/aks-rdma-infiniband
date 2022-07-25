@@ -5,6 +5,7 @@ FROM ubuntu:20.04 as debs
 
 WORKDIR /opt/debs
 COPY download.sh download.sh 
+USER root
 RUN bash download.sh
 
 FROM ubuntu:20.04

@@ -38,11 +38,11 @@ spec:
       hostNetwork: true
       hostPID: true
       containers:
-      - image: docker.io/lilypan26/install-mlxofed-driver:latest # aksrdma.azurecr.io/lilypan/install-ibdriver:latest # TODO: build me! # requires an image with bash, curl, sleep, and nsenter (vanilla ubuntu works)
+      - image: <place your image name here> # docker.io/lilypan26/install-mlxofed-driver:latest 
         imagePullPolicy: Always
         name: *name
         command: ["/entrypoint.sh"] 
-        args: ["downloadandinstall"] # if you don't use my image or build one from Dockerfile, set this to "downloadandinstall"
+        args: ["installonly"] # set this to "downloadandinstall" if you are not using a custom image
         resources:
           requests:
             {}
