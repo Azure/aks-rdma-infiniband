@@ -12,15 +12,23 @@ This installation assumes you have the following setup:
     - Sample command to create AKS nodepool with HPC-sku (assuming aks resource group and cluster already created): 
         - `az aks nodepool add --resource-group <resource group name> --cluster-name <cluster name> --name rdmanp --node-count 2 --node-vm-size standard_hb120rs_v2`
     
-
+## Configuration
+Depending on intended usage there are alterations that can be made to the `shared-hca-images/configMap.yaml`:
+- if you only intended to assign a single pod to each node, keep the `rdmaHcaMax` parameter as 1
+- if you want to run parallel workloads on each node and assign multiple pods to the same node, modify `rdmaHcaMax` to be how many pods you want on a single node
+    - Note: this will affect the latency, since the pods will be sharing the bandwidth
 
 ## Quickstart
-1. Deploy manifests:
+1. Build & push image:
+    - build image locally: `docker build -t <image-name> .`
+    - push image to ACR or other registry
+    - replace image name in `shared-hca-images/driver-installation.yml` with your image name
+3. Deploy manifests:
     - `kubectl apply -f shared-hca-images/.`
-2. Check installation logs to confirm driver installation
+4. Check installation logs to confirm driver installation
     -  `kubectl get pods`
     -  `kubectl logs <name of installation pod>`
-4. Deploy MPI workload (refer to example test pods on how to pull resources)
+5. Deploy MPI workload (refer to example test pods on how to pull resources)
     -  `kubectl apply -f <rdma workload>`
 
 ## Contributing
