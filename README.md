@@ -15,7 +15,7 @@ This installation assumes you have the following setup:
 ## Configuration
 Depending on intended usage there are alterations that can be made to the `shared-hca-images/configMap.yaml`:
 - if you only intended to assign a single pod to each node, keep the `rdmaHcaMax` parameter as 1
-- if you want to run parallel workloads on each node and assign multiple pods to the same node, modify `rdmaHcaMax` to be how many pods you want on a single node
+- if you want to run parallel workloads with multiple pods per node, modify `rdmaHcaMax` to be how many pods you want on a single node
     - Note: this will affect the latency, since the pods will be sharing the bandwidth
 
 ## Quickstart
@@ -25,7 +25,7 @@ Depending on intended usage there are alterations that can be made to the `share
     - replace image name in `shared-hca-images/driver-installation.yml` with your image name
 3. Deploy manifests:
     - `kubectl apply -f shared-hca-images/.`
-4. Check installation logs to confirm driver installation
+4. Check installation logs to confirm driver installation completed successfully
     -  `kubectl get pods`
     -  `kubectl logs <name of installation pod>`
 5. Deploy MPI workload (refer to example test pods, `test-rdma-pods.yaml`, specifically the resources section to see how to pull resources)
