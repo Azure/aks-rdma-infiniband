@@ -26,9 +26,10 @@ Depending on intended usage there are alterations that can be made to the `share
     - replace image name in `shared-hca-images/driver-installation.yml` with your image name
 3. Deploy manifests:
     - `kubectl apply -f shared-hca-images/.`
-4. Check installation logs to confirm driver installation completed successfully
+4. Check installation logs to confirm driver installation 
     -  `kubectl get pods`
     -  `kubectl logs <name of installation pod>`
+    -  Wait until you see message indicating installation completed successfully
 5. Deploy MPI workload (refer to example test pods, `test-rdma-pods.yaml`, specifically the resources section to see how to pull resources)
     -  `kubectl apply -f <rdma workload>`
 
