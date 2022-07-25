@@ -38,7 +38,7 @@ spec:
       hostNetwork: true
       hostPID: true
       containers:
-      - image: <place your image name here> # docker.io/lilypan26/install-mlxofed-driver:latest 
+      - image: <your image name here>
         imagePullPolicy: Always
         name: *name
         command: ["/entrypoint.sh"] 
