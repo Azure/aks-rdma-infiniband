@@ -1,4 +1,3 @@
-# TODO: mcr base?
 FROM ubuntu:20.04 as debs
 
 # Install ISO from nvidia
