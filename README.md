@@ -28,7 +28,7 @@ Depending on intended usage there are alterations that can be made to the `share
 4. Check installation logs to confirm driver installation
     -  `kubectl get pods`
     -  `kubectl logs <name of installation pod>`
-5. Deploy MPI workload (refer to example test pods on how to pull resources)
+5. Deploy MPI workload (refer to example test pods, `test-rdma-pods.yaml`, specifically the resources section to see how to pull resources)
     -  `kubectl apply -f <rdma workload>`
 
 ## Contributing
