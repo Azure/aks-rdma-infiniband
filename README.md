@@ -20,7 +20,8 @@ Depending on intended usage there are alterations that can be made to the `share
     - Note: this will affect the latency, since the pods will be sharing the bandwidth
 
 ## Quickstart
-1. Build & push image (this image will later be available on mcr):
+1. Clone repository
+2. Build & push image (this image will later be available on mcr):
     - build image locally: `docker build -t <image-name> .`
     - push image to ACR or other registry: https://docs.microsoft.com/en-us/azure/container-registry/container-registry-get-started-azure-cli
         - https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-kubernetes#create-an-image-pull-secret
