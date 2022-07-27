@@ -26,7 +26,7 @@ Depending on intended usage there are alterations that can be made to the `share
         - https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-kubernetes#create-an-image-pull-secret
     - replace image name in `shared-hca-images/driver-installation.yml` with your image name
 3. Deploy manifests:
-    - `kubectl apply -f shared-hca-images/.`
+    - `kubectl apply -k shared-hca-images/.`
 4. Check installation logs to confirm driver installation 
     -  `kubectl get pods`
     -  `kubectl logs <name of installation pod>`
