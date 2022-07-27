@@ -10,7 +10,8 @@ This installation assumes you have the following setup:
 - AKS nodepool with RDMA-capable skus:
     - Refer to the HPC docs: https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-hpc
     - Sample command to create AKS nodepool with HPC-sku (assuming aks resource group and cluster already created): 
-        - `az aks nodepool add --resource-group <resource group name> --cluster-name <cluster name> --name rdmanp --node-count 2 --node-vm-size standard_hb120rs_v2`
+        - `az aks nodepool add --resource-group <resource group name> --cluster-name <cluster name> --name rdmanp --node-count 2 --node-vm-size Standard_HB120rs_v2`
+        - Note: VM size names are case-sensitive
     
 ## Configuration
 Depending on intended usage there are alterations that can be made to the `shared-hca-images/configMap.yaml`:
@@ -25,7 +26,7 @@ Depending on intended usage there are alterations that can be made to the `share
         - https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-kubernetes#create-an-image-pull-secret
     - replace image name in `shared-hca-images/driver-installation.yml` with your image name
 3. Deploy manifests:
-    - `kubectl apply -f shared-hca-images/.`
+    - `kubectl apply -k shared-hca-images/.`
 4. Check installation logs to confirm driver installation 
     -  `kubectl get pods`
     -  `kubectl logs <name of installation pod>`
