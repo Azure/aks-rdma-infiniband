@@ -44,6 +44,7 @@ spec:
                 - Standard_NC24rs_v2
                 - Standard_ND96amsr_A100_v4
                 - Standard_ND96asr_v4
+                - Standard_HC44rs
       hostNetwork: true
       priorityClassName: system-node-critical
       containers:
