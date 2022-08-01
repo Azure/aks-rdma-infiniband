@@ -1,5 +1,5 @@
 # AKS RDMA/Infiniband Support
-To support running HPC workloads using RDMA/Infiniband on AKS, this repo provides a daemonset to install the necessary RDMA drivers and device plugins on IB nodes. 
+To support running HPC workloads using RDMA/Infiniband on AKS, this repo provides a daemonset to install the necessary RDMA drivers and device plugins on HPC-series VMs. 
 
 ## Prerequisites
 This installation assumes you have the following setup:
@@ -34,6 +34,10 @@ Depending on intended usage there are alterations that can be made to the `share
     -  Wait until you see message indicating installation completed successfully
 5. Deploy MPI workload (refer to example test pods, `test-rdma-pods.yaml`, specifically the resources section to see how to pull resources)
     -  `kubectl apply -f <rdma workload>`
+
+
+** This solution is modelled after: https://github.com/alexeldeib/aks-fpga **
+
 
 ## Contributing
 
