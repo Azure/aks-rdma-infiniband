@@ -36,7 +36,7 @@ Depending on intended usage there are alterations that can be made to the `share
     -  `kubectl apply -f <rdma workload>`
 
 
-* This solution is modelled after: https://github.com/alexeldeib/aks-fpga *
+** This solution is modelled after: https://github.com/alexeldeib/aks-fpga **
 
 
 ## Contributing
