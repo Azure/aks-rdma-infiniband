@@ -1,0 +1,25 @@
+# Versions are provided at: https://docs.nvidia.com/networking/display/kubernetes<driver-version>/platform-support.html
+apiVersion: mellanox.com/v1alpha1
+kind: NicClusterPolicy
+metadata:
+  name: aks-nic-cluster-policy
+spec:
+  sriovDevicePlugin:
+    repository: ghcr.io/k8snetworkplumbingwg
+    image: sriov-network-device-plugin
+    version: v3.8.0
+    config: |
+      {
+        "resourceList": [
+          {
+            "resourcePrefix": "rdma",
+            "resourceName": "ib",
+            "selectors": {
+              "vendors": ["15b3"], # Mellanox
+              "devices": ["101c"], # ConnectX-6
+              "isRdma": true
+            }
+          }
+        ]
+      }
+
