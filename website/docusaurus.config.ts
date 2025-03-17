@@ -4,6 +4,8 @@ import { themes as prismThemes } from 'prism-react-renderer';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
+const isDeployPreview = !!process.env.NETLIFY && process.env.CONTEXT === 'deploy-preview';
+
 const config: Config = {
   title: 'RDMA & InfiniBand on AKS',
   tagline: 'RDMA & InfiniBand on AKS',
@@ -13,7 +15,7 @@ const config: Config = {
   url: 'https://Azure.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/aks-rdma-infiniband/',
+  baseUrl: isDeployPreview ? '/' : '/aks-rdma-infiniband/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
