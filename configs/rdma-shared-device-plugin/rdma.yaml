@@ -12,6 +12,7 @@ spec:
     useCdi: true
     # The config below directly propagates to k8s-rdma-shared-device-plugin configuration.
     # Replace 'devices' with your (RDMA capable) netdevice name.
+    # 15b3 is the vendor id for Nvidia NIC by Mellanox: https://admin.pci-ids.ucw.cz/read/PC/15b3
     config: |
       {
         "configList": [
@@ -19,7 +20,7 @@ spec:
             "resourceName": "rdma_shared_device_a",
             "rdmaHcaMax": 63,
             "selectors": {
-              "vendors": ["15b3"], # Mellanox
+              "vendors": ["15b3"]
             }
           }
         ]
