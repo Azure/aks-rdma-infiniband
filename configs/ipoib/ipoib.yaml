@@ -2,7 +2,7 @@
 apiVersion: mellanox.com/v1alpha1
 kind: NicClusterPolicy
 metadata:
-  name: aks-nic-cluster-policy
+  name: nic-cluster-policy
 spec:
   secondaryNetwork:
     cniPlugins:
