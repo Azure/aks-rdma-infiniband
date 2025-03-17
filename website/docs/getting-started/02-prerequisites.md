@@ -14,9 +14,15 @@ An active AKS cluster is required as the foundation for deploying RDMA and Infin
 To create an AKS cluster, use the following Azure CLI command as a starting point:
 
 ```bash
+export AZURE_RESOURCE_GROUP="myResourceGroup"
+export CLUSTER_NAME="myAKSCluster"
+export NODEPOOL_NAME="ibnodepool"
+export NODEPOOL_NODE_COUNT="2"
+export NODEPOOL_VM_SIZE="Standard_ND96asr_v4"
+
 az aks create \
-  --resource-group myResourceGroup \
-  --name myAKSCluster \
+  --resource-group "${AZURE_RESOURCE_GROUP}" \
+  --name "${CLUSTER_NAME}" \
   --node-count 1 \
   --generate-ssh-keys
 ```
@@ -38,12 +44,13 @@ The AKS cluster requires a dedicated nodepool configured to support InfiniBand n
 To create a nodepool with AKS-managed GPU driver installation, use the following command:
 
 ```bash
+
 az aks nodepool add \
-  --resource-group myResourceGroup \
-  --cluster-name myAKSCluster \
-  --name ibnodepool \
-  --node-count 2 \
-  --node-vm-size Standard_ND96asr_v4 \
+  --resource-group "${AZURE_RESOURCE_GROUP}" \
+  --cluster-name "${CLUSTER_NAME}" \
+  --name "${NODEPOOL_NAME}" \
+  --node-count "${NODEPOOL_NODE_COUNT}" \
+  --node-vm-size "${NODEPOOL_VM_SIZE}" \
   --os-sku Ubuntu
 ```
 
@@ -51,11 +58,11 @@ To create a nodepool without GPU Driver installation, use the following command:
 
 ```bash
 az aks nodepool add \
-  --resource-group myResourceGroup \
-  --cluster-name myAKSCluster \
-  --name ibnodepool \
-  --node-count 2 \
-  --node-vm-size Standard_ND96asr_v4 \
+  --resource-group "${AZURE_RESOURCE_GROUP}" \
+  --cluster-name "${CLUSTER_NAME}" \
+  --name "${NODEPOOL_NAME}" \
+  --node-count "${NODEPOOL_NODE_COUNT}" \
+  --node-vm-size "${NODEPOOL_VM_SIZE}" \
   --os-sku Ubuntu \
   # highlight-next-line
   --skip-gpu-driver-install
