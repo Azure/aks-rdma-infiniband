@@ -8,6 +8,10 @@ spec:
     repository: ghcr.io/k8snetworkplumbingwg
     image: sriov-network-device-plugin
     version: v3.9.0
+    # Selector explaination:
+    # - vendors: ["15b3"] - Vendor ID for Mellanox devices
+    # - linkTypes: ["infiniband"] - Link type for Infiniband devices
+    # - isRdma: true - Mounts the RDMA device to the container's /dev/infiniband
     config: |
       {
         "resourceList": [
@@ -15,11 +19,10 @@ spec:
             "resourcePrefix": "rdma",
             "resourceName": "ib",
             "selectors": {
-              "vendors": ["15b3"], # Mellanox
-              "devices": ["101c"], # ConnectX-6
+              "vendors": ["15b3"],
+              "linkTypes": ["infiniband"],
               "isRdma": true
             }
           }
         ]
       }
-
