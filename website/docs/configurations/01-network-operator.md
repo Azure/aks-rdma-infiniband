@@ -33,8 +33,8 @@ The SR-IOV Device Plugin assigns each InfiniBand-enabled NIC (e.g., Mellanox Con
 
 To deploy the above config, create a `NicClusterPolicy` CR with the following YAML:
 
-```yaml reference
-https://github.com/Azure/aks-rdma-infiniband/blob/main/configs/sriov-device-plugin/sriov.yaml
+```bash
+kubectl apply -k https://github.com/Azure/aks-rdma-infiniband/configs/sriov-device-plugin
 ```
 
 Example pod configuration:
@@ -62,8 +62,8 @@ The RDMA Shared Device Plugin enables multiple pods to share all InfiniBand NICs
 
 To deploy the above config, create a `NicClusterPolicy` CR with the following YAML:
 
-```yaml reference
-https://github.com/Azure/aks-rdma-infiniband/blob/main/configs/rdma-shared-device-plugin/rdma.yaml
+```bash
+kubectl apply -k https://github.com/Azure/aks-rdma-infiniband/configs/rdma-shared-device-plugin
 ```
 
 Example pod configuration:
