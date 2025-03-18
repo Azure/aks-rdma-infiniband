@@ -2,7 +2,7 @@
 title: Prerequisites
 ---
 
-This section details the prerequisites for deploying an AKS cluster with support for high-speed InfiniBand networking and Remote Direct Memory Access (RDMA), including optional configurations for GPUDirect RDMA.
+This section details the prerequisites for deploying an AKS cluster with support for Remote Direct Memory Access (RDMA) over InfiniBand, including optional configurations for GPUDirect RDMA.
 
 ## AKS Nodepools
 
@@ -31,7 +31,7 @@ Additional nodepools will be added in the next step to meet specific hardware re
 
 ### Requirements
 
-The AKS cluster requires a dedicated nodepool configured to support InfiniBand networking and RDMA. For AI workloads leveraging GPUDirect RDMA, GPU support is also necessary.
+The AKS cluster requires a dedicated nodepool configured to support RDMA over InfiniBand. For AI workloads leveraging GPUDirect RDMA, GPU support is also necessary.
 
 | Requirement          | Recommended Configuration                                                                             | Description                                                                                               |
 | -------------------- | ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
@@ -41,21 +41,10 @@ The AKS cluster requires a dedicated nodepool configured to support InfiniBand n
 | **VM Size**          | [ND-series](https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/gpu-accelerated/nd-family) | NVIDIA GPU-enabled VMs with InfiniBand support; e.g., `Standard_ND96asr_v4` or `Standard_ND96isr_H100_v5` |
 | **GPUDirect RDMA**   | Optional; requires GPU-enabled VMs (e.g., ND-series with A100 or H100 GPUs)                           | Enables direct GPU-to-GPU communication; omit GPUs for non-GPUDirect RDMA use cases                       |
 
-To configure an AKS nodepool with RDMA over InfiniBand support - either without GPUs or with a GPU-enabled VM size using the AKS-managed GPU driver installation, use the following command:
+To create a GPU nodepool **without** GPU Driver installation, use the following command (see [GPU Operator](../configurations/gpu-operator#skip-gpu-driver-installation) for more details):
 
 ```bash
-az aks nodepool add \
-  --resource-group "${AZURE_RESOURCE_GROUP}" \
-  --cluster-name "${CLUSTER_NAME}" \
-  --name "${NODEPOOL_NAME}" \
-  --node-count "${NODEPOOL_NODE_COUNT}" \
-  --node-vm-size "${NODEPOOL_VM_SIZE}" \
-  --os-sku Ubuntu
-```
-
-To create a GPU nodepool **without** GPU Driver installation, use the following command (see below section for more details):
-
-```bash
+az extension add -n aks-preview
 az aks nodepool add \
   --resource-group "${AZURE_RESOURCE_GROUP}" \
   --cluster-name "${CLUSTER_NAME}" \
@@ -67,25 +56,17 @@ az aks nodepool add \
   --skip-gpu-driver-install
 ```
 
-### Skip GPU Driver Installation
+To create an AKS nodepool with RDMA over InfiniBand support - either without GPUs or with a GPU-enabled VM size using the AKS-managed GPU driver installation, use the following command:
 
-:::info
-Read more about the GPU driver installation options in AKS and the NVIDIA GPU Operator in the [AKS documentation](https://learn.microsoft.com/en-us/azure/aks/gpu-cluster?tabs=add-ubuntu-gpu-node-pool) and the [GPU Operator documentation](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/microsoft-aks.html).
-:::
-
-When provisioning GPU nodepools in an AKS cluster, the cluster administrator has the option to either rely on the default GPU driver installation managed by AKS or via GPU Operator. This decision impacts cluster setup, maintenance, and compatibility.
-
-|                | **Without NVIDIA GPU Operator (Default)**                         | **With NVIDIA GPU Operator (Skip GPU Driver)**                              |
-| -------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| **Automation** | AKS-managed drivers; no automation for other components           | Automates driver, device plugins, and container runtimes via GPU Operator   |
-| **Complexity** | Default: Minimal setup, no flexibility; Manual: High setup effort | Moderate setup (deploy operator); simplified ongoing management             |
-| **Support**    | Fully supported by AKS; no preview features                       | `--skip-gpu-driver-install` is a preview feature; limited support available |
-
-#### Recommendations
-
-For GPUDirect RDMA over InfiniBand, use the NVIDIA GPU Operator with `--skip-gpu-driver-install` when creating the nodepool to leverage GPU Operator's automation and management capabilities. This approach simplifies the deployment of GPU drivers, device plugins, and container runtimes, ensuring compatibility with the latest NVIDIA stack.
-
-Opt for AKS-managed driver for simpler GPU tasks without GPUDirect RDMA needs.
+```bash
+az aks nodepool add \
+  --resource-group "${AZURE_RESOURCE_GROUP}" \
+  --cluster-name "${CLUSTER_NAME}" \
+  --name "${NODEPOOL_NAME}" \
+  --node-count "${NODEPOOL_NODE_COUNT}" \
+  --node-vm-size "${NODEPOOL_VM_SIZE}" \
+  --os-sku Ubuntu
+```
 
 ## Appendix
 
