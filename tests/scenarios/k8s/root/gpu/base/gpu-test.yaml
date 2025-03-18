@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: placeholder
+spec:
+  template:
+    spec:
+      containers:
+      - name: runner
+        command:
+        - sh
+        - -c
+        - "set -x;
+           bash /root/tests/rdma_test.sh ${ROLE} leader"
