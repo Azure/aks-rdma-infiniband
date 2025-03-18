@@ -1,9 +1,9 @@
-# AKS RDMA/Infiniband Support
+# RDMA Over Infiniband in AKS
 
 > [!CAUTION]
 > This project is still under construction, and content is actively being developed.
 
-Azure Kubernetes Service (AKS) supports HPC workloads with RDMA and InfiniBand, including GPUDirect RDMA. This repository provides guidance, samples, and tools for managing these workloads on RDMA-capable AKS clusters.
+Azure Kubernetes Service (AKS) supports HPC workloads with RDMA over InfiniBand, including GPUDirect RDMA. This repository provides guidance, samples, and tools for managing these workloads on RDMA-capable AKS clusters.
 
 ## Contributing
 

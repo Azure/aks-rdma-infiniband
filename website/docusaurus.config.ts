@@ -7,8 +7,8 @@ import { themes as prismThemes } from 'prism-react-renderer';
 const isDeployPreview = !!process.env.NETLIFY && process.env.CONTEXT === 'deploy-preview';
 
 const config: Config = {
-  title: 'RDMA & InfiniBand on AKS',
-  tagline: 'RDMA & InfiniBand on AKS',
+  title: 'RDMA over InfiniBand on AKS',
+  tagline: 'RDMA over InfiniBand on AKS',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
@@ -56,7 +56,7 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/logo.png',
     navbar: {
-      title: 'RDMA & InfiniBand on AKS',
+      title: 'RDMA over InfiniBand on AKS',
       logo: {
         alt: 'Microsoft Azure logo',
         src: 'img/favicon.ico',
@@ -78,7 +78,7 @@ const config: Config = {
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
-      additionalLanguages: ["bash"]
+      additionalLanguages: ["bash", "yaml"],
     },
     colorMode: {
       defaultMode: 'light',
@@ -86,6 +86,11 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
   } satisfies Preset.ThemeConfig,
+
+
+  themes: [
+    '@saucelabs/theme-github-codeblock',
+  ]
 };
 
 export default config;
