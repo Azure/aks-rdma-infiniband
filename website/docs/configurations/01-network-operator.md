@@ -88,7 +88,7 @@ spec:
 #### Recommendations
 
 - **Maximum Performance**: Use the SR-IOV Device Plugin with one pod per node claiming all InfiniBand NICs (e.g., `rdma/ib: <NIC count>`), ensuring exclusive RDMA access for optimal throughput and isolation.
-- **Resource Efficiency**: Use the RDMA Shared Device Plugin for multi-pod sharing. For GPUDirect RDMA workloads, note that if a pod claims `rdma/rdma_shared_device_a: 1` and all GPUs (e.g., 8 on `Standard_ND96asr_v4`), no additional pods of the same type can schedule on that node due to GPU exhaustion, despite remaining RDMA slots.
+- **Resource Efficiency**: Use the RDMA Shared Device Plugin for multi-pod sharing. For GPUDirect RDMA workloads, note that if a pod claims `rdma/shared_ib: 1` and all GPUs (e.g., 8 on `Standard_ND96asr_v4`), no additional pods of the same type can schedule on that node due to GPU exhaustion, despite remaining RDMA slots.
 
 ## Order of Operations
 
