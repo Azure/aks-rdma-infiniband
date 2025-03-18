@@ -8,7 +8,10 @@ spec:
     repository: ghcr.io/k8snetworkplumbingwg
     image: sriov-network-device-plugin
     version: v3.9.0
-    # 15b3 is the vendor id for Nvidia NIC by Mellanox: https://admin.pci-ids.ucw.cz/read/PC/15b3
+    # Selector explaination:
+    # - vendors: ["15b3"] - Vendor ID for Mellanox devices
+    # - linkTypes: ["infiniband"] - Link type for Infiniband devices
+    # - isRdma: true - Mounts the RDMA device to the container's /dev/infiniband
     config: |
       {
         "resourceList": [
@@ -17,7 +20,8 @@ spec:
             "resourceName": "ib",
             "selectors": {
               "vendors": ["15b3"],
-              "linkTypes": ["infiniband"]
+              "linkTypes": ["infiniband"],
+              "isRdma": true
             }
           }
         ]

@@ -31,6 +31,8 @@ Post-installation, create a `NicClusterPolicy` Custom Resource (CR) to define th
 
 The SR-IOV Device Plugin assigns each InfiniBand-enabled NIC (e.g., Mellanox ConnectX-6) to a single pod as a Kubernetes resource (`rdma/ib`). The number of available resources matches the count of physical NICs on the node (e.g., 1 NIC = 1 resource), ideal for workloads requiring maximum performance and isolation.
 
+To deploy the above config, create a `NicClusterPolicy` CR with the following YAML:
+
 ```yaml reference
 https://github.com/Azure/aks-rdma-infiniband/blob/main/configs/sriov-device-plugin/sriov.yaml
 ```
@@ -56,7 +58,9 @@ spec:
 
 #### RDMA Shared Device Plugin
 
-The RDMA Shared Device Plugin enables multiple pods to share all InfiniBand NICs on a node, exposed as `rdma/rdma_shared_device_a`. The resource count represents the maximum number of concurrent pods (default: 63 per node, configurable), not the NICs themselves, suiting resource-efficient workloads.
+The RDMA Shared Device Plugin enables multiple pods to share all InfiniBand NICs on a node, exposed as `rdma/shared_ib`. The resource count represents the maximum number of concurrent pods (default: 63 per node, configurable), not the NICs themselves, suiting resource-efficient workloads.
+
+To deploy the above config, create a `NicClusterPolicy` CR with the following YAML:
 
 ```yaml reference
 https://github.com/Azure/aks-rdma-infiniband/blob/main/configs/rdma-shared-device-plugin/rdma.yaml
@@ -76,9 +80,9 @@ spec:
     image: images.my-company.example/app:v4
     resources:
       requests:
-        rdma/rdma_shared_device_a: 1 # Claims 1 of 63 pod slots; all NICs accessible
+        rdma/shared_ib: 1 # Claims 1 of 63 pod slots; all NICs accessible
       limits:
-        rdma/rdma_shared_device_a: 1
+        rdma/shared_ib: 1
 ```
 
 #### Recommendations
