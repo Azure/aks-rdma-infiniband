@@ -8,6 +8,7 @@ spec:
     repository: ghcr.io/k8snetworkplumbingwg
     image: sriov-network-device-plugin
     version: v3.9.0
+    # 15b3 is the vendor id for Nvidia NIC by Mellanox: https://admin.pci-ids.ucw.cz/read/PC/15b3
     config: |
       {
         "resourceList": [
@@ -15,11 +16,9 @@ spec:
             "resourcePrefix": "rdma",
             "resourceName": "ib",
             "selectors": {
-              "vendors": ["15b3"], # Mellanox
-              "devices": ["101c"], # ConnectX-6
-              "isRdma": true
+              "vendors": ["15b3"],
+              "linkTypes": ["infiniband"]
             }
           }
         ]
       }
-
