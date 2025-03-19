@@ -1,24 +1,24 @@
-name: deploy-docs
+name: gh-pages
 on:
   push:
     branches:
       - main
     paths:
-      - '.github/workflows/deploy-docs.yaml'
+      - '.github/workflows/gh-pages.yml'
       - 'website/**'
   pull_request:
     branches:
       - main
     paths:
-      - '.github/workflows/deploy-docs.yaml'
+      - '.github/workflows/gh-pages.yml'
       - 'website/**'
 
 permissions:
   contents: read
 
 jobs:
-  deploy:
-    name: Generate docs website to GitHub Pages
+  build-and-deploy:
+    name: "Build and Deploy"
     runs-on: ubuntu-latest
     permissions:
       contents: write

@@ -21,22 +21,3 @@ spec:
     # Latest tag: https://catalog.ngc.nvidia.com/orgs/nvidia/teams/mellanox/containers/doca-driver/tags
     # When this is deployed a suffix is added in the format "-<os><os version>-<cpu arch>" for e.g.: "-ubuntu22.04-amd64".
     version: 25.01-0.6.0.0-0
-
-    forcePrecompiled: false
-    upgradePolicy:
-      autoUpgrade: true
-      drain:
-        deleteEmptyDir: true
-        enable: true
-        force: true
-        timeoutSeconds: 300
-      maxParallelUpgrades: 1
-    startupProbe:
-      initialDelaySeconds: 10
-      periodSeconds: 20
-    livenessProbe:
-      initialDelaySeconds: 30
-      periodSeconds: 30
-    readinessProbe:
-      initialDelaySeconds: 10
-      periodSeconds: 30
