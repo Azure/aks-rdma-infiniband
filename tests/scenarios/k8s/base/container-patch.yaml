@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: placeholder
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: runner
+        image: quay.io/surajd/ibtools:latest
+        # image: ghcr.io/Azure/aks-rdma-infiniband/ibtools
+        imagePullPolicy: Always
+        command:
+        - sh
+        - -c
+        - "sleep inf"
+        env:
+        - name: NCCL_DEBUG
+          value: TRACE
+        volumeMounts:
+        - name: test-scripts
+          mountPath: /root/tests
+      volumes:
+      - name: test-scripts
+        configMap:
+          name: test-scripts
+          items:
+          - key: rdma_test.sh
+            path: rdma_test.sh
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: task
+                operator: In
+                values:
+                - test
+            topologyKey: "kubernetes.io/hostname"
