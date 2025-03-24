@@ -8,8 +8,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: runner
-        image: quay.io/surajd/ibtools:latest
-        # image: ghcr.io/Azure/aks-rdma-infiniband/ibtools
+        image: ghcr.io/azure/aks-rdma-infiniband/ibtools:latest
         imagePullPolicy: Always
         command:
         - sh
