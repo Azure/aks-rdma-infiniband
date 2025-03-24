@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- leader-job.yaml
+- leader-svc.yaml
+- worker-job.yaml
+
+configMapGenerator:
+- name: test-scripts
+  files:
+  - test-scripts/rdma_test.sh
+  - test-scripts/vllm-rdma.py
+
+patches:
+- path: container-patch.yaml
+  target:
+    kind: Job
