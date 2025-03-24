@@ -11,7 +11,7 @@ if [ "${DEBUG:-false}" = "true" ]; then
 fi
 
 function deploy_root_nic_policy() {
-    kubectl apply -k "${SCRIPT_DIR}/../../configs/base"
+    kubectl apply -k "${SCRIPT_DIR}/../../configs/nicclusterpolicy/base"
     wait_until_mofed_is_ready
 }
 
@@ -37,7 +37,7 @@ function root_nic_policy_gpu() {
 }
 
 function deploy_sriov_nic_policy() {
-    kubectl apply -k "${SCRIPT_DIR}/../../configs/sriov-device-plugin"
+    kubectl apply -k "${SCRIPT_DIR}/../../configs/nicclusterpolicy/sriov-device-plugin"
     wait_until_mofed_is_ready
 }
 
@@ -62,7 +62,7 @@ function sriov_nic_policy_gpu() {
 }
 
 function deploy_ipoib_nic_policy() {
-    kubectl apply -k "${SCRIPT_DIR}/../../configs/ipoib"
+    kubectl apply -k "${SCRIPT_DIR}/../../configs/nicclusterpolicy/ipoib"
     wait_until_mofed_is_ready
 }
 
@@ -81,7 +81,7 @@ function ipoib_nic_policy_gpu() {
 }
 
 function deploy_rdma_shared_device_plugin() {
-    kubectl apply -k "${SCRIPT_DIR}/../../configs/rdma-shared-device-plugin"
+    kubectl apply -k "${SCRIPT_DIR}/../../configs/nicclusterpolicy/rdma-shared-device-plugin"
     wait_until_mofed_is_ready
 
 }
