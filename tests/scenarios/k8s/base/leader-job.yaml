@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: leader
+  labels:
+    role: leader
+    task: test
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        role: leader
+    spec:
+      containers:
+      - name: runner
+        env:
+        - name: ROLE
+          value: server
+        - name: TORCH_RUN_RANK
+          value: "0"

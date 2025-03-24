@@ -1,0 +1,56 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: placeholder
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: runner
+        image: quay.io/surajd/ibtools:latest
+        # image: ghcr.io/Azure/aks-rdma-infiniband/ibtools
+        imagePullPolicy: Always
+        command:
+        - sh
+        - -c
+        - "set -x;
+           bash /root/tests/rdma_test.sh ${ROLE} leader &&
+           torchrun --nnodes 2
+            --nproc-per-node=gpu
+            --rdzv_backend=static
+            --rdzv_endpoint=leader:29500
+            --node_rank=${TORCH_RUN_RANK}
+            /root/tests/vllm-rdma.py"
+        env:
+        - name: NCCL_DEBUG
+          value: TRACE
+        - name: NCCL_IB_DISABLE # Force NCCL to use Infiniband.
+          value: "0"
+        volumeMounts:
+        - name: shm
+          mountPath: /dev/shm
+        - name: test-scripts
+          mountPath: /root/tests
+      volumes:
+      - name: test-scripts
+        configMap:
+          name: test-scripts
+          items:
+          - key: rdma_test.sh
+            path: rdma_test.sh
+          - key: vllm-rdma.py
+            path: vllm-rdma.py
+      - name: shm
+        emptyDir:
+          medium: Memory
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: task
+                operator: In
+                values:
+                - test
+            topologyKey: "kubernetes.io/hostname"
