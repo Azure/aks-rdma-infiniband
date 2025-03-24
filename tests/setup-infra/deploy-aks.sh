@@ -107,23 +107,13 @@ function install_gpu_operator() {
     helm repo add nvidia https://helm.ngc.nvidia.com/nvidia
     helm repo update
 
-    # See if NFD is already deployed. This means that the network operator was deployed before.
-    nfd_pods_count="$(kubectl get pods \
-        -A -l app.kubernetes.io/name=node-feature-discovery \
-        --no-headers | wc -l)"
-
-    helm_chart_flags=""
-    if [[ "${nfd_pods_count}" -gt 0 ]]; then
-        helm_chart_flags="--set nfd.enabled=false"
-    fi
-
     helm upgrade -i \
         --wait \
         -n "${gpu_operator_ns}" \
         --create-namespace \
+        --values ${SCRIPT_DIR}/../../configs/values/gpu-operator/values.yaml \
         gpu-operator \
-        nvidia/gpu-operator \
-        --set dcgmExporter.serviceMonitor.enabled="true" ${helm_chart_flags}
+        nvidia/gpu-operator
 
     cuda_validator_label="app=nvidia-cuda-validator"
 
