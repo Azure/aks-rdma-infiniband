@@ -12,7 +12,6 @@ This guide assumes a basic understanding of Network Operator and its role in Kub
 
 This guide details recommended configurations for Network Operator v25.1.0 to enable RDMA over InfiniBand, optimized for AKS environments with Mellanox NICs.
 
-
 ### Helm Values
 
 Network Operator is deployed using [Helm](https://helm.sh/), and the [default Helm values](https://github.com/Mellanox/network-operator/blob/v25.1.0/deployment/network-operator/values.yaml) are recommended unless specific customizations are required. These defaults include [Node Feature Discovery (NFD)](https://kubernetes-sigs.github.io/node-feature-discovery/stable/get-started/index.html), a critical dependency that labels nodes with hardware details (e.g., Mellanox NIC presence) for pod scheduling.
@@ -34,7 +33,7 @@ The SR-IOV Device Plugin assigns each InfiniBand-enabled NIC (e.g., Mellanox Con
 To deploy the above config, create a `NicClusterPolicy` CR with the following YAML:
 
 ```bash
-kubectl apply -k https://github.com/Azure/aks-rdma-infiniband/configs/sriov-device-plugin
+kubectl apply -k https://github.com/Azure/aks-rdma-infiniband/configs/nicclusterpolicy/sriov-device-plugin
 ```
 
 Example pod configuration:
@@ -63,7 +62,7 @@ The RDMA Shared Device Plugin enables multiple pods to share all InfiniBand NICs
 To deploy the above config, create a `NicClusterPolicy` CR with the following YAML:
 
 ```bash
-kubectl apply -k https://github.com/Azure/aks-rdma-infiniband/configs/rdma-shared-device-plugin
+kubectl apply -k https://github.com/Azure/aks-rdma-infiniband/configs/nicclusterpolicy/rdma-shared-device-plugin
 ```
 
 Example pod configuration:

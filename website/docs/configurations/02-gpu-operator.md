@@ -54,7 +54,7 @@ GPU Operator is deployed using [Helm](https://helm.sh/), and the [default Helm v
 Save the following YAML configuration to a file named `gpu-operator-values.yaml`:
 
 ```yaml reference
-https://github.com/Azure/aks-rdma-infiniband/blob/main/configs/gpu-operator/values.yaml
+https://github.com/Azure/aks-rdma-infiniband/blob/main/configs/values/gpu-operator/values.yaml
 ```
 
 Deploy GPU Operator with the following command:
