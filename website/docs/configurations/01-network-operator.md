@@ -19,7 +19,7 @@ Network Operator is deployed using [Helm](https://helm.sh/), and the [default He
 ```bash
 helm repo add nvidia https://helm.ngc.nvidia.com/nvidia
 helm repo update
-helm upgrade --install --create-namespace -n network-operator network-operator nvidia/network-operator
+helm upgrade --install --create-namespace -n network-operator network-operator nvidia/network-operator --version v25.1.0
 ```
 
 ### NicClusterPolicy
