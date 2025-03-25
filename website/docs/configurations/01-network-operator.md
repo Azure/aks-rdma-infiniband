@@ -16,10 +16,23 @@ This guide details recommended configurations for Network Operator v25.1.0 to en
 
 Network Operator is deployed using [Helm](https://helm.sh/), and the [default Helm values](https://github.com/Mellanox/network-operator/blob/v25.1.0/deployment/network-operator/values.yaml) are recommended unless specific customizations are required. These defaults include [Node Feature Discovery (NFD)](https://kubernetes-sigs.github.io/node-feature-discovery/stable/get-started/index.html), a critical dependency that labels nodes with hardware details (e.g., Mellanox NIC presence) for pod scheduling.
 
+Save the following YAML configuration to a file named `values.yaml`:
+
+```yaml reference
+https://github.com/Azure/aks-rdma-infiniband/blob/main/configs/values/network-operator/values.yaml
+```
+
+Deploy Network Operator with the following commands:
+
 ```bash
 helm repo add nvidia https://helm.ngc.nvidia.com/nvidia
 helm repo update
-helm upgrade --install --create-namespace -n network-operator network-operator nvidia/network-operator --version v25.1.0
+
+helm upgrade --install \
+  --create-namespace -n network-operator \
+  network-operator nvidia/network-operator \
+  -f values.yaml \
+  --version v25.1.0
 ```
 
 ### NicClusterPolicy

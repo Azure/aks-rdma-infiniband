@@ -51,7 +51,7 @@ Opt for AKS-managed driver and skip GPU Operator installation for simpler GPU ta
 
 GPU Operator is deployed using [Helm](https://helm.sh/), and the [default Helm values](https://github.com/NVIDIA/gpu-operator/blob/v24.9.2/deployments/gpu-operator/values.yaml) are customized to align with the Network Operator and AKS requirements. Key adjustments to the Helm values disable redundant components such as NFD and enable RDMA support.
 
-Save the following YAML configuration to a file named `gpu-operator-values.yaml`:
+Save the following YAML configuration to a file named `values.yaml`:
 
 ```yaml reference
 https://github.com/Azure/aks-rdma-infiniband/blob/main/configs/values/gpu-operator/values.yaml
@@ -62,7 +62,12 @@ Deploy GPU Operator with the following command:
 ```bash
 helm repo add nvidia https://helm.ngc.nvidia.com/nvidia
 helm repo update
-helm upgrade --install --create-namespace -n gpu-operator gpu-operator nvidia/gpu-operator -f values.yaml --version v24.9.2
+
+helm upgrade --install \
+  --create-namespace -n gpu-operator \
+  gpu-operator nvidia/gpu-operator \
+  -f values.yaml \
+  --version v24.9.2
 ```
 
 ### GPUDirect RDMA
