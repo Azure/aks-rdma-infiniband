@@ -89,13 +89,15 @@ function install_network_operator() {
     helm repo add nvidia https://helm.ngc.nvidia.com/nvidia
     helm repo update
 
+    # Find latest version of network operator: https://github.com/Mellanox/network-operator/releases
     helm upgrade -i \
         --wait \
         --create-namespace \
         -n network-operator \
         --values ${SCRIPT_DIR}/../../configs/values/network-operator/values.yaml \
         network-operator \
-        nvidia/network-operator
+        nvidia/network-operator \
+        --version v25.1.0
 
     kubectl apply -f ${SCRIPT_DIR}/network-operator-nfd.yaml
     kubectl apply -k "${SCRIPT_DIR}/../../configs/nicclusterpolicy/base"
@@ -110,13 +112,15 @@ function install_gpu_operator() {
     helm repo add nvidia https://helm.ngc.nvidia.com/nvidia
     helm repo update
 
+    # Find latest version of the GPU operator: https://github.com/NVIDIA/gpu-operator/releases
     helm upgrade -i \
         --wait \
         -n "${gpu_operator_ns}" \
         --create-namespace \
         --values ${SCRIPT_DIR}/../../configs/values/gpu-operator/values.yaml \
         gpu-operator \
-        nvidia/gpu-operator
+        nvidia/gpu-operator \
+        --version v24.9.2
 
     cuda_validator_label="app=nvidia-cuda-validator"
 

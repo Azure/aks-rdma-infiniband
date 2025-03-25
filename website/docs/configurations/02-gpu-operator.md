@@ -62,7 +62,7 @@ Deploy GPU Operator with the following command:
 ```bash
 helm repo add nvidia https://helm.ngc.nvidia.com/nvidia
 helm repo update
-helm upgrade --install --create-namespace -n gpu-operator gpu-operator nvidia/gpu-operator -f values.yaml
+helm upgrade --install --create-namespace -n gpu-operator gpu-operator nvidia/gpu-operator -f values.yaml --version v24.9.2
 ```
 
 ### GPUDirect RDMA
