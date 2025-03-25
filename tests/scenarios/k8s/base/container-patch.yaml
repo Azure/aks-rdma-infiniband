@@ -26,6 +26,9 @@ spec:
           value: TRACE
         - name: NCCL_IB_DISABLE # Force NCCL to use Infiniband.
           value: "0"
+        # # Enable script in verbose mode.
+        # - name: DEBUG
+        #   value: "true"
         volumeMounts:
         - name: shm
           mountPath: /dev/shm
