@@ -53,6 +53,17 @@ function add_nodepool() {
     az extension add --name aks-preview || true
     az extension update --name aks-preview || true
 
+    aks_infiniband_support="az feature show \
+        --namespace "Microsoft.ContainerService" \
+        --name AKSInfinibandSupport -o tsv --query 'properties.state'"
+
+    # Until the output of the above command is not "Registered", keep running the command.
+    while [[ "$(eval $aks_infiniband_support)" != "Registered" ]]; do
+        az feature register --name AKSInfinibandSupport --namespace Microsoft.ContainerService
+        echo "⏳ Waiting for the feature 'AKSInfinibandSupport' to be registered..."
+        sleep 10
+    done
+
     az aks nodepool add \
         --name "${NODE_POOL_NAME}" \
         --resource-group "${AZURE_RESOURCE_GROUP}" \
@@ -75,17 +86,6 @@ function download_aks_credentials() {
 # values file with `--set key=value`. For example a call would like this:
 # `install_network_operator --set key=value`
 function install_network_operator() {
-    aks_infiniband_support="az feature show \
-        --namespace "Microsoft.ContainerService" \
-        --name AKSInfinibandSupport -o tsv --query 'properties.state'"
-
-    # Until the output of the above command is not "Registered", keep running the command.
-    while [[ "$(eval $aks_infiniband_support)" != "Registered" ]]; do
-        az feature register --name AKSInfinibandSupport --namespace Microsoft.ContainerService
-        echo "⏳ Waiting for the feature 'AKSInfinibandSupport' to be registered..."
-        sleep 10
-    done
-
     helm repo add nvidia https://helm.ngc.nvidia.com/nvidia
     helm repo update
 
