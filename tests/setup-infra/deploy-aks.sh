@@ -3,6 +3,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+source "${SCRIPT_DIR}/../scenarios/util.sh"
 
 # Check if the DEBUG env var is set to true
 if [ "${DEBUG:-false}" = "true" ]; then
@@ -92,11 +93,13 @@ function install_network_operator() {
         --wait \
         --create-namespace \
         -n network-operator \
+        --values ${SCRIPT_DIR}/../../configs/values/network-operator/values.yaml \
         network-operator \
-        nvidia/network-operator \
-        --set nfd.deployNodeFeatureRules=false "$@"
+        nvidia/network-operator
 
     kubectl apply -f ${SCRIPT_DIR}/network-operator-nfd.yaml
+    kubectl apply -k "${SCRIPT_DIR}/../../configs/nicclusterpolicy/base"
+    wait_until_mofed_is_ready
 }
 
 function install_gpu_operator() {
