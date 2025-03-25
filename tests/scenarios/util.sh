@@ -63,6 +63,32 @@ function wait_until_sriov_is_ready() {
     eval "${rdma_ib_on_nodes_cmd}"
 }
 
+function wait_until_rdma_is_ready() {
+    rdma_label="app=rdma-shared-dp"
+
+    echo "⏳ Waiting for all rdma-shared-dp pods in namespace ${NETWORK_OPERATOR_NS} to be in 'Running' phase..."
+
+    while true; do
+        pods_json=$(kubectl get pods -n "${NETWORK_OPERATOR_NS}" -l "${rdma_label}" -o json)
+
+        total=$(echo "${pods_json}" | jq '.items | length')
+        running=$(echo "${pods_json}" | jq '[.items[] | select(.status.phase == "Running")] | length')
+
+        if [ "${total}" -eq "${running}" ] && [ "${total}" -ne 0 ]; then
+            echo "✅ All rdma-shared-dp ${total} pods are in 'Running' state."
+            break
+        else
+            echo "⏳ Waiting for rdma-shared-dp, ${running}/${total} pods running..."
+            sleep 5
+        fi
+    done
+
+    echo -e '\nRDMA Shared IB devices on nodes:\n'
+    rdma_ib_on_nodes_cmd="kubectl get nodes -o json | jq -r '.items[] | {name: .metadata.name, \"rdma/shared_ib\": .status.allocatable[\"rdma/shared_ib\"]}'"
+    echo "$ ${rdma_ib_on_nodes_cmd}"
+    eval "${rdma_ib_on_nodes_cmd}"
+}
+
 function find_gpu_per_node() {
     case "${NODE_POOL_VM_SIZE}" in
     "Standard_ND96asr_v4" | "Standard_ND96amsr_A100_v4")

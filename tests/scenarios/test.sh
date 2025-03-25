@@ -95,9 +95,15 @@ function rdma_shared_device_plugin() {
 
 function rdma_shared_device_plugin_gpu() {
     deploy_rdma_shared_device_plugin
-    echo "📝 TODO: Add GPU based RDMA shared device plugin tests"
-    echo "❌ Not implemented yet"
-    exit 1
+    wait_until_rdma_is_ready
+
+    find_gpu_per_node
+    kubectl apply -k "${SCRIPT_DIR}/k8s/rdma/gpu/${GPU_PER_NODE}"
+    fail_on_job_failure "role=leader" "default"
+    fail_on_job_failure "role=worker" "default"
+
+    echo "🧹 Cleaning up..."
+    kubectl delete -k "${SCRIPT_DIR}/k8s/rdma/gpu/${GPU_PER_NODE}"
 }
 
 PARAM="${1:-}"
@@ -121,10 +127,10 @@ deploy-ipoib-nic-policy-gpu)
     deploy_ipoib_nic_policy_gpu
     ;;
 rdma-shared-device-plugin)
-    deploy_rdma_shared_device_plugin
+    rdma_shared_device_plugin
     ;;
 rdma-shared-device-plugin-gpu)
-    deploy_rdma_shared_device_plugin_gpu
+    rdma_shared_device_plugin_gpu
     ;;
 *)
     echo "Usage: $0 root-nic-policy | root-nic-policy-gpu | sriov-nic-policy | sriov-nic-policy-gpu | deploy-ipoib-nic-policy | deploy-ipoib-nic-policy-gpu | rdma-shared-device-plugin | rdma-shared-device-plugin-gpu"
