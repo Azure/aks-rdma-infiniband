@@ -10,6 +10,7 @@ configMapGenerator:
   files:
   - test-scripts/rdma_test.sh
   - test-scripts/vllm-rdma.py
+  - test-scripts/verify_gpudirect_rdma.py
 
 patches:
 - path: container-patch.yaml
