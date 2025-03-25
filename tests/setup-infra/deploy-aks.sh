@@ -86,6 +86,10 @@ function download_aks_credentials() {
 # values file with `--set key=value`. For example a call would like this:
 # `install_network_operator --set key=value`
 function install_network_operator() {
+    network_operator_ns="network-operator"
+    kubectl create ns "${network_operator_ns}" || true
+    kubectl label --overwrite ns "${network_operator_ns}" pod-security.kubernetes.io/enforce=privileged
+
     helm repo add nvidia https://helm.ngc.nvidia.com/nvidia
     helm repo update
 
@@ -93,7 +97,7 @@ function install_network_operator() {
     helm upgrade -i \
         --wait \
         --create-namespace \
-        -n network-operator \
+        -n "${network_operator_ns}" \
         --values ${SCRIPT_DIR}/../../configs/values/network-operator/values.yaml \
         network-operator \
         nvidia/network-operator \
