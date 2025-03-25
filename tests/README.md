@@ -30,4 +30,5 @@ Run the tests:
 ```bash
 ./tests/scenarios/test.sh root-nic-policy-gpu
 ./tests/scenarios/test.sh sriov-nic-policy-gpu
+./tests/scenarios/test.sh rdma-shared-device-plugin-gpu
 ```
