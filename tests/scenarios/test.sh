@@ -17,10 +17,14 @@ function deploy_root_nic_policy() {
 
 function root_nic_policy() {
     deploy_root_nic_policy
-    echo "📝 TODO: Add tests that can be run using privileged user."
-    echo "❌ Not implemented yet"
-    exit 1
 
+    kubectl apply -k "${SCRIPT_DIR}/k8s/root/base"
+    fail_on_job_failure "role=leader" "default"
+    fail_on_job_failure "role=worker" "default"
+
+    # Clean up
+    echo "🧹 Cleaning up..."
+    kubectl delete -k "${SCRIPT_DIR}/k8s/root/base"
 }
 
 function root_nic_policy_gpu() {

@@ -25,10 +25,16 @@ If the nodes support GPU, then install the GPU operator:
 ./tests/setup-infra/deploy-aks.sh install-gpu-operator
 ```
 
-Run the tests:
+Run the GPU based tests:
 
 ```bash
 ./tests/scenarios/test.sh root-nic-policy-gpu
 ./tests/scenarios/test.sh sriov-nic-policy-gpu
 ./tests/scenarios/test.sh rdma-shared-device-plugin-gpu
+```
+
+Run the non-GPU tests:
+
+```bash
+./tests/scenarios/test.sh root-nic-policy
 ```
