@@ -43,18 +43,23 @@ function root_nic_policy_gpu() {
 function deploy_sriov_nic_policy() {
     kubectl apply -k "${SCRIPT_DIR}/../../configs/nicclusterpolicy/sriov-device-plugin"
     wait_until_mofed_is_ready
+    wait_until_sriov_is_ready
 }
 
 function sriov_nic_policy() {
     deploy_sriov_nic_policy
-    echo "📝 TODO: Add SRIOV tests"
-    echo "❌ Not implemented yet"
-    exit 1
+
+    kubectl apply -k "${SCRIPT_DIR}/k8s/sriov/base"
+    fail_on_job_failure "role=leader" "default"
+    fail_on_job_failure "role=worker" "default"
+
+    # Clean up
+    echo "🧹 Cleaning up..."
+    kubectl delete -k "${SCRIPT_DIR}/k8s/sriov/base"
 }
 
 function sriov_nic_policy_gpu() {
     deploy_sriov_nic_policy
-    wait_until_sriov_is_ready
 
     find_gpu_per_node
     kubectl apply -k "${SCRIPT_DIR}/k8s/sriov/gpu/${GPU_PER_NODE}"

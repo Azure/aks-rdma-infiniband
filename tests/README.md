@@ -37,4 +37,5 @@ Run the non-GPU tests:
 
 ```bash
 ./tests/scenarios/test.sh root-nic-policy
+./tests/scenarios/test.sh sriov-nic-policy
 ```

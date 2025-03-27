@@ -12,3 +12,8 @@ spec:
             # A pod without this will have a low locked memory value `# ulimit
             # -l` value of "64", this changes the value to "unlimited".
             add: ["IPC_LOCK"]
+        resources:
+          limits:
+            rdma/ib: 1
+          requests:
+            rdma/ib: 1
