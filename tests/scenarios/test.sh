@@ -92,19 +92,22 @@ function ipoib_nic_policy_gpu() {
 function deploy_rdma_shared_device_plugin() {
     kubectl apply -k "${SCRIPT_DIR}/../../configs/nicclusterpolicy/rdma-shared-device-plugin"
     wait_until_mofed_is_ready
-
+    wait_until_rdma_is_ready
 }
 
 function rdma_shared_device_plugin() {
     deploy_rdma_shared_device_plugin
-    echo "📝 TODO: Add RDMA shared device plugin tests"
-    echo "❌ Not implemented yet"
-    exit 1
+
+    kubectl apply -k "${SCRIPT_DIR}/k8s/rdma/base"
+    fail_on_job_failure "role=leader" "default"
+    fail_on_job_failure "role=worker" "default"
+
+    echo "🧹 Cleaning up..."
+    kubectl delete -k "${SCRIPT_DIR}/k8s/rdma/base"
 }
 
 function rdma_shared_device_plugin_gpu() {
     deploy_rdma_shared_device_plugin
-    wait_until_rdma_is_ready
 
     find_gpu_per_node
     kubectl apply -k "${SCRIPT_DIR}/k8s/rdma/gpu/${GPU_PER_NODE}"
