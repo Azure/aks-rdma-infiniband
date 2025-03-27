@@ -18,6 +18,7 @@ which lspci >/dev/null 2>&1 || {
 
 # Check if the pod has NVIDIA GPUs
 if lspci | grep -i nvidia; then
+    echo "NVIDIA GPUs found. Running GPU tests..."
     torchrun --nnodes 2 \
         --nproc-per-node=gpu \
         --rdzv_backend=static \
@@ -33,5 +34,4 @@ if lspci | grep -i nvidia; then
         ${TESTS_DIR}/verify_gpudirect_rdma.py
 else
     echo "No NVIDIA GPUs found. Skipping GPU tests."
-    exit 0
 fi
