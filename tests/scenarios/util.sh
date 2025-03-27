@@ -2,8 +2,6 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-
 # Check if the DEBUG env var is set to true
 if [ "${DEBUG:-false}" = "true" ]; then
     set -x
@@ -28,6 +26,7 @@ function wait_until_mofed_is_ready() {
             --no-headers | wc -l)"
 
         if [[ "${mofed_pods_count}" -gt 0 && "${mofed_pods_count}" -eq "${nodes_with_mofed_wait_false}" ]]; then
+            echo "✅ MOFED driver is successfully installed on all nodes."
             break
         fi
 
