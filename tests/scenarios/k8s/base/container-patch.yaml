@@ -13,20 +13,7 @@ spec:
         command:
         - sh
         - -c
-        - "set -x;
-           bash /root/tests/rdma_test.sh ${ROLE} leader &&
-           torchrun --nnodes 2
-            --nproc-per-node=gpu
-            --rdzv_backend=static
-            --rdzv_endpoint=leader:29500
-            --node_rank=${TORCH_RUN_RANK}
-            /root/tests/vllm-rdma.py &&
-            torchrun --nnodes 2
-            --nproc-per-node=gpu
-            --rdzv_backend=static
-            --rdzv_endpoint=leader:29500
-            --node_rank=${TORCH_RUN_RANK}
-            /root/tests/verify_gpudirect_rdma.py"
+        - "set -x; bash /root/tests/test-runner.sh"
         env:
         - name: NCCL_DEBUG
           value: TRACE
@@ -53,6 +40,8 @@ spec:
             path: vllm-rdma.py
           - key: verify_gpudirect_rdma.py
             path: verify_gpudirect_rdma.py
+          - key: test-runner.sh
+            path: test-runner.sh
       - name: shm
         emptyDir:
           medium: Memory
