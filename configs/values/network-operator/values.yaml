@@ -1,2 +1,12 @@
-nfd:
-  deployNodeFeatureRules: false
+node-feature-discovery:
+  worker:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            # Don't schedule NFD workers on the system nodepool.
+            - key: kubernetes.azure.com/mode
+              operator: NotIn
+              values:
+              - system

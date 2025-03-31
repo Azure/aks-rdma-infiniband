@@ -4,17 +4,6 @@ kind: NicClusterPolicy
 metadata:
   name: nic-cluster-policy
 spec:
-  # This is needed so that you don't schedule pods on the non-infiniband machines.
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-      - matchExpressions:
-        # This node label is added by NFD.
-        - key: feature.node.kubernetes.io/pci-15b3.present
-          operator: In
-          values:
-          - "true"
-
   ofedDriver:
     repository: nvcr.io/nvidia/mellanox
     image: doca-driver
