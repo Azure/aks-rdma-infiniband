@@ -91,9 +91,16 @@ function ipoib_nic_policy() {
 
 function ipoib_nic_policy_gpu() {
     deploy_ipoib_nic_policy
-    echo "📝 TODO: Add GPU based IPOIB tests"
-    echo "❌ Not implemented yet"
-    exit 1
+
+    find_gpu_per_node
+    kubectl apply -k "${SCRIPT_DIR}/k8s/ipoib/gpu/${GPU_PER_NODE}"
+    ipoib_add_ep_ip
+
+    fail_on_job_failure "role=leader" "default"
+    fail_on_job_failure "role=worker" "default"
+
+    echo "🧹 Cleaning up..."
+    kubectl delete -k "${SCRIPT_DIR}/k8s/ipoib/gpu/${GPU_PER_NODE}"
 }
 
 function deploy_rdma_shared_device_plugin() {
@@ -152,7 +159,7 @@ rdma-shared-device-plugin-gpu)
     rdma_shared_device_plugin_gpu
     ;;
 *)
-    echo "Usage: $0 root-nic-policy | root-nic-policy-gpu | sriov-nic-policy | sriov-nic-policy-gpu | deploy-ipoib-nic-policy | deploy-ipoib-nic-policy-gpu | rdma-shared-device-plugin | rdma-shared-device-plugin-gpu"
+    echo "Usage: $0 root-nic-policy | root-nic-policy-gpu | sriov-nic-policy | sriov-nic-policy-gpu | ipoib-nic-policy | ipoib-nic-policy-gpu | rdma-shared-device-plugin | rdma-shared-device-plugin-gpu"
     exit 1
     ;;
 esac
