@@ -88,6 +88,81 @@ function wait_until_rdma_is_ready() {
     eval "${rdma_ib_on_nodes_cmd}"
 }
 
+function _check_if_all_pods_in_ds_are_ready() {
+    namespace="${1}"
+    ds_name="${2}"
+
+    ready=$(kubectl get daemonset "$ds_name" -n "$namespace" -o jsonpath='{.status.numberReady}')
+    desired=$(kubectl get daemonset "$ds_name" -n "$namespace" -o jsonpath='{.status.desiredNumberScheduled}')
+
+    [[ "$ready" -eq "$desired" ]] && return 0
+
+    return 1
+}
+
+function wait_until_ipoib_is_ready() {
+    ds_list=(
+        cni-plugins-ds
+        kube-ipoib-cni-ds
+        kube-multus-ds
+        whereabouts
+    )
+
+    while true; do
+        all_ready=true
+        for ds in "${ds_list[@]}"; do
+            if ! _check_if_all_pods_in_ds_are_ready "${NETWORK_OPERATOR_NS}" "${ds}"; then
+                all_ready=false
+                echo "⏳ Waiting for DaemonSet '$ds' in namespace '${NETWORK_OPERATOR_NS}' to be ready..."
+            else
+                echo "✅ DaemonSet '$ds' in namespace '${NETWORK_OPERATOR_NS}' is ready."
+            fi
+        done
+
+        if [[ "$all_ready" == true ]]; then
+            echo "✅ All DaemonSets are ready!"
+            break
+        else
+            echo "⏳ Waiting for all DaemonSets to be ready..."
+            sleep 5
+        fi
+    done
+}
+
+function ipoib_add_ep_ip() {
+    while true; do
+        ep_ip=$(kubectl get pods -l role=leader -o json | jq -r '
+        .items[]
+            | select(.metadata.annotations["k8s.v1.cni.cncf.io/network-status"] != null)
+            | .metadata.annotations["k8s.v1.cni.cncf.io/network-status"]
+            | fromjson
+            | map(select(.name == "default/aks-infiniband"))[0]
+            | if . == null then
+                error("Network name is not default/aks-infiniband")
+              else
+                .ips[0]
+              end')
+
+        # Break only if ep_ip is not empty
+        if [[ -n "${ep_ip}" ]]; then
+            echo "✅ Found leader pod Infiniband IP: ${ep_ip}".
+            break
+        fi
+        echo "⏳ Waiting for leader pod to be ready..."
+        sleep 5
+    done
+
+    kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: leader-ib
+subsets:
+  - addresses:
+      - ip: ${ep_ip}
+EOF
+}
+
 function find_gpu_per_node() {
     case "${NODE_POOL_VM_SIZE}" in
     "Standard_ND96asr_v4" | "Standard_ND96amsr_A100_v4")

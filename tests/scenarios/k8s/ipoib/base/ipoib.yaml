@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: placeholder
+spec:
+  template:
+    metadata:
+      annotations:
+        # This name should match the IPoIBNetwork object we created earlier.
+        # You can find this config by running `kubectl get IPoIBNetwork`.
+        k8s.v1.cni.cncf.io/networks: aks-infiniband
+    spec:
+      containers:
+      - name: runner
+        ports:
+        - containerPort: 11111
+          name: infiniband
+        - containerPort: 11112
+          name: ethernet

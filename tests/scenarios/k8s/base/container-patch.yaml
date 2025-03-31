@@ -40,6 +40,8 @@ spec:
             path: vllm-rdma.py
           - key: verify_gpudirect_rdma.py
             path: verify_gpudirect_rdma.py
+          - key: sockperf-test.sh
+            path: sockperf-test.sh
           - key: test-runner.sh
             path: test-runner.sh
       - name: shm
