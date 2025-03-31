@@ -39,4 +39,5 @@ Run the non-GPU tests:
 ./tests/scenarios/test.sh root-nic-policy
 ./tests/scenarios/test.sh sriov-nic-policy
 ./tests/scenarios/test.sh rdma-shared-device-plugin
+./tests/scenarios/test.sh ipoib-nic-policy
 ```

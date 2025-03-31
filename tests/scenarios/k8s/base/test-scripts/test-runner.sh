@@ -6,8 +6,10 @@ set -x
 
 export TESTS_DIR="/root/tests"
 
-# Does not need GPU.
-# Needs IB.
+# Can run on IB interface or regular NICs.
+bash ${TESTS_DIR}/sockperf-test.sh ${ROLE}
+
+# Needs IB devices, doesn't matter if there are GPUs or not.
 bash ${TESTS_DIR}/rdma_test.sh ${ROLE} leader
 
 # Needs GPU

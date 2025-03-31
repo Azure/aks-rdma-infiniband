@@ -18,6 +18,16 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 # Set the RDMA port
 export PORT=18515
 
+function check_ib_devices() {
+    # If the output of the command `ibv_devinfo` is `No IB devices found` then
+    # there aren't IB devices to run the rdma_test.sh.
+    output=$(ibv_devinfo 2>&1 || true)
+    if echo "$output" | grep -q "No IB devices found"; then
+        echo "No IB devices found. Skipping RDMA tests."
+        exit 0
+    fi
+}
+
 function get_ib_devices() {
     # Get the list of available IB devices. There is a possibility that the node
     # has a NIC that shows up as mlx but is not an IB device. It could be using
@@ -26,10 +36,11 @@ function get_ib_devices() {
     # One way to ignore such devices at NCCL level is to set "export
     # NCCL_IB_HCA=^mlx5_8". So here we are ignoring the mlx5_8 device.
     # See the failures like this: https://gist.github.com/surajssd/d65a9eb3844bfc49ccda3e84a0ff5a4b#file-nccl-failure-on-roce-mlx5_8-device-sh
-    IB_DEVICES=$(for dev in /sys/class/infiniband/*; do
-        hca=$(basename "$dev")
-        if [[ $(cat $dev/ports/1/link_layer 2>/dev/null) == "InfiniBand" ]]; then
-            echo "$hca"
+    IB_DEVICE_INFO=$(ibv_devinfo -l | grep -v 'HCA' | tr -d ' ')
+    IB_DEVICES=$(for dev in $IB_DEVICE_INFO; do
+        # Check if the device is an InfiniBand device
+        if [[ $(ibv_devinfo -d "$dev" | grep link_layer | grep -c "InfiniBand") -gt 0 ]]; then
+            echo "$dev"
         fi
     done)
 
@@ -67,6 +78,7 @@ function check_ib_device_is_active() {
     fi
 }
 
+check_ib_devices
 get_ib_devices
 check_tools
 

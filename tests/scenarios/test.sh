@@ -73,13 +73,20 @@ function sriov_nic_policy_gpu() {
 function deploy_ipoib_nic_policy() {
     kubectl apply -k "${SCRIPT_DIR}/../../configs/nicclusterpolicy/ipoib"
     wait_until_mofed_is_ready
+    wait_until_ipoib_is_ready
 }
 
 function ipoib_nic_policy() {
     deploy_ipoib_nic_policy
-    echo "📝 TODO: Add IPOIB tests"
-    echo "❌ Not implemented yet"
-    exit 1
+
+    kubectl apply -k "${SCRIPT_DIR}/k8s/ipoib/base/"
+    ipoib_add_ep_ip
+
+    fail_on_job_failure "role=leader" "default"
+    fail_on_job_failure "role=worker" "default"
+
+    echo "🧹 Cleaning up..."
+    kubectl delete -k "${SCRIPT_DIR}/k8s/ipoib/base/"
 }
 
 function ipoib_nic_policy_gpu() {
@@ -132,11 +139,11 @@ sriov-nic-policy)
 sriov-nic-policy-gpu)
     sriov_nic_policy_gpu
     ;;
-deploy-ipoib-nic-policy)
-    deploy_ipoib_nic_policy
+ipoib-nic-policy)
+    ipoib_nic_policy
     ;;
-deploy-ipoib-nic-policy-gpu)
-    deploy_ipoib_nic_policy_gpu
+ipoib-nic-policy-gpu)
+    ipoib_nic_policy_gpu
     ;;
 rdma-shared-device-plugin)
     rdma_shared_device_plugin
