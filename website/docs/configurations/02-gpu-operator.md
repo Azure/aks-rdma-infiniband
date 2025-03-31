@@ -2,54 +2,46 @@
 title: GPU Operator
 ---
 
+This guide details recommended configurations for GPU Operator v24.9.2 to enable GPU workload, with specific settings for GPUDirect RDMA integration.
+
 :::tip
 This guide assumes a basic understanding of GPU Operator and its role in Kubernetes clusters. Readers unfamiliar with GPU Operator are advised to review the official [guide](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html) before proceeding. The concepts and recommended configurations presented here build on that foundation to enable GPU workload and GPUDirect RDMA in AKS. This documentation is based on GPU Operator v24.9.2.
 :::
 
-## Recommended Configuration
-
-This guide details recommended configurations for GPU Operator v24.9.2 to enable GPU workload, with specific settings for GPUDirect RDMA integration.
-
-### Skip GPU Driver Installation
-
-:::info
-Read more about the GPU driver installation options in AKS and the NVIDIA GPU Operator in the [AKS documentation](https://learn.microsoft.com/en-us/azure/aks/gpu-cluster?tabs=add-ubuntu-gpu-node-pool) and the [GPU Operator documentation](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/microsoft-aks.html).
-:::
+## GPU Drivers: AKS-managed vs. GPU Operator-managed
 
 :::danger
-AKS-managed GPU drivers and the NVIDIA GPU Operator are **mutually exclusive** and cannot coexist. When you create a nodepool **without** the `--skip-gpu-driver-install` flag, AKS provisions it with a node image that includes pre-installed NVIDIA drivers and the NVIDIA container runtime. Installing GPU Operator subsequently replaces this setup by deploying its own `nvidia-container-toolkit`, overriding the AKS-managed configuration. Upon uninstalling GPU Operator, the toolkit cannot revert to the original AKS containerd configuration, as it lacks awareness of the prior state, potentially disrupting the node’s container runtime and impairing workload execution.
+AKS-managed GPU drivers and the NVIDIA GPU Operator managed GPU drivers are **mutually exclusive** and cannot coexist. When you create a nodepool **without** the `--skip-gpu-driver-install` flag, AKS provisions it with a node image that includes pre-installed NVIDIA drivers and the NVIDIA container runtime. Installing GPU Operator subsequently replaces this setup by deploying its own `nvidia-container-toolkit`, overriding the AKS-managed configuration. Upon uninstalling GPU Operator, the toolkit cannot revert to the original AKS containerd configuration, as it lacks awareness of the prior state, potentially disrupting the node’s container runtime and impairing workload execution.
 :::
 
 When provisioning GPU nodepools in an AKS cluster, the cluster administrator has the option to either rely on the default GPU driver installation managed by AKS or via GPU Operator. This decision impacts cluster setup, maintenance, and compatibility.
 
 |                | **AKS-managed GPU Driver (Without GPU Operator)**                                  | **GPU Operator-managed GPU Driver (`--skip-gpu-driver-install`)**                         |
-| -------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+|----------------|------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
 | **Automation** | AKS-managed drivers; cluster administrator needs to manually deploy device plugins | Automates installation of driver, device plugins, and container runtimes via GPU Operator |
-| **Complexity** | Simple, no additional components except device plugins                             | More complex, requires GPU Operator and additional components                             | Moderate setup (deploy operator); simplified ongoing management |
+| **Complexity** | Simple, no additional components except device plugins                             | More complex, requires GPU Operator and additional components                             |
 | **Support**    | Fully supported by AKS; no preview features                                        | `--skip-gpu-driver-install` is a preview feature; limited support available               |
 
-#### Recommendations
+:::info
+Read more about the GPU driver installation options in AKS and the NVIDIA GPU Operator in the [AKS documentation](https://learn.microsoft.com/en-us/azure/aks/gpu-cluster?tabs=add-ubuntu-gpu-node-pool) and the [GPU Operator documentation](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/microsoft-aks.html).
+:::
 
-For GPUDirect RDMA over InfiniBand, use GPU Operator with `--skip-gpu-driver-install` when creating the nodepool to leverage GPU Operator's automation and management capabilities. This approach enables self-management of GPU drivers, device plugins, and container runtimes via GPU Operator, ensuring compatibility with the latest NVIDIA stack. This guide assumes the use of GPU Operator with `--skip-gpu-driver-install` for the GPU driver installation:
+## GPU Operator Deployment
 
-```bash
-az extension add -n aks-preview
-az aks nodepool add \
-  --resource-group "${AZURE_RESOURCE_GROUP}" \
-  --cluster-name "${CLUSTER_NAME}" \
-  --name "${NODEPOOL_NAME}" \
-  --node-count "${NODEPOOL_NODE_COUNT}" \
-  --node-vm-size "${NODEPOOL_VM_SIZE}" \
-  --os-sku Ubuntu \
-  # highlight-next-line
-  --skip-gpu-driver-install
-```
+:::warning
+Please proceed with GPU operator installation only if you have created the nodepool with the `--skip-gpu-driver-install` flag as described in [prerequisites documentation](../getting-started/02-prerequisites.md#gpu-operator-managed-gpu-driver).
+:::
 
-Opt for AKS-managed driver and skip GPU Operator installation for simpler GPU tasks without GPUDirect RDMA needs.
-
-### Helm Values
+### Operator
 
 GPU Operator is deployed using [Helm](https://helm.sh/), and the [default Helm values](https://github.com/NVIDIA/gpu-operator/blob/v24.9.2/deployments/gpu-operator/values.yaml) are customized to align with the Network Operator and AKS requirements. Key adjustments to the Helm values disable redundant components such as NFD and enable RDMA support.
+
+GPU operator deploys pods that require privileged access to the host system. To ensure proper operation, the `gpu-operator` namespace must be labeled with `pod-security.kubernetes.io/enforce=privileged`.
+
+```bash
+kubectl create ns gpu-operator
+kubectl label --overwrite ns gpu-operator pod-security.kubernetes.io/enforce=privileged
+```
 
 Save the following YAML configuration to a file named `values.yaml`:
 
@@ -70,9 +62,13 @@ helm upgrade --install \
   --version v24.9.2
 ```
 
-### GPUDirect RDMA
+## Usage of GPUDirect RDMA
 
-Once GPU Operator and its operands are installed, configure pods to claim both GPUs and InfiniBand resources created from one of the [device plugins managed via Network Operator](network-operator#nicclusterpolicy). Below is an example for a GPUDirect RDMA workload using [SR-IOV Device Plugin](network-operator#sr-iov-device-plugin):
+Once GPU Operator and its operands are installed, configure pods to claim both GPUs and InfiniBand resources created from one of the [device plugins managed via Network Operator](network-operator#nicclusterpolicy).
+
+### 1. SR-IOV Device Plugin
+
+Here is an example for a GPUDirect RDMA workload using [SR-IOV Device Plugin](network-operator#1-sr-iov-device-plugin):
 
 ```yaml
 ---
@@ -93,7 +89,9 @@ spec:
         rdma/ib: 8
 ```
 
-Below is an example for a GPUDirect RDMA workload using [RDMA Shared Device Plugin](network-operator#rdma-shared-device-plugin):
+### 2. RDMA Shared Device Plugin
+
+Here is an example for a GPUDirect RDMA workload using [RDMA Shared Device Plugin](network-operator#2-rdma-shared-device-plugin):
 
 ```yaml
 ---
@@ -112,6 +110,30 @@ spec:
       limits:
         nvidia.com/gpu: 8
         rdma/shared_ib: 1
+```
+
+### 3. IP over InfiniBand (IPoIB)
+
+Here is an example for a GPUDirect RDMA workload using [IPoIB](network-operator#3-ip-over-infiniband-ipoib):
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ib-pod
+  annotations:
+    # This name should match the IPoIBNetwork object we created earlier.
+    # You can find this config by running `kubectl get IPoIBNetwork`.
+    k8s.v1.cni.cncf.io/networks: aks-infiniband
+spec:
+  containers:
+  - name: ib
+    image: images.my-company.example/app:v4
+    resources:
+      requests:
+        nvidia.com/gpu: 8 # Claims all GPUs on the node
+      limits:
+        nvidia.com/gpu: 8
 ```
 
 ## Order of Operations
