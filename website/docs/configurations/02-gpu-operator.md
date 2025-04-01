@@ -17,7 +17,7 @@ AKS-managed GPU drivers and the NVIDIA GPU Operator managed GPU drivers are **mu
 When provisioning GPU nodepools in an AKS cluster, the cluster administrator has the option to either rely on the default GPU driver installation managed by AKS or via GPU Operator. This decision impacts cluster setup, maintenance, and compatibility.
 
 |                | **AKS-managed GPU Driver (Without GPU Operator)**                                  | **GPU Operator-managed GPU Driver (`--skip-gpu-driver-install`)**                         |
-|----------------|------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
+| -------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | **Automation** | AKS-managed drivers; cluster administrator needs to manually deploy device plugins | Automates installation of driver, device plugins, and container runtimes via GPU Operator |
 | **Complexity** | Simple, no additional components except device plugins                             | More complex, requires GPU Operator and additional components                             |
 | **Support**    | Fully supported by AKS; no preview features                                        | `--skip-gpu-driver-install` is a preview feature; limited support available               |
@@ -80,6 +80,11 @@ spec:
   containers:
   - name: gpudirect-rdma
     image: images.my-company.example/app:v4
+    securityContext:
+      capabilities:
+        # A pod without this will have a low locked memory value `# ulimit
+        # -l` value of "64", this changes the value to "unlimited".
+        add: ["IPC_LOCK"]
     resources:
       requests:
         nvidia.com/gpu: 8 # Claims all GPUs on the node
@@ -103,6 +108,11 @@ spec:
   containers:
   - name: gpudirect-rdma
     image: images.my-company.example/app:v4
+    securityContext:
+      capabilities:
+        # A pod without this will have a low locked memory value `# ulimit
+        # -l` value of "64", this changes the value to "unlimited".
+        add: ["IPC_LOCK"]
     resources:
       requests:
         nvidia.com/gpu: 8 # Claims all GPUs on the node

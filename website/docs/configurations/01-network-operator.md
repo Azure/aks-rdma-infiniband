@@ -86,6 +86,11 @@ spec:
   containers:
   - name: ib
     image: images.my-company.example/app:v4
+    securityContext:
+      capabilities:
+        # A pod without this will have a low locked memory value `# ulimit
+        # -l` value of "64", this changes the value to "unlimited".
+        add: ["IPC_LOCK"]
     resources:
       requests:
         rdma/ib: 8 # Claims 8 NIC; adjust to match node’s NIC count
@@ -114,6 +119,11 @@ spec:
   containers:
   - name: ib
     image: images.my-company.example/app:v4
+    securityContext:
+      capabilities:
+        # A pod without this will have a low locked memory value `# ulimit
+        # -l` value of "64", this changes the value to "unlimited".
+        add: ["IPC_LOCK"]
     resources:
       requests:
         rdma/shared_ib: 1 # Claims 1 of 63 pod slots; all NICs accessible
