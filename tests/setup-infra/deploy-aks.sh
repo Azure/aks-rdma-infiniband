@@ -17,6 +17,9 @@ fi
 : "${CLUSTER_NAME:=ib-aks-cluster}"
 : "${USER_NAME:=azureuser}"
 
+# Versions
+: "${GPU_OPERATOR_VERSION:=v25.3.0}"
+
 # deploy_aks creates a resource gropu and a new AKS cluster with the provided
 # arguments. You can provide additional arguments to the function. For example a
 # call would look like this: `deploy_aks --enable-addons monitoring`
@@ -124,7 +127,7 @@ function install_gpu_operator() {
         --values ${SCRIPT_DIR}/../../configs/values/gpu-operator/values.yaml \
         gpu-operator \
         nvidia/gpu-operator \
-        --version v24.9.2
+        --version "${GPU_OPERATOR_VERSION}"
 
     cuda_validator_label="app=nvidia-cuda-validator"
 
