@@ -32,29 +32,15 @@ function wait_until_mofed_is_ready() {
 
         [[ "${mofed_pods_count}" -eq 0 ]] && echo "⏳ Waiting for mofed pods to show up..."
         echo "⏳ Waiting for all nodes to be labeled 'network.nvidia.com/operator.mofed.wait=false' ..."
-        sleep 2
+        sleep 10
     done
 }
 
 function wait_until_sriov_is_ready() {
-    sriov_label="app=sriovdp"
-
-    echo "⏳ Waiting for all sriov pods in namespace ${NETWORK_OPERATOR_NS} to be in 'Running' phase..."
-
-    while true; do
-        pods_json=$(kubectl get pods -n "${NETWORK_OPERATOR_NS}" -l "$sriov_label" -o json)
-
-        total=$(echo "${pods_json}" | jq '.items | length')
-        running=$(echo "${pods_json}" | jq '[.items[] | select(.status.phase == "Running")] | length')
-
-        if [ "${total}" -eq "${running}" ] && [ "${total}" -ne 0 ]; then
-            echo "✅ All ${total} pods are in 'Running' state."
-            break
-        else
-            echo "⏳ Waiting, ${running}/${total} pods running..."
-            sleep 5
-        fi
-    done
+    ds="network-operator-sriov-device-plugin"
+    _wait_until_ds_is_ready "${NETWORK_OPERATOR_NS}" "${ds}"
+    # Some times even when the pods report running, the devices take time to show up, so give it some time.
+    sleep 10
 
     echo -e '\nRDMA IB devices on nodes:\n'
     rdma_ib_on_nodes_cmd="kubectl get nodes -o json | jq -r '.items[] | {name: .metadata.name, \"rdma/ib\": .status.allocatable[\"rdma/ib\"]}'"
@@ -63,24 +49,10 @@ function wait_until_sriov_is_ready() {
 }
 
 function wait_until_rdma_is_ready() {
-    rdma_label="app=rdma-shared-dp"
-
-    echo "⏳ Waiting for all rdma-shared-dp pods in namespace ${NETWORK_OPERATOR_NS} to be in 'Running' phase..."
-
-    while true; do
-        pods_json=$(kubectl get pods -n "${NETWORK_OPERATOR_NS}" -l "${rdma_label}" -o json)
-
-        total=$(echo "${pods_json}" | jq '.items | length')
-        running=$(echo "${pods_json}" | jq '[.items[] | select(.status.phase == "Running")] | length')
-
-        if [ "${total}" -eq "${running}" ] && [ "${total}" -ne 0 ]; then
-            echo "✅ All rdma-shared-dp ${total} pods are in 'Running' state."
-            break
-        else
-            echo "⏳ Waiting for rdma-shared-dp, ${running}/${total} pods running..."
-            sleep 5
-        fi
-    done
+    ds="rdma-shared-dp-ds"
+    _wait_until_ds_is_ready "${NETWORK_OPERATOR_NS}" "${ds}"
+    # Some times even when the pods report running, the devices take time to show up, so give it some time.
+    sleep 10
 
     echo -e '\nRDMA Shared IB devices on nodes:\n'
     rdma_ib_on_nodes_cmd="kubectl get nodes -o json | jq -r '.items[] | {name: .metadata.name, \"rdma/shared_ib\": .status.allocatable[\"rdma/shared_ib\"]}'"
@@ -100,6 +72,21 @@ function _check_if_all_pods_in_ds_are_ready() {
     return 1
 }
 
+function _wait_until_ds_is_ready() {
+    namespace="${1}"
+    ds_name="${2}"
+
+    while true; do
+        if _check_if_all_pods_in_ds_are_ready "${namespace}" "${ds_name}"; then
+            echo "✅ DaemonSet '$ds_name' in namespace '${namespace}' is ready."
+            break
+        fi
+
+        echo "⏳ Waiting for DaemonSet '$ds_name' in namespace '${namespace}' to be ready..."
+        sleep 5
+    done
+}
+
 function wait_until_ipoib_is_ready() {
     ds_list=(
         cni-plugins-ds
@@ -108,25 +95,11 @@ function wait_until_ipoib_is_ready() {
         whereabouts
     )
 
-    while true; do
-        all_ready=true
-        for ds in "${ds_list[@]}"; do
-            if ! _check_if_all_pods_in_ds_are_ready "${NETWORK_OPERATOR_NS}" "${ds}"; then
-                all_ready=false
-                echo "⏳ Waiting for DaemonSet '$ds' in namespace '${NETWORK_OPERATOR_NS}' to be ready..."
-            else
-                echo "✅ DaemonSet '$ds' in namespace '${NETWORK_OPERATOR_NS}' is ready."
-            fi
-        done
-
-        if [[ "$all_ready" == true ]]; then
-            echo "✅ All DaemonSets are ready!"
-            break
-        else
-            echo "⏳ Waiting for all DaemonSets to be ready..."
-            sleep 5
-        fi
+    for ds in "${ds_list[@]}"; do
+        _wait_until_ds_is_ready "${NETWORK_OPERATOR_NS}" "${ds}"
     done
+
+    echo "✅ All DaemonSets are ready!"
 }
 
 function ipoib_add_ep_ip() {
