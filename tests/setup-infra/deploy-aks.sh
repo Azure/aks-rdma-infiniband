@@ -153,11 +153,25 @@ function install_gpu_operator() {
     eval "${gpu_on_nodes_cmd}"
 }
 
+function install_kube_prometheus() {
+    helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+    helm repo update
+    helm upgrade -i \
+        --wait \
+        -n monitoring \
+        --create-namespace \
+        kube-prometheus \
+        prometheus-community/kube-prometheus-stack
+
+    kubectl apply -f ${SCRIPT_DIR}/rbac.yaml
+}
+
 PARAM="${1:-}"
 case $PARAM in
 deploy-aks)
     deploy_aks
     download_aks_credentials --overwrite-existing
+    install_kube_prometheus
     ;;
 add-nodepool)
     add_nodepool --skip-gpu-driver-install
@@ -168,14 +182,18 @@ install-network-operator)
 install-gpu-operator)
     install_gpu_operator
     ;;
+install-kube-prometheus)
+    install_kube_prometheus
+    ;;
 all)
     deploy_aks
     download_aks_credentials --overwrite-existing
+    install_kube_prometheus
     add_nodepool
     install_network_operator
     ;;
 *)
-    echo "🛠️ Usage: $0 deploy-aks|add-nodepool|install-network-operator|install-gpu-operator|all"
+    echo "🛠️ Usage: $0 deploy-aks|add-nodepool|install-network-operator|install-gpu-operator|install-kube-prometheus|all"
     exit 1
     ;;
 esac
