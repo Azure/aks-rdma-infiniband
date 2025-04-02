@@ -168,21 +168,21 @@ function install_kube_prometheus() {
 
 PARAM="${1:-}"
 case $PARAM in
-deploy-aks)
+deploy-aks | deploy_aks)
     deploy_aks
     download_aks_credentials --overwrite-existing
     install_kube_prometheus
     ;;
-add-nodepool)
+add-nodepool | add_nodepool)
     add_nodepool --skip-gpu-driver-install
     ;;
-install-network-operator)
+install-network-operator | install_network_operator)
     install_network_operator
     ;;
-install-gpu-operator)
+install-gpu-operator | install_gpu_operator)
     install_gpu_operator
     ;;
-install-kube-prometheus)
+install-kube-prometheus | install_kube_prometheus)
     install_kube_prometheus
     ;;
 all)
