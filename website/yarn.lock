@@ -1792,7 +1792,7 @@
   resolved "https://registry.yarnpkg.com/@docusaurus/tsconfig/-/tsconfig-3.7.0.tgz#654dcc524e25b8809af0f1b0b42485c18c047ab5"
   integrity sha512-vRsyj3yUZCjscgfgcFYjIsTcAru/4h4YH2/XAE8Rs7wWdnng98PgWKvP5ovVc4rmRpRg2WChVW0uOy2xHDvDBQ==
 
-"@docusaurus/types@3.7.0", "@docusaurus/types@^3.0.0":
+"@docusaurus/types@3.7.0":
   version "3.7.0"
   resolved "https://registry.yarnpkg.com/@docusaurus/types/-/types-3.7.0.tgz#3f5a68a60f80ecdcb085666da1d68f019afda943"
   integrity sha512-kOmZg5RRqJfH31m+6ZpnwVbkqMJrPOG5t0IOl4i/+3ruXyNfWzZ0lVtVrD0u4ONc/0NOsS9sWYaxxWNkH1LdLQ==
@@ -4962,9 +4962,9 @@ ignore@^5.2.0, ignore@^5.2.4:
   integrity sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==
 
 image-size@^1.0.2:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/image-size/-/image-size-1.2.0.tgz#312af27a2ff4ff58595ad00b9344dd684c910df6"
-  integrity sha512-4S8fwbO6w3GeCVN6OPtA9I5IGKkcDMPcKndtUlpJuCwu7JLjtj7JZpwqLuyY2nrmQT3AWsCJLSKPsc2mPBSl3w==
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/image-size/-/image-size-1.2.1.tgz#ee118aedfe666db1a6ee12bed5821cde3740276d"
+  integrity sha512-rH+46sQJ2dlwfjfhCyNx5thzrv+dtmBIhPHk0zgRUukHzZ/kRueTJXoYYsclBaKcSMBWuGbOFXtioLpzTb5euw==
   dependencies:
     queue "6.0.2"
 
