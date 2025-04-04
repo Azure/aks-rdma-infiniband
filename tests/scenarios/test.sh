@@ -134,28 +134,28 @@ function rdma_shared_device_plugin_gpu() {
 
 PARAM="${1:-}"
 case $PARAM in
-root-nic-policy)
+root-nic-policy | root_nic_policy)
     root_nic_policy
     ;;
-root-nic-policy-gpu)
+root-nic-policy-gpu | root_nic_policy_gpu)
     root_nic_policy_gpu
     ;;
-sriov-nic-policy)
+sriov-nic-policy | sriov_nic_policy)
     sriov_nic_policy
     ;;
-sriov-nic-policy-gpu)
+sriov-nic-policy-gpu | sriov_nic_policy_gpu)
     sriov_nic_policy_gpu
     ;;
-ipoib-nic-policy)
+ipoib-nic-policy | ipoib_nic_policy)
     ipoib_nic_policy
     ;;
-ipoib-nic-policy-gpu)
+ipoib-nic-policy-gpu | ipoib_nic_policy_gpu)
     ipoib_nic_policy_gpu
     ;;
-rdma-shared-device-plugin)
+rdma-shared-device-plugin | rdma_shared_device_plugin)
     rdma_shared_device_plugin
     ;;
-rdma-shared-device-plugin-gpu)
+rdma-shared-device-plugin-gpu | rdma_shared_device_plugin_gpu)
     rdma_shared_device_plugin_gpu
     ;;
 *)
