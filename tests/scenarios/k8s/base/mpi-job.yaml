@@ -1,0 +1,80 @@
+apiVersion: kubeflow.org/v2beta1
+kind: MPIJob
+metadata:
+  name: nccl-tests
+  labels:
+    app: nccl-tests
+spec:
+  slotsPerWorker: 8
+  runPolicy:
+    cleanPodPolicy: Running
+    activeDeadlineSeconds: 666
+  mpiReplicaSpecs:
+    Launcher:
+      replicas: 1
+      template:
+        metadata:
+          labels:
+            app: nccl-tests
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - image: quay.io/surajd/nccl-tests:2025-04-Apr-02-01-00-00
+            name: nccl
+            env:
+            - name: OMPI_ALLOW_RUN_AS_ROOT
+              value: "1"
+            - name: OMPI_ALLOW_RUN_AS_ROOT_CONFIRM
+              value: "1"
+            command: ["/bin/bash", "-c"]
+            args:
+            - |
+              set -xe
+              until mpirun -np 16 -x LD_LIBRARY_PATH -bind-to none /usr/bin/nvidia-smi; do sleep 5; done
+              mpirun \
+                -np 16 \
+                -bind-to none \
+                -x NCCL_DEBUG=INFO \
+                -x NCCL_NET_GDR_LEVEL=PHB \
+                  /opt/nccl_tests/build/all_reduce_perf \
+                    -c 0 \
+                    -b 8 \
+                    -e 16G \
+                    -f 4 \
+                    -g 1 \
+                    -n 10
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+          enableServiceLinks: false
+          automountServiceAccountToken: false
+    Worker:
+      replicas: 2
+      template:
+        metadata:
+          labels:
+            task: test
+        spec:
+          containers:
+          - image: quay.io/surajd/nccl-tests:2025-04-Apr-02-01-00-00
+            name: nccl
+            volumeMounts:
+            - name: shm
+              mountPath: /dev/shm
+          volumes:
+          - name: shm
+            emptyDir:
+              medium: Memory
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchExpressions:
+                  - key: task
+                    operator: In
+                    values:
+                    - test
+                topologyKey: "kubernetes.io/hostname"
+          enableServiceLinks: false
+          automountServiceAccountToken: false
