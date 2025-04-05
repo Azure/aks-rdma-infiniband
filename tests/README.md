@@ -1,5 +1,7 @@
 # Testing RDMA Infiniband on AKS
 
+## Deploying the Infrastructure
+
 > [!NOTE]
 > To enable debug mode, run `export DEBUG="true"` before running any script.
 
@@ -17,11 +19,17 @@ Install AKS, the nodepool and the network operator:
 ./tests/setup-infra/deploy-aks.sh all
 ```
 
-If the nodes support GPU, then install the GPU operator:
+### Optional: Install GPU Operator
+
+Install the GPU operator, only if your nodes are GPU enabled, by running the following command:
 
 ```bash
 ./tests/setup-infra/deploy-aks.sh install-gpu-operator
 ```
+
+## Testing
+
+### With GPU
 
 Run the GPU based tests:
 
@@ -32,6 +40,8 @@ Run the GPU based tests:
 ./tests/scenarios/test.sh ipoib-nic-policy-gpu
 ```
 
+### Without GPU
+
 Run the non-GPU tests:
 
 ```bash
@@ -39,4 +49,14 @@ Run the non-GPU tests:
 ./tests/scenarios/test.sh sriov-nic-policy
 ./tests/scenarios/test.sh rdma-shared-device-plugin
 ./tests/scenarios/test.sh ipoib-nic-policy
+```
+
+## FAQ
+
+### How do I save the voluminous logs?
+
+If you want to save the logs output at the end of each run, you can pipe the output to a file, for example:
+
+```bash
+./tests/scenarios/test.sh sriov-nic-policy-gpu > sriov-nic-policy-gpu.log 2>&1
 ```
