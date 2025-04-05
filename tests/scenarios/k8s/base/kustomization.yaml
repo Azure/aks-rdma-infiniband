@@ -4,6 +4,7 @@ resources:
 - leader-job.yaml
 - leader-svc.yaml
 - worker-job.yaml
+- mpi-job.yaml
 
 configMapGenerator:
 - name: test-scripts

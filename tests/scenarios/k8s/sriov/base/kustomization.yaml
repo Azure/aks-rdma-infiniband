@@ -5,6 +5,40 @@ resources:
 - ../../base
 
 patches:
-- path: security-context.yaml
+- patch: |-
+    - op: add
+      path: /spec/template/spec/containers/0/resources
+      value:
+        limits:
+          rdma/ib: 1
+        requests:
+          rdma/ib: 1
+    - op: add
+      path: /spec/template/spec/containers/0/securityContext
+      value:
+        capabilities:
+          add:
+          # A pod without this will have a low locked memory value `# ulimit
+          # -l` value of "64", this changes the value to "unlimited".
+          - IPC_LOCK
   target:
     kind: Job
+
+- patch: |-
+    - op: add
+      path: /spec/mpiReplicaSpecs/Worker/template/spec/containers/0/resources
+      value:
+        limits:
+          rdma/ib: 1
+        requests:
+          rdma/ib: 1
+    - op: add
+      path: /spec/mpiReplicaSpecs/Worker/template/spec/containers/0/securityContext
+      value:
+        capabilities:
+          add:
+          # A pod without this will have a low locked memory value `# ulimit
+          # -l` value of "64", this changes the value to "unlimited".
+          - IPC_LOCK
+  target:
+    kind: MPIJob
