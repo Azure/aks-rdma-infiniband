@@ -19,6 +19,7 @@ fi
 
 # Versions
 : "${GPU_OPERATOR_VERSION:=v25.3.0}"
+: "${MPI_OPERATOR_VERSION:=v0.6.0}" # Latest version: https://github.com/kubeflow/mpi-operator/releases
 
 # deploy_aks creates a resource gropu and a new AKS cluster with the provided
 # arguments. You can provide additional arguments to the function. For example a
@@ -166,12 +167,15 @@ function install_kube_prometheus() {
     kubectl apply -f ${SCRIPT_DIR}/rbac.yaml
 }
 
+function install_mpi_operator() {
+    kubectl apply --server-side -f "https://raw.githubusercontent.com/kubeflow/mpi-operator/${MPI_OPERATOR_VERSION}/deploy/v2beta1/mpi-operator.yaml"
+}
+
 PARAM="${1:-}"
 case $PARAM in
 deploy-aks | deploy_aks)
     deploy_aks
     download_aks_credentials --overwrite-existing
-    install_kube_prometheus
     ;;
 add-nodepool | add_nodepool)
     add_nodepool --skip-gpu-driver-install
@@ -185,15 +189,19 @@ install-gpu-operator | install_gpu_operator)
 install-kube-prometheus | install_kube_prometheus)
     install_kube_prometheus
     ;;
+install-mpi-operator | install_mpi_operator)
+    install_mpi_operator
+    ;;
 all)
     deploy_aks
     download_aks_credentials --overwrite-existing
     install_kube_prometheus
-    add_nodepool
+    install_mpi_operator
+    add_nodepool --skip-gpu-driver-install
     install_network_operator
     ;;
 *)
-    echo "🛠️ Usage: $0 deploy-aks|add-nodepool|install-network-operator|install-gpu-operator|install-kube-prometheus|all"
+    echo "🛠️ Usage: $0 deploy-aks|add-nodepool|install-network-operator|install-gpu-operator|install-kube-prometheus|install-mpi-operator|all"
     exit 1
     ;;
 esac

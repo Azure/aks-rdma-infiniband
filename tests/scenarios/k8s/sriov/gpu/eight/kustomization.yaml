@@ -17,3 +17,15 @@ patches:
           rdma/ib: 8
   target:
     kind: Job
+- patch: |-
+    - op: replace
+      path: /spec/mpiReplicaSpecs/Worker/template/spec/containers/0/resources
+      value:
+        limits:
+          nvidia.com/gpu: "8"
+          rdma/ib: 8
+        requests:
+          nvidia.com/gpu: "8"
+          rdma/ib: 8
+  target:
+    kind: MPIJob

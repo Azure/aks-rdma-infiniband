@@ -52,6 +52,7 @@ function sriov_nic_policy() {
     kubectl apply -k "${SCRIPT_DIR}/k8s/sriov/base"
     fail_on_job_failure "role=leader" "default"
     fail_on_job_failure "role=worker" "default"
+    fail_on_job_failure "app=nccl-tests" "default"
 
     # Clean up
     echo "🧹 Cleaning up..."
@@ -65,6 +66,7 @@ function sriov_nic_policy_gpu() {
     kubectl apply -k "${SCRIPT_DIR}/k8s/sriov/gpu/${GPU_PER_NODE}"
     fail_on_job_failure "role=leader" "default"
     fail_on_job_failure "role=worker" "default"
+    fail_on_job_failure "app=nccl-tests" "default"
 
     echo "🧹 Cleaning up..."
     kubectl delete -k "${SCRIPT_DIR}/k8s/sriov/gpu/${GPU_PER_NODE}"

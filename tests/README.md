@@ -14,9 +14,7 @@ export NODE_POOL_VM_SIZE="Standard_ND96asr_v4"
 Install AKS, the nodepool and the network operator:
 
 ```bash
-./tests/setup-infra/deploy-aks.sh deploy-aks
-./tests/setup-infra/deploy-aks.sh add-nodepool
-./tests/setup-infra/deploy-aks.sh install-network-operator
+./tests/setup-infra/deploy-aks.sh all
 ```
 
 If the nodes support GPU, then install the GPU operator:
