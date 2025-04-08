@@ -99,8 +99,11 @@ if [[ "$1" == "server" ]]; then
 
         echo "Starting RDMA Server 'ib_read_bw' for $IB_DEVICE (Port $PORT)..."
         # Run RDMA bandwidth test
-        ib_read_bw --ib-dev "$IB_DEVICE"
+        ib_read_bw --ib-dev "$IB_DEVICE" -a -F --report_gbits -q 1
 
+        echo "Starting RDMA Server 'ib_write_bw' for $IB_DEVICE (Port $PORT)..."
+        # Run RDMA write bandwidth test
+        ib_write_bw --ib-dev "$IB_DEVICE" -a -F --report_gbits -q 1
     done
 
 # Client Mode
@@ -127,11 +130,16 @@ elif [[ "$1" == "client" && -n "$2" ]]; then
         done
 
         # Run RDMA bandwidth test
-        until ib_read_bw --ib-dev "$IB_DEVICE" -p $PORT "$SERVER_IP"; do
+        until ib_read_bw --ib-dev "$IB_DEVICE" -p $PORT -n 5000 -a -F --report_gbits -q 1 "$SERVER_IP"; do
             echo "Waiting for 'ib_read_bw' server to be ready for $IB_DEVICE..."
             sleep 2
         done
 
+        # Run RDMA write bandwidth test
+        until ib_write_bw --ib-dev "$IB_DEVICE" -p $PORT -n 5000 -a -F --report_gbits -q 1 "$SERVER_IP"; do
+            echo "Waiting for 'ib_write_bw' server to be ready for $IB_DEVICE..."
+            sleep 2
+        done
     done
 
 else
