@@ -140,9 +140,58 @@ function find_gpu_per_node() {
     case "${NODE_POOL_VM_SIZE}" in
     "Standard_ND96asr_v4" | "Standard_ND96amsr_A100_v4")
         GPU_PER_NODE=eight
+        GPU_PER_NODE_NUMBER=8
         ;;
     *)
         echo "❌ Unknown VM size: $NODE_POOL_VM_SIZE"
+        exit 1
+        ;;
+    esac
+}
+
+function topo_file_name() {
+    # The topo files in the nvidia-topology folder are added from here:
+    # https://github.com/Azure/azhpc-images/tree/4a4565a0c0aa9d6944c53420155936061b9c3a98/topology
+
+    vm_family=""
+    vm_version=""
+
+    if [[ "$NODE_POOL_VM_SIZE" =~ (ND|NC).*v([0-9]+)$ ]]; then
+        vm_family="${BASH_REMATCH[1]}"
+        vm_version="v${BASH_REMATCH[2]}"
+    fi
+
+    case "${vm_family}" in
+    "ND")
+        case "${vm_version}" in
+        "v2")
+            export TOPO_FILE_NAME="ndv2-topo.xml"
+            ;;
+        "v4")
+            export TOPO_FILE_NAME="ndv4-topo.xml"
+            ;;
+        "v5")
+            export TOPO_FILE_NAME="ndv5-topo.xml"
+            ;;
+        *)
+            echo "❌ Unknown ND family version: $vm_version. Only ND v2, v4, and v5 are supported."
+            exit 1
+            ;;
+        esac
+        ;;
+    "NC")
+        case "${vm_version}" in
+        "v4")
+            export TOPO_FILE_NAME="ncv4-topo.xml"
+            ;;
+        *)
+            echo "❌ Unknown NC family version: $vm_version. Only NC v4 is supported."
+            exit 1
+            ;;
+        esac
+        ;;
+    *)
+        echo "❌ Unknown VM family: $vm_family. Only ND and NC are supported."
         exit 1
         ;;
     esac

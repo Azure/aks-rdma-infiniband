@@ -8,7 +8,6 @@ spec:
   slotsPerWorker: 8
   runPolicy:
     cleanPodPolicy: Running
-    activeDeadlineSeconds: 666
   mpiReplicaSpecs:
     Launcher:
       replicas: 1
@@ -26,16 +25,22 @@ spec:
               value: "1"
             - name: OMPI_ALLOW_RUN_AS_ROOT_CONFIRM
               value: "1"
+            - name: NUMBER_OF_PROCESSES
+              valueFrom:
+                configMapKeyRef:
+                  name: mpi-job
+                  key: NUMBER_OF_PROCESSES
             command: ["/bin/bash", "-c"]
             args:
             - |
               set -xe
-              until mpirun -np 16 -x LD_LIBRARY_PATH -bind-to none /usr/bin/nvidia-smi; do sleep 5; done
+              until mpirun -np ${NUMBER_OF_PROCESSES} -x LD_LIBRARY_PATH -bind-to none /usr/bin/nvidia-smi; do sleep 5; done
               mpirun \
-                -np 16 \
+                -np ${NUMBER_OF_PROCESSES} \
                 -bind-to none \
                 -x NCCL_DEBUG=INFO \
-                -x NCCL_NET_GDR_LEVEL=PHB \
+                -x NCCL_NET_GDR_LEVEL=SYS \
+                -x NCCL_TOPO_FILE=/opt/nvidia-topology/topo.xml \
                   /opt/nccl_tests/build/all_reduce_perf \
                     -c 0 \
                     -b 8 \
@@ -62,10 +67,18 @@ spec:
             volumeMounts:
             - name: shm
               mountPath: /dev/shm
+            - name: nvidia-topology
+              mountPath: /opt/nvidia-topology
           volumes:
           - name: shm
             emptyDir:
               medium: Memory
+          - name: nvidia-topology
+            configMap:
+              name: nvidia-topology
+              items:
+              - key: topo.xml
+                path: topo.xml
           affinity:
             podAntiAffinity:
               requiredDuringSchedulingIgnoredDuringExecution:
