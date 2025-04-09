@@ -8,22 +8,39 @@ RUN apt-get -qq update && \
     --allow-change-held-packages \
     --no-install-recommends \
     --allow-downgrades \
-    build-essential libtool autoconf automake autotools-dev unzip \
+    build-essential \
+    libtool \
+    autoconf \
+    automake \
+    autotools-dev \
+    unzip \
     ca-certificates \
-    wget curl openssh-server vim environment-modules \
-    iputils-ping net-tools \
-    libnuma1 libsubunit0 libpci-dev \
+    wget \
+    curl \
+    openssh-server \
+    vim \
+    environment-modules \
+    iputils-ping \
+    net-tools \
+    libnuma1 \
+    libsubunit0 \
+    libpci-dev \
     libpmix-dev \
     datacenter-gpu-manager \
-    g++ libopenmpi-dev openmpi-bin \
-    git && \
+    g++ \
+    libopenmpi-dev \
+    openmpi-bin \
+    git \
+    ibverbs-utils \
+    libibverbs-dev \
+    libibumad3 \
+    libibumad-dev \
+    librdmacm-dev \
+    rdmacm-utils \
+    infiniband-diags \
+    ibverbs-utils && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-RUN apt-get -qq update \
-    && apt-get -qq install -y --no-install-recommends \
-    ibverbs-utils libibverbs-dev libibumad3 libibumad-dev librdmacm-dev rdmacm-utils infiniband-diags ibverbs-utils \
-    && rm -rf /var/lib/apt/lists/*
 
 # NCCL Tests: https://github.com/NVIDIA/nccl-tests
 # This commit corresponds to the release v2.14.1
