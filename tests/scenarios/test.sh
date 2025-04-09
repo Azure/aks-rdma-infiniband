@@ -128,9 +128,12 @@ function rdma_shared_device_plugin_gpu() {
     deploy_rdma_shared_device_plugin
 
     find_gpu_per_node
+    mpi_job_number_of_processes
+
     kubectl apply -k "${SCRIPT_DIR}/k8s/rdma/gpu/${GPU_PER_NODE}"
     fail_on_job_failure "role=leader" "default"
     fail_on_job_failure "role=worker" "default"
+    fail_on_job_failure "app=nccl-tests" "default"
 
     echo "🧹 Cleaning up..."
     kubectl delete -k "${SCRIPT_DIR}/k8s/rdma/gpu/${GPU_PER_NODE}"

@@ -5,6 +5,27 @@ resources:
 - ../../base
 
 patches:
-- path: eight.yaml
+- patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/resources
+      value:
+        limits:
+          nvidia.com/gpu: 8
+          rdma/shared_ib: 1 # Claims 1 of 63 pod slots; all NICs accessible
+        requests:
+          nvidia.com/gpu: 8
+          rdma/shared_ib: 1 # Claims 1 of 63 pod slots; all NICs accessible
   target:
     kind: Job
+- patch: |-
+    - op: replace
+      path: /spec/mpiReplicaSpecs/Worker/template/spec/containers/0/resources
+      value:
+        limits:
+          nvidia.com/gpu: 8
+          rdma/shared_ib: 1 # Claims 1 of 63 pod slots; all NICs accessible
+        requests:
+          nvidia.com/gpu: 8
+          rdma/shared_ib: 1 # Claims 1 of 63 pod slots; all NICs accessible
+  target:
+    kind: MPIJob
