@@ -60,3 +60,17 @@ If you want to save the logs output at the end of each run, you can pipe the out
 ```bash
 ./tests/scenarios/test.sh sriov-nic-policy-gpu > sriov-nic-policy-gpu.log 2>&1
 ```
+
+### How do I run the tests in verbose mode?
+
+If you want to run the tests in verbose mode, you can uncomment the comments in the [`kustomization.yaml`](scenarios/k8s/base/kustomization.yaml) file:
+
+```yaml
+  - NCCL_DEBUG=INFO             # Valid values: VERSION, WARN, INFO, TRACE
+  - NCCL_DEBUG_SUBSYS=INIT,NET
+  - DEBUG=true                  # Enable script in verbose mode.
+```
+
+- `NCCL_DEBUG` controls the verbosity of the NCCL library. This is useful for debugging the NCCL library itself. Valid values are `VERSION`, `WARN`, `INFO`, and `TRACE`.
+- `NCCL_DEBUG_SUBSYS` controls the verbosity of the NCCL library for specific subsystems. For example, `INIT` and `NET` are two subsystems that can be enabled for debugging.
+- `DEBUG` enables the bash scripts to run with `set -x` so as to print each command before executing it. This is useful for debugging the scripts.

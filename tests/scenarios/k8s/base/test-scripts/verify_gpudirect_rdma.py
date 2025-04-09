@@ -6,12 +6,6 @@ import torch
 import torch.distributed as dist
 
 def main():
-    # Set NCCL debug environment variables
-    os.environ["NCCL_DEBUG"] = "INFO"
-    os.environ["NCCL_DEBUG_SUBSYS"] = "INIT,NET"
-    os.environ["NCCL_IB_DISABLE"] = "0"
-    os.environ["NCCL_P2P_LEVEL"] = "NVL"
-
     # Initialize the distributed process group with NCCL backend
     dist.init_process_group(backend="nccl")
     rank = dist.get_rank()

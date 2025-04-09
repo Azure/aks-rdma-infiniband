@@ -14,16 +14,9 @@ spec:
         - sh
         - -c
         - "set -x; bash /root/tests/test-runner.sh"
-        env:
-        - name: NCCL_DEBUG
-          value: TRACE
-        - name: NCCL_DEBUG_SUBSYS
-          value: INIT,NET
-        - name: NCCL_IB_DISABLE # Force NCCL to use Infiniband.
-          value: "0"
-        # # Enable script in verbose mode.
-        # - name: DEBUG
-        #   value: "true"
+        envFrom:
+        - configMapRef:
+            name: nccl-env-vars
         volumeMounts:
         - name: shm
           mountPath: /dev/shm

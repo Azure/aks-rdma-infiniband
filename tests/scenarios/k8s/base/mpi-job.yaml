@@ -30,16 +30,20 @@ spec:
                 configMapKeyRef:
                   name: mpi-job
                   key: NUMBER_OF_PROCESSES
+            envFrom:
+            - configMapRef:
+                name: nccl-env-vars
             command: ["/bin/bash", "-c"]
             args:
             - |
               set -xe
-              until mpirun -np ${NUMBER_OF_PROCESSES} -x LD_LIBRARY_PATH -bind-to none /usr/bin/nvidia-smi; do sleep 5; done
+              until mpirun -np ${NUMBER_OF_PROCESSES} -x LD_LIBRARY_PATH -bind-to none /usr/bin/nvidia-smi -L 2>/dev/null; do sleep 5; done
               mpirun \
                 -np ${NUMBER_OF_PROCESSES} \
                 -bind-to none \
-                -x NCCL_DEBUG=INFO \
-                -x NCCL_NET_GDR_LEVEL=SYS \
+                -x NCCL_DEBUG=${NCCL_DEBUG} \
+                -x NCCL_NET_GDR_LEVEL=${NCCL_NET_GDR_LEVEL} \
+                -x CUDA_DEVICE_ORDER=PCI_BUS_ID \
                 -x NCCL_TOPO_FILE=/opt/nvidia-topology/topo.xml \
                   /opt/nccl_tests/build/all_reduce_perf \
                     -c 0 \
