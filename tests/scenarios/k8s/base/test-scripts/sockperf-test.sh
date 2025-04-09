@@ -32,6 +32,8 @@ function start_exit_server() {
     echo "Exit server started with PID ${EXIT_SERVER_PID}."
 }
 
+echo -e "\nStarting sockperf test...\n"
+
 if [[ "$1" == "server" ]]; then
     # Start the exit server
     start_exit_server
@@ -39,10 +41,12 @@ if [[ "$1" == "server" ]]; then
     # Find if the pod has a network interface with the name net1 only then listen on the IPoIB interface.
     if ip addr show net1 2>/dev/null; then
         ipoib_ip=$(ip -j -4 addr show net1 | jq -r '.[0].addr_info[] | select(.family=="inet") | .local')
+        echo -e "\nStarting sockperf test server on IPOIB interface...\n\n"
         sockperf server -i ${ipoib_ip} --port ${IPOIB_PORT} --tcp --msg-size=1472 --daemonize &
     fi
 
     eth0_ip=$(ip -j -4 addr show eth0 | jq -r '.[0].addr_info[] | select(.family=="inet") | .local')
+    echo -e "\nStarting sockperf test server on eth0 interface...\n\n"
     sockperf server -i ${eth0_ip} --port ${ETH0_PORT} --tcp --msg-size=1472 --daemonize &
 
     # Wait for the exit server to terminate

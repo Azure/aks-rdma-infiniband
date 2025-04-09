@@ -85,23 +85,23 @@ check_tools
 # Server Mode
 if [[ "$1" == "server" ]]; then
     for IB_DEVICE in $IB_DEVICES; do
-        echo "Testing RDMA on device: $IB_DEVICE (Port $PORT)"
+        echo -e "\nTesting RDMA on device: $IB_DEVICE (Port $PORT)\n"
 
         check_ib_device_is_active
 
-        echo "Starting RDMA Server 'ibv_rc_pingpong' for $IB_DEVICE (Port $PORT)..."
+        echo -e "\nStarting RDMA Server 'ibv_rc_pingpong' for $IB_DEVICE (Port $PORT)...\n"
         # Run RDMA ping-pong test
         ibv_rc_pingpong --ib-dev "$IB_DEVICE"
 
-        echo "Starting RDMA Server 'ib_read_lat' for $IB_DEVICE (Port $PORT)..."
+        echo -e "\nStarting RDMA Server 'ib_read_lat' for $IB_DEVICE (Port $PORT)...\n"
         # Run RDMA latency test
         ib_read_lat --ib-dev "$IB_DEVICE"
 
-        echo "Starting RDMA Server 'ib_read_bw' for $IB_DEVICE (Port $PORT)..."
+        echo -e "\nStarting RDMA Server 'ib_read_bw' for $IB_DEVICE (Port $PORT)...\n"
         # Run RDMA bandwidth test
         ib_read_bw --ib-dev "$IB_DEVICE" -a -F --report_gbits -q 1
 
-        echo "Starting RDMA Server 'ib_write_bw' for $IB_DEVICE (Port $PORT)..."
+        echo -e "\nStarting RDMA Server 'ib_write_bw' for $IB_DEVICE (Port $PORT)...\n"
         # Run RDMA write bandwidth test
         ib_write_bw --ib-dev "$IB_DEVICE" -a -F --report_gbits -q 1
     done
@@ -112,7 +112,7 @@ elif [[ "$1" == "client" && -n "$2" ]]; then
 
     echo "Starting RDMA Client, connecting to $SERVER_IP..."
     for IB_DEVICE in $IB_DEVICES; do
-        echo "Testing RDMA on device: $IB_DEVICE (Port $PORT)"
+        echo -e "\nTesting RDMA on device: $IB_DEVICE (Port $PORT)\n"
 
         check_ib_device_is_active
 
