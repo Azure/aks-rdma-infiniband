@@ -14,7 +14,15 @@ configMapGenerator:
   - test-scripts/verify_gpudirect_rdma.py
   - test-scripts/sockperf-test.sh
   - test-scripts/test-runner.sh
-
+- name: nccl-env-vars
+  options:
+    disableNameSuffixHash: true
+  literals:
+  - NCCL_NET_GDR_LEVEL=SYS        # Needed for MPI Job.
+  - NCCL_IB_DISABLE=0             # Force NCCL to use Infiniband.
+  # - NCCL_DEBUG=INFO             # Valid values: VERSION, WARN, INFO, TRACE
+  # - NCCL_DEBUG_SUBSYS=INIT,NET
+  # - DEBUG=true                  # Enable script in verbose mode.
 patches:
 - path: container-patch.yaml
   target:
