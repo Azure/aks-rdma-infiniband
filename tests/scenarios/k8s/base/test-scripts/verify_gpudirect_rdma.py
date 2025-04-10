@@ -2,8 +2,10 @@
 
 import os
 import time
+
 import torch
 import torch.distributed as dist
+
 
 def main():
     # Set NCCL debug environment variables
@@ -11,6 +13,8 @@ def main():
     os.environ["NCCL_DEBUG_SUBSYS"] = "INIT,NET"
     os.environ["NCCL_IB_DISABLE"] = "0"
     os.environ["NCCL_P2P_LEVEL"] = "NVL"
+    # force GPUDirect RDMA
+    os.environ["NCCL_NET_GDR_LEVEL"] = "SYS"
 
     # Initialize the distributed process group with NCCL backend
     dist.init_process_group(backend="nccl")
@@ -48,6 +52,7 @@ def main():
     assert abs(avg - expected) < 1e-3, f"[Rank {rank}] Expected {expected}, got {avg}"
 
     dist.destroy_process_group()
+
 
 if __name__ == "__main__":
     main()
