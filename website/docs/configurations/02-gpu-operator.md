@@ -29,7 +29,7 @@ Read more about the GPU driver installation options in AKS and the NVIDIA GPU Op
 ## GPU Operator Deployment
 
 :::warning
-Please proceed with GPU operator installation only if you have created the nodepool with the `--skip-gpu-driver-install` flag as described in [prerequisites documentation](../getting-started/02-prerequisites.md#gpu-operator-managed-gpu-driver).
+Please proceed with GPU operator installation only if you have created the nodepool with the `--skip-gpu-driver-install` flag as described in [prerequisites documentation](../getting-started/02-prerequisites.md#nodepool-with-gpus).
 :::
 
 ### Operator
