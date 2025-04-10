@@ -39,7 +39,7 @@ Additional nodepools will be added in the next step to meet specific hardware re
 The AKS cluster requires a dedicated nodepool configured to support RDMA over InfiniBand. For AI workloads leveraging GPUDirect RDMA, GPU support is also necessary.
 
 | Requirement                | Recommended Configuration                                                                                                                                                                                                                                                                                                                                                                                     | Description                                                                                               |
-|----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | **Minimum Nodes**          | At least 2 nodes                                                                                                                                                                                                                                                                                                                                                                                              | Enables cross-node communication for RDMA over InfiniBand; more nodes for scaling                         |
 | **Operating System**       | Ubuntu                                                                                                                                                                                                                                                                                                                                                                                                        | Well-supported by NVIDIA drivers and software stack; other OS options may be available                    |
 | **Hardware**               | [Mellanox ConnectX NICs](https://www.nvidia.com/en-us/networking/ethernet-adapters/)                                                                                                                                                                                                                                                                                                                          | High-performance network interface cards (NICs) for RDMA over InfiniBand support                          |
@@ -62,7 +62,7 @@ az feature show \
 
 #### GPU Operator Managed GPU Driver
 
-To create an AKS nodepool **without** GPU Driver installation by AKS, use the following command (see [GPU Operator](../configurations/gpu-operator#skip-gpu-driver-installation) for more details):
+To create an AKS nodepool **without** GPU Driver installation by AKS and with [GPU Operator](../configurations/02-gpu-operator.md), use the following command:
 
 ```bash
 az extension add -n aks-preview
@@ -79,7 +79,7 @@ az aks nodepool add \
 
 #### AKS Managed GPU Driver
 
-To create an AKS nodepool **with** GPU Driver installation by AKS, use the following command:
+To create an AKS nodepool **with** GPU Driver installation by AKS and **without** GPU Operator, use the following command:
 
 ```bash
 az aks nodepool add \
