@@ -157,12 +157,19 @@ function install_gpu_operator() {
 function install_kube_prometheus() {
     helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
     helm repo update
-    helm upgrade -i \
+    kube_prometheus_install="helm upgrade -i \
         --wait \
         -n monitoring \
         --create-namespace \
         kube-prometheus \
-        prometheus-community/kube-prometheus-stack
+        prometheus-community/kube-prometheus-stack"
+
+    # If you don't retry then it could fail with errors like:
+    # Error: create: failed to create: Post "https://foobar.southcentralus.azmk8s.io:443/api/v1/namespaces/monitoring/secrets": remote error: tls: bad record MAC
+    until ${kube_prometheus_install}; do
+        echo "⏳ Waiting for kube-prometheus to be installed..."
+        sleep 5
+    done
 
     kubectl apply -f ${SCRIPT_DIR}/rbac.yaml
 }
