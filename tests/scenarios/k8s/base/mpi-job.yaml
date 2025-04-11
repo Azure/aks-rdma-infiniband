@@ -45,6 +45,7 @@ spec:
                 -x NCCL_NET_GDR_LEVEL=${NCCL_NET_GDR_LEVEL} \
                 -x CUDA_DEVICE_ORDER=PCI_BUS_ID \
                 -x NCCL_TOPO_FILE=/opt/nvidia-topology/topo.xml \
+                -x NCCL_SOCKET_IFNAME=${NCCL_SOCKET_IFNAME} \
                   /opt/nccl_tests/build/all_reduce_perf \
                     -c 0 \
                     -b 8 \

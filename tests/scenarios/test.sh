@@ -97,11 +97,15 @@ function ipoib_nic_policy_gpu() {
     deploy_ipoib_nic_policy
 
     find_gpu_per_node
+    mpi_job_number_of_processes
+
     kubectl apply -k "${SCRIPT_DIR}/k8s/ipoib/gpu/${GPU_PER_NODE}"
+    ipoib_add_nccl_vars
     ipoib_add_ep_ip
 
     fail_on_job_failure "role=leader" "default"
     fail_on_job_failure "role=worker" "default"
+    fail_on_job_failure "app=nccl-tests" "default"
 
     echo "🧹 Cleaning up..."
     kubectl delete -k "${SCRIPT_DIR}/k8s/ipoib/gpu/${GPU_PER_NODE}"
