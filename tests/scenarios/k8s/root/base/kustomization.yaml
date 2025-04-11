@@ -5,6 +5,17 @@ resources:
 - ../../base
 
 patches:
-- path: security-context.yaml
+- patch: |-
+    - op: add
+      path: /spec/template/spec/containers/0/securityContext
+      value:
+        privileged: true
   target:
     kind: Job
+- patch: |-
+    - op: add
+      path: /spec/mpiReplicaSpecs/Worker/template/spec/containers/0/securityContext
+      value:
+        privileged: true
+  target:
+    kind: MPIJob
