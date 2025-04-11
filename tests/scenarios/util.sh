@@ -136,6 +136,13 @@ subsets:
 EOF
 }
 
+function ipoib_add_nccl_vars() {
+    kubectl patch configmap nccl-env-vars \
+        --type merge \
+        -p '{"data":{"NCCL_SOCKET_IFNAME": "net1"}}'
+    kubectl delete pod -l app=nccl-tests --wait=false
+}
+
 function find_gpu_per_node() {
     case "${NODE_POOL_VM_SIZE}" in
     "Standard_ND96asr_v4" | "Standard_ND96amsr_A100_v4")
