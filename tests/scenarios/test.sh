@@ -146,50 +146,40 @@ function rdma_shared_device_plugin_gpu() {
     kubectl delete -k "${SCRIPT_DIR}/k8s/rdma/gpu/${GPU_PER_NODE}"
 }
 
-function create_topo_configmap() {
-    topo_file_name
-    kubectl create configmap nvidia-topology \
-        --from-file="topo.xml=${SCRIPT_DIR}/nvidia-topology/${TOPO_FILE_NAME}" \
-        --dry-run=client -o yaml | kubectl apply -f -
-}
-
-function mpi_job_number_of_processes() {
-    NUMBER_OF_PROCESSES=$((GPU_PER_NODE_NUMBER * 2))
-    kubectl create configmap mpi-job \
-        --from-literal=NUMBER_OF_PROCESSES="${NUMBER_OF_PROCESSES}" \
-        --dry-run=client -o yaml | kubectl apply -f -
-}
-
-create_topo_configmap
-
-PARAM="${1:-}"
-case $PARAM in
+PARAM1="${1:-}"
+case $PARAM1 in
 root-nic-policy | root_nic_policy)
-    root_nic_policy
+    DEPLOY_METHOD_FUNC="root_nic_policy"
     ;;
 root-nic-policy-gpu | root_nic_policy_gpu)
-    root_nic_policy_gpu
+    DEPLOY_METHOD_FUNC="root_nic_policy_gpu"
     ;;
 sriov-nic-policy | sriov_nic_policy)
-    sriov_nic_policy
+    DEPLOY_METHOD_FUNC="sriov_nic_policy"
     ;;
 sriov-nic-policy-gpu | sriov_nic_policy_gpu)
-    sriov_nic_policy_gpu
+    DEPLOY_METHOD_FUNC="sriov_nic_policy_gpu"
     ;;
 ipoib-nic-policy | ipoib_nic_policy)
-    ipoib_nic_policy
+    DEPLOY_METHOD_FUNC="ipoib_nic_policy"
     ;;
 ipoib-nic-policy-gpu | ipoib_nic_policy_gpu)
-    ipoib_nic_policy_gpu
+    DEPLOY_METHOD_FUNC="ipoib_nic_policy_gpu"
     ;;
 rdma-shared-device-plugin | rdma_shared_device_plugin)
-    rdma_shared_device_plugin
+    DEPLOY_METHOD_FUNC="rdma_shared_device_plugin"
     ;;
 rdma-shared-device-plugin-gpu | rdma_shared_device_plugin_gpu)
-    rdma_shared_device_plugin_gpu
+    DEPLOY_METHOD_FUNC="rdma_shared_device_plugin_gpu"
     ;;
 *)
-    echo "Usage: $0 root-nic-policy | root-nic-policy-gpu | sriov-nic-policy | sriov-nic-policy-gpu | ipoib-nic-policy | ipoib-nic-policy-gpu | rdma-shared-device-plugin | rdma-shared-device-plugin-gpu"
+    print_help $0
     exit 1
     ;;
 esac
+
+create_topo_configmap
+create_test_runner_subcmd "${2:-}"
+trap cleanup_cm EXIT
+
+${DEPLOY_METHOD_FUNC}

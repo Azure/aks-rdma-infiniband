@@ -13,10 +13,12 @@ spec:
         command:
         - sh
         - -c
-        - "set -x; bash /root/tests/test-runner.sh"
+        - "set -x; bash /root/tests/test-runner.sh ${TEST_FUNCTION}"
         envFrom:
         - configMapRef:
             name: nccl-env-vars
+        - configMapRef:
+            name: test-function-name
         volumeMounts:
         - name: shm
           mountPath: /dev/shm
