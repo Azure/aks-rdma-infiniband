@@ -170,6 +170,12 @@ function find_gpu_per_node() {
     esac
 }
 
+function cleanup_cm() {
+    kubectl delete configmap mpi-job
+    kubectl delete configmap test-function-name
+    kubectl delete configmap nvidia-topology
+}
+
 function topo_file_name() {
     # The topo files in the nvidia-topology folder are added from here:
     # https://github.com/Azure/azhpc-images/tree/4a4565a0c0aa9d6944c53420155936061b9c3a98/topology
@@ -242,4 +248,40 @@ function fail_on_job_failure() {
         echo "⏳ Waiting for job with label '${1}' in namespace '${2}' to complete..."
         sleep 5
     done
+}
+
+function create_test_runner_subcmd() {
+    kubectl create configmap test-function-name \
+        --from-literal=TEST_FUNCTION="${1}" \
+        --dry-run=client -o yaml | kubectl apply -f -
+}
+
+function print_help() {
+    # Print multiline
+    cat <<EOF
+AKS RDMA Infiniband Test Suite
+
+Usage:
+  $1 [command] [subcommand]
+
+Available Commands (GPU):
+  root-nic-policy-gpu             Run a test with no shared device plugin
+  sriov-nic-policy-gpu            Run a test with SR-IOV shared device plugin
+  rdma-shared-device-plugin-gpu   Run a test with RDMA shared device plugin
+  ipoib-nic-policy-gpu            Run a test with IP over IB
+
+Available Commands (non-GPU):
+  root-nic-policy                 Run a test with no shared device plugin without GPU
+  sriov-nic-policy                Run a test with SR-IOV shared device plugin without GPU
+  rdma-shared-device-plugin       Run a test with RDMA shared device plugin wihtout GPU
+  ipoib-nic-policy                Run a test with IP over IB without GPU
+
+Available Subcommands:
+  sockperf                      Run tests with sockperf utility
+  rdma-test                     Run RDMA tests with IB utility
+  nccl-test-vllm-rdma           Run Python based NCCL tests with vLLM
+  nccl-test-gpudirect-rdma      Run Python based NCCL test to verify GPUDirect RDMA
+  debug                         The tests sleep infinitely for debugging
+  all                           Run all tests in the order sockperf, rdma-test and nccl-tests
+EOF
 }
