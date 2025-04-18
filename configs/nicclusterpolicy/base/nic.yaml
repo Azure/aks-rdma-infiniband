@@ -40,3 +40,7 @@ spec:
     readinessProbe:
       initialDelaySeconds: 10
       periodSeconds: 30
+  docaTelemetryService:
+    repository: nvcr.io/nvidia/doca
+    image: doca_telemetry
+    version: 1.16.5-doca2.6.0-host
