@@ -5,6 +5,9 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 source "${SCRIPT_DIR}/util.sh"
 
+export HELM_INSTALL_CMD="helm upgrade -i --wait test ${SCRIPT_DIR}/k8s --values ${SCRIPT_DIR}/k8s/values.yaml"
+export HELM_UNINSTALL_CMD="helm uninstall test --wait"
+
 # Check if the DEBUG env var is set to true
 if [ "${DEBUG:-false}" = "true" ]; then
     set -x
@@ -18,13 +21,20 @@ function deploy_root_nic_policy() {
 function root_nic_policy() {
     deploy_root_nic_policy
 
-    kubectl apply -k "${SCRIPT_DIR}/k8s/root/base"
-    fail_on_job_failure "role=leader" "default"
-    fail_on_job_failure "role=worker" "default"
+    if [[ ${subcmd} != "mpijob" ]]; then
+        $HELM_INSTALL_CMD --set securityContext.privileged=true \
+            --set job.enabled=true \
+            --set job.testFunctionName="${subcmd}"
 
-    # Clean up
+        fail_on_job_failure "role=leader" "default"
+        fail_on_job_failure "role=worker" "default"
+    else
+        echo "❌ Can't run mpijob without GPUs"
+        exit 1
+    fi
+
     echo "🧹 Cleaning up..."
-    kubectl delete -k "${SCRIPT_DIR}/k8s/root/base"
+    $HELM_UNINSTALL_CMD
 }
 
 function root_nic_policy_gpu() {
@@ -33,14 +43,28 @@ function root_nic_policy_gpu() {
     find_gpu_per_node
     mpi_job_number_of_processes
 
-    kubectl apply -k "${SCRIPT_DIR}/k8s/root/gpu/${GPU_PER_NODE}"
-    fail_on_job_failure "role=leader" "default"
-    fail_on_job_failure "role=worker" "default"
-    fail_on_job_failure "app=nccl-tests" "default"
+    local test_flags=(
+        --set "securityContext.privileged=true"
+        --set "resources.nvidia\.com/gpu=${GPU_PER_NODE_NUMBER}"
+    )
 
-    # Clean up
+    if [[ ${subcmd} != "mpijob" ]]; then
+        $HELM_INSTALL_CMD "${test_flags[@]}" \
+            --set job.enabled=true \
+            --set job.testFunctionName="${subcmd}"
+
+        fail_on_job_failure "role=leader" "default"
+        fail_on_job_failure "role=worker" "default"
+    else
+        $HELM_INSTALL_CMD "${test_flags[@]}" \
+            --set mpiJob.enabled=true \
+            --set mpiJob.numberOfProcesses="${NUMBER_OF_PROCESSES}"
+
+        fail_on_job_failure "app=nccl-tests" "default"
+    fi
+
     echo "🧹 Cleaning up..."
-    kubectl delete -k "${SCRIPT_DIR}/k8s/root/gpu/${GPU_PER_NODE}"
+    $HELM_UNINSTALL_CMD
 }
 
 function deploy_sriov_nic_policy() {
@@ -52,14 +76,25 @@ function deploy_sriov_nic_policy() {
 function sriov_nic_policy() {
     deploy_sriov_nic_policy
 
-    kubectl apply -k "${SCRIPT_DIR}/k8s/sriov/base"
-    fail_on_job_failure "role=leader" "default"
-    fail_on_job_failure "role=worker" "default"
-    fail_on_job_failure "app=nccl-tests" "default"
+    local test_flags=(
+        --set "securityContext.capabilities.add={IPC_LOCK}"
+        --set "resources.rdma/ib=1"
+    )
 
-    # Clean up
+    if [[ ${subcmd} != "mpijob" ]]; then
+        $HELM_INSTALL_CMD "${test_flags[@]}" \
+            --set job.enabled=true \
+            --set job.testFunctionName="${subcmd}"
+
+        fail_on_job_failure "role=leader" "default"
+        fail_on_job_failure "role=worker" "default"
+    else
+        echo "❌ Can't run mpijob without GPUs"
+        exit 1
+    fi
+
     echo "🧹 Cleaning up..."
-    kubectl delete -k "${SCRIPT_DIR}/k8s/sriov/base"
+    $HELM_UNINSTALL_CMD
 }
 
 function sriov_nic_policy_gpu() {
@@ -68,13 +103,29 @@ function sriov_nic_policy_gpu() {
     find_gpu_per_node
     mpi_job_number_of_processes
 
-    kubectl apply -k "${SCRIPT_DIR}/k8s/sriov/gpu/${GPU_PER_NODE}"
-    fail_on_job_failure "role=leader" "default"
-    fail_on_job_failure "role=worker" "default"
-    fail_on_job_failure "app=nccl-tests" "default"
+    local test_flags=(
+        --set "securityContext.capabilities.add={IPC_LOCK}"
+        --set "resources.nvidia\.com/gpu=${GPU_PER_NODE_NUMBER}"
+        --set "resources.rdma/ib=${GPU_PER_NODE_NUMBER}"
+    )
+
+    if [[ ${subcmd} != "mpijob" ]]; then
+        $HELM_INSTALL_CMD "${test_flags[@]}" \
+            --set job.enabled=true \
+            --set job.testFunctionName="${subcmd}"
+
+        fail_on_job_failure "role=leader" "default"
+        fail_on_job_failure "role=worker" "default"
+    else
+        $HELM_INSTALL_CMD "${test_flags[@]}" \
+            --set mpiJob.enabled=true \
+            --set mpiJob.numberOfProcesses="${NUMBER_OF_PROCESSES}"
+
+        fail_on_job_failure "app=nccl-tests" "default"
+    fi
 
     echo "🧹 Cleaning up..."
-    kubectl delete -k "${SCRIPT_DIR}/k8s/sriov/gpu/${GPU_PER_NODE}"
+    $HELM_UNINSTALL_CMD
 }
 
 function deploy_ipoib_nic_policy() {
@@ -86,14 +137,26 @@ function deploy_ipoib_nic_policy() {
 function ipoib_nic_policy() {
     deploy_ipoib_nic_policy
 
-    kubectl apply -k "${SCRIPT_DIR}/k8s/ipoib/base/"
-    ipoib_add_ep_ip
+    local test_flags=(
+        --set "ipoib=true"
+        --set "ncclEnvVars.NCCL_SOCKET_IFNAME=net1"
+    )
 
-    fail_on_job_failure "role=leader" "default"
-    fail_on_job_failure "role=worker" "default"
+    if [[ ${subcmd} != "mpijob" ]]; then
+        $HELM_INSTALL_CMD "${test_flags[@]}" \
+            --set job.enabled=true \
+            --set job.testFunctionName="${subcmd}"
+        ipoib_add_ep_ip
+
+        fail_on_job_failure "role=leader" "default"
+        fail_on_job_failure "role=worker" "default"
+    else
+        echo "❌ Can't run mpijob without GPUs"
+        exit 1
+    fi
 
     echo "🧹 Cleaning up..."
-    kubectl delete -k "${SCRIPT_DIR}/k8s/ipoib/base/"
+    $HELM_UNINSTALL_CMD
 }
 
 function ipoib_nic_policy_gpu() {
@@ -102,16 +165,30 @@ function ipoib_nic_policy_gpu() {
     find_gpu_per_node
     mpi_job_number_of_processes
 
-    kubectl apply -k "${SCRIPT_DIR}/k8s/ipoib/gpu/${GPU_PER_NODE}"
-    ipoib_add_nccl_vars
-    ipoib_add_ep_ip
+    local test_flags=(
+        --set "resources.nvidia\.com/gpu=${GPU_PER_NODE_NUMBER}"
+        --set "ipoib=true"
+        --set "ncclEnvVars.NCCL_SOCKET_IFNAME=net1"
+    )
 
-    fail_on_job_failure "role=leader" "default"
-    fail_on_job_failure "role=worker" "default"
-    fail_on_job_failure "app=nccl-tests" "default"
+    if [[ ${subcmd} != "mpijob" ]]; then
+        $HELM_INSTALL_CMD "${test_flags[@]}" \
+            --set job.enabled=true \
+            --set job.testFunctionName="${subcmd}"
+        ipoib_add_ep_ip
+
+        fail_on_job_failure "role=leader" "default"
+        fail_on_job_failure "role=worker" "default"
+    else
+        $HELM_INSTALL_CMD "${test_flags[@]}" \
+            --set mpiJob.enabled=true \
+            --set mpiJob.numberOfProcesses="${NUMBER_OF_PROCESSES}"
+
+        fail_on_job_failure "app=nccl-tests" "default"
+    fi
 
     echo "🧹 Cleaning up..."
-    kubectl delete -k "${SCRIPT_DIR}/k8s/ipoib/gpu/${GPU_PER_NODE}"
+    $HELM_UNINSTALL_CMD
 }
 
 function deploy_rdma_shared_device_plugin() {
@@ -123,12 +200,25 @@ function deploy_rdma_shared_device_plugin() {
 function rdma_shared_device_plugin() {
     deploy_rdma_shared_device_plugin
 
-    kubectl apply -k "${SCRIPT_DIR}/k8s/rdma/base"
-    fail_on_job_failure "role=leader" "default"
-    fail_on_job_failure "role=worker" "default"
+    local test_flags=(
+        --set "securityContext.capabilities.add={IPC_LOCK}"
+        --set "resources.rdma/shared_ib=1"
+    )
+
+    if [[ ${subcmd} != "mpijob" ]]; then
+        $HELM_INSTALL_CMD "${test_flags[@]}" \
+            --set job.enabled=true \
+            --set job.testFunctionName="${subcmd}"
+
+        fail_on_job_failure "role=leader" "default"
+        fail_on_job_failure "role=worker" "default"
+    else
+        echo "❌ Can't run mpijob without GPUs"
+        exit 1
+    fi
 
     echo "🧹 Cleaning up..."
-    kubectl delete -k "${SCRIPT_DIR}/k8s/rdma/base"
+    $HELM_UNINSTALL_CMD
 }
 
 function rdma_shared_device_plugin_gpu() {
@@ -137,59 +227,76 @@ function rdma_shared_device_plugin_gpu() {
     find_gpu_per_node
     mpi_job_number_of_processes
 
-    kubectl apply -k "${SCRIPT_DIR}/k8s/rdma/gpu/${GPU_PER_NODE}"
-    fail_on_job_failure "role=leader" "default"
-    fail_on_job_failure "role=worker" "default"
-    fail_on_job_failure "app=nccl-tests" "default"
+    local test_flags=(
+        --set "securityContext.capabilities.add={IPC_LOCK}"
+        --set "resources.nvidia\.com/gpu=${GPU_PER_NODE_NUMBER}"
+        --set "resources.rdma/shared_ib=1"
+    )
+
+    if [[ ${subcmd} != "mpijob" ]]; then
+        $HELM_INSTALL_CMD "${test_flags[@]}" \
+            --set job.enabled=true \
+            --set job.testFunctionName="${subcmd}"
+
+        fail_on_job_failure "role=leader" "default"
+        fail_on_job_failure "role=worker" "default"
+    else
+        $HELM_INSTALL_CMD "${test_flags[@]}" \
+            --set mpiJob.enabled=true \
+            --set mpiJob.numberOfProcesses="${NUMBER_OF_PROCESSES}"
+
+        fail_on_job_failure "app=nccl-tests" "default"
+    fi
 
     echo "🧹 Cleaning up..."
-    kubectl delete -k "${SCRIPT_DIR}/k8s/rdma/gpu/${GPU_PER_NODE}"
+    $HELM_UNINSTALL_CMD
 }
 
-function create_topo_configmap() {
-    topo_file_name
-    kubectl create configmap nvidia-topology \
-        --from-file="topo.xml=${SCRIPT_DIR}/nvidia-topology/${TOPO_FILE_NAME}" \
-        --dry-run=client -o yaml | kubectl apply -f -
-}
-
-function mpi_job_number_of_processes() {
-    NUMBER_OF_PROCESSES=$((GPU_PER_NODE_NUMBER * 2))
-    kubectl create configmap mpi-job \
-        --from-literal=NUMBER_OF_PROCESSES="${NUMBER_OF_PROCESSES}" \
-        --dry-run=client -o yaml | kubectl apply -f -
-}
-
-create_topo_configmap
-
-PARAM="${1:-}"
-case $PARAM in
+cmd="${1:-}"
+case $cmd in
 root-nic-policy | root_nic_policy)
-    root_nic_policy
+    DEPLOY_METHOD_FUNC="root_nic_policy"
     ;;
 root-nic-policy-gpu | root_nic_policy_gpu)
-    root_nic_policy_gpu
+    DEPLOY_METHOD_FUNC="root_nic_policy_gpu"
     ;;
 sriov-nic-policy | sriov_nic_policy)
-    sriov_nic_policy
+    DEPLOY_METHOD_FUNC="sriov_nic_policy"
     ;;
 sriov-nic-policy-gpu | sriov_nic_policy_gpu)
-    sriov_nic_policy_gpu
+    DEPLOY_METHOD_FUNC="sriov_nic_policy_gpu"
     ;;
 ipoib-nic-policy | ipoib_nic_policy)
-    ipoib_nic_policy
+    DEPLOY_METHOD_FUNC="ipoib_nic_policy"
     ;;
 ipoib-nic-policy-gpu | ipoib_nic_policy_gpu)
-    ipoib_nic_policy_gpu
+    DEPLOY_METHOD_FUNC="ipoib_nic_policy_gpu"
     ;;
 rdma-shared-device-plugin | rdma_shared_device_plugin)
-    rdma_shared_device_plugin
+    DEPLOY_METHOD_FUNC="rdma_shared_device_plugin"
     ;;
 rdma-shared-device-plugin-gpu | rdma_shared_device_plugin_gpu)
-    rdma_shared_device_plugin_gpu
+    DEPLOY_METHOD_FUNC="rdma_shared_device_plugin_gpu"
     ;;
 *)
-    echo "Usage: $0 root-nic-policy | root-nic-policy-gpu | sriov-nic-policy | sriov-nic-policy-gpu | ipoib-nic-policy | ipoib-nic-policy-gpu | rdma-shared-device-plugin | rdma-shared-device-plugin-gpu"
+    echo "Unknown command: ${cmd}"
+    print_help $0
     exit 1
     ;;
 esac
+
+subcmd="${2:-}"
+case $subcmd in
+sockperf | rdma_test | rdma-test | nccl_test_vllm_rdma | nccl-test-vllm-rdma) ;;
+nccl_test_gpudirect_rdma | nccl-test-gpudirect-rdma | mpijob | debug | all) ;;
+*)
+    echo "Unknown subcommand: ${subcmd}"
+    print_help $0
+    exit 1
+    ;;
+esac
+
+create_topo_configmap
+trap cleanup_cm EXIT
+
+${DEPLOY_METHOD_FUNC}

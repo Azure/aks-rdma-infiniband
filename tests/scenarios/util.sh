@@ -136,11 +136,15 @@ subsets:
 EOF
 }
 
-function ipoib_add_nccl_vars() {
-    kubectl patch configmap nccl-env-vars \
-        --type merge \
-        -p '{"data":{"NCCL_SOCKET_IFNAME": "net1"}}'
-    kubectl delete pod -l app=nccl-tests --wait=false
+function create_topo_configmap() {
+    topo_file_name
+    kubectl create configmap nvidia-topology \
+        --from-file="topo.xml=${SCRIPT_DIR}/nvidia-topology/${TOPO_FILE_NAME}" \
+        --dry-run=client -o yaml | kubectl apply -f -
+}
+
+function mpi_job_number_of_processes() {
+    NUMBER_OF_PROCESSES=$((GPU_PER_NODE_NUMBER * 2))
 }
 
 function find_gpu_per_node() {
@@ -154,6 +158,10 @@ function find_gpu_per_node() {
         exit 1
         ;;
     esac
+}
+
+function cleanup_cm() {
+    kubectl delete configmap nvidia-topology
 }
 
 function topo_file_name() {
@@ -228,4 +236,35 @@ function fail_on_job_failure() {
         echo "⏳ Waiting for job with label '${1}' in namespace '${2}' to complete..."
         sleep 5
     done
+}
+
+function print_help() {
+    # Print multiline
+    cat <<EOF
+AKS RDMA Infiniband Test Suite
+
+Usage:
+  $1 [command] [subcommand]
+
+Available Commands (GPU):
+  root-nic-policy-gpu             Run a test with no shared device plugin
+  sriov-nic-policy-gpu            Run a test with SR-IOV shared device plugin
+  rdma-shared-device-plugin-gpu   Run a test with RDMA shared device plugin
+  ipoib-nic-policy-gpu            Run a test with IP over IB
+
+Available Commands (non-GPU):
+  root-nic-policy                 Run a test with no shared device plugin without GPU
+  sriov-nic-policy                Run a test with SR-IOV shared device plugin without GPU
+  rdma-shared-device-plugin       Run a test with RDMA shared device plugin wihtout GPU
+  ipoib-nic-policy                Run a test with IP over IB without GPU
+
+Available Subcommands:
+  sockperf                      Run tests with sockperf utility
+  rdma-test                     Run RDMA tests with IB utility
+  nccl-test-vllm-rdma           Run Python based NCCL tests with vLLM
+  nccl-test-gpudirect-rdma      Run Python based NCCL test to verify GPUDirect RDMA
+  mpijob                        Run MPI job to see the total speed
+  debug                         The tests sleep infinitely for debugging
+  all                           Run all tests in the order sockperf, rdma-test and nccl-tests
+EOF
 }

@@ -1,6 +1,8 @@
+{{- if .Values.ipoib }}
 apiVersion: v1
 kind: Service
 metadata:
   name: leader-ib
 spec:
   clusterIP: None
+{{- end }}

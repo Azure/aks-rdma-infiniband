@@ -1,0 +1,31 @@
+mpiJob:
+  enabled: false
+  image: ghcr.io/azure/aks-rdma-infiniband/nccl-tests
+  numberOfProcesses: 0
+
+job:
+  enabled: false
+  image: ghcr.io/azure/aks-rdma-infiniband/ibtools:latest
+  testFunctionName: ""
+
+# resources:
+#   nvidia.com/gpu: 8
+#   rdma/ib: 8
+#   rdma/shared_ib: 1
+
+# securityContext:
+#   privileged: false
+#   capabilities:
+#     add:
+#     - IPC_LOCK
+
+ipoib: false
+
+# --------------------------------------------------------------------
+# Below this point it is gonna be constant for all the tests
+ncclEnvVars:
+  NCCL_NET_GDR_LEVEL: SYS        # Needed for MPI Job.
+  NCCL_IB_DISABLE: "0"             # Force NCCL to use Infiniband.
+  # NCCL_DEBUG: INFO             # Valid values: VERSION, WARN, INFO, TRACE
+  # NCCL_DEBUG_SUBSYS: INIT,NET
+  # DEBUG: true                  # Enable script in verbose mode.

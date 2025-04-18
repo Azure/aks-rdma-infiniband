@@ -29,26 +29,63 @@ Install the GPU operator, only if your nodes are GPU enabled, by running the fol
 
 ## Testing
 
-### With GPU
-
-Run the GPU based tests:
+To find out all the available testing options run the following command:
 
 ```bash
-./tests/scenarios/test.sh root-nic-policy-gpu
-./tests/scenarios/test.sh sriov-nic-policy-gpu
-./tests/scenarios/test.sh rdma-shared-device-plugin-gpu
-./tests/scenarios/test.sh ipoib-nic-policy-gpu
+./tests/scenarios/test.sh help
+```
+
+The format of the testing command is as follows:
+
+```bash
+./tests/scenarios/test.sh <IB setup scenario> <test type>
+```
+
+Here is the list of available Infiniband setup scenarios:
+
+| Scenario Name                 | Description                                             |
+|-------------------------------|---------------------------------------------------------|
+| root-nic-policy-gpu           | Run a test with no shared device plugin                 |
+| sriov-nic-policy-gpu          | Run a test with SR-IOV shared device plugin             |
+| rdma-shared-device-plugin-gpu | Run a test with RDMA shared device plugin               |
+| ipoib-nic-policy-gpu          | Run a test with IP over IB                              |
+| root-nic-policy               | Run a test with no shared device plugin without GPU     |
+| sriov-nic-policy              | Run a test with SR-IOV shared device plugin without GPU |
+| rdma-shared-device-plugin     | Run a test with RDMA shared device plugin wihtout GPU   |
+| ipoib-nic-policy              | Run a test with IP over IB without GPU                  |
+
+Here are the available test types:
+
+| Test Type                | Description                                                   |
+|--------------------------|---------------------------------------------------------------|
+| sockperf                 | Run tests with sockperf utility                               |
+| rdma-test                | Run RDMA tests with IB utility                                |
+| nccl-test-vllm-rdma      | Run Python based NCCL tests with vLLM                         |
+| nccl-test-gpudirect-rdma | Run Python based NCCL test to verify GPUDirect RDMA           |
+| mpijob                   | Run MPI job to see the total speed                            |
+| debug                    | The tests sleep infinitely for debugging                      |
+| all                      | Run all tests in the order sockperf, rdma-test and nccl-tests |
+
+### With GPU
+
+Run all the GPU based tests:
+
+```bash
+./tests/scenarios/test.sh root-nic-policy-gpu all
+./tests/scenarios/test.sh sriov-nic-policy-gpu all
+./tests/scenarios/test.sh rdma-shared-device-plugin-gpu all
+./tests/scenarios/test.sh ipoib-nic-policy-gpu all
 ```
 
 ### Without GPU
 
-Run the non-GPU tests:
+Run all the non-GPU tests:
 
 ```bash
-./tests/scenarios/test.sh root-nic-policy
-./tests/scenarios/test.sh sriov-nic-policy
-./tests/scenarios/test.sh rdma-shared-device-plugin
-./tests/scenarios/test.sh ipoib-nic-policy
+./tests/scenarios/test.sh root-nic-policy all
+./tests/scenarios/test.sh sriov-nic-policy all
+./tests/scenarios/test.sh rdma-shared-device-plugin all
+./tests/scenarios/test.sh ipoib-nic-policy all
 ```
 
 ## FAQ
@@ -63,12 +100,14 @@ If you want to save the logs output at the end of each run, you can pipe the out
 
 ### How do I run the tests in verbose mode?
 
-If you want to run the tests in verbose mode, you can uncomment the comments in the [`kustomization.yaml`](scenarios/k8s/base/kustomization.yaml) file:
+If you want to run the tests in verbose mode, you can uncomment the comments in the [`values.yaml`](scenarios/k8s/values.yaml) file:
 
 ```yaml
-  - NCCL_DEBUG=INFO             # Valid values: VERSION, WARN, INFO, TRACE
-  - NCCL_DEBUG_SUBSYS=INIT,NET
-  - DEBUG=true                  # Enable script in verbose mode.
+ncclEnvVars:
+  NCCL_DEBUG: INFO             # Valid values: VERSION, WARN, INFO, TRACE
+  NCCL_DEBUG_SUBSYS: INIT,NET
+  DEBUG: true                  # Enable script in verbose mode.
+
 ```
 
 - `NCCL_DEBUG` controls the verbosity of the NCCL library. This is useful for debugging the NCCL library itself. Valid values are `VERSION`, `WARN`, `INFO`, and `TRACE`.

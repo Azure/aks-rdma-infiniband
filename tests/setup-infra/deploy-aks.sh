@@ -21,6 +21,18 @@ fi
 : "${GPU_OPERATOR_VERSION:=v25.3.0}"
 : "${MPI_OPERATOR_VERSION:=v0.6.0}" # Latest version: https://github.com/kubeflow/mpi-operator/releases
 
+function check_prereqs() {
+    local prereqs=("kubectl" "helm" "az" "jq")
+    for cmd in "${prereqs[@]}"; do
+        if ! command -v "$cmd" &>/dev/null; then
+            echo "❌ $cmd is not installed. Please install it and try again."
+            exit 1
+        fi
+    done
+}
+
+check_prereqs
+
 # deploy_aks creates a resource gropu and a new AKS cluster with the provided
 # arguments. You can provide additional arguments to the function. For example a
 # call would look like this: `deploy_aks --enable-addons monitoring`
