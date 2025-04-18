@@ -1,3 +1,4 @@
+{{- if .Values.mpiJob.enabled }}
 apiVersion: kubeflow.org/v2beta1
 kind: MPIJob
 metadata:
@@ -13,12 +14,16 @@ spec:
       replicas: 1
       template:
         metadata:
+          {{- if .Values.ipoib }}
+          annotations:
+            k8s.v1.cni.cncf.io/networks: aks-infiniband
+          {{- end }}
           labels:
             app: nccl-tests
         spec:
           restartPolicy: OnFailure
           containers:
-          - image: ghcr.io/azure/aks-rdma-infiniband/nccl-tests
+          - image: {{ .Values.mpiJob.image }}
             name: nccl
             env:
             - name: OMPI_ALLOW_RUN_AS_ROOT
@@ -26,14 +31,13 @@ spec:
             - name: OMPI_ALLOW_RUN_AS_ROOT_CONFIRM
               value: "1"
             - name: NUMBER_OF_PROCESSES
-              valueFrom:
-                configMapKeyRef:
-                  name: mpi-job
-                  key: NUMBER_OF_PROCESSES
+              value: "{{ .Values.mpiJob.numberOfProcesses }}"
             envFrom:
             - configMapRef:
                 name: nccl-env-vars
-            command: ["/bin/bash", "-c"]
+            command:
+            - /bin/bash
+            - -c
             args:
             - |
               set -xe
@@ -63,12 +67,27 @@ spec:
       replicas: 2
       template:
         metadata:
+          {{- if .Values.ipoib }}
+          annotations:
+            k8s.v1.cni.cncf.io/networks: aks-infiniband
+          {{- end }}
           labels:
             task: test
         spec:
           containers:
-          - image: ghcr.io/azure/aks-rdma-infiniband/nccl-tests
+          - image: {{ .Values.mpiJob.image }}
             name: nccl
+            {{- if .Values.resources }}
+            resources:
+              limits:
+                {{- toYaml .Values.resources | nindent 16 }}
+              requests:
+                {{- toYaml .Values.resources | nindent 16 }}
+            {{- end }}
+            {{- if .Values.securityContext }}
+            securityContext:
+              {{- toYaml .Values.securityContext | nindent 14 }}
+            {{- end }}
             volumeMounts:
             - name: shm
               mountPath: /dev/shm
@@ -93,6 +112,7 @@ spec:
                     operator: In
                     values:
                     - test
-                topologyKey: "kubernetes.io/hostname"
+                topologyKey: kubernetes.io/hostname
           enableServiceLinks: false
           automountServiceAccountToken: false
+{{- end }}

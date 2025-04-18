@@ -1,0 +1,77 @@
+{{- if .Values.job.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    role: leader
+    task: test
+  name: leader
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      {{- if .Values.ipoib }}
+      annotations:
+        k8s.v1.cni.cncf.io/networks: aks-infiniband
+      {{- end }}
+      labels:
+        role: leader
+    spec:
+      containers:
+      - name: runner
+        image: {{ .Values.job.image }}
+        imagePullPolicy: Always
+        command:
+        - sh
+        - -c
+        - set -x; bash /root/tests/test-runner.sh {{ .Values.job.testFunctionName }}
+        env:
+        - name: ROLE
+          value: server
+        - name: TORCH_RUN_RANK
+          value: "0"
+        envFrom:
+        - configMapRef:
+            name: nccl-env-vars
+        ports:
+        {{- if .Values.ipoib }}
+        - containerPort: 11111
+          name: infiniband
+        {{- end }}
+        - containerPort: 11112
+          name: ethernet
+        {{- if .Values.resources }}
+        resources:
+          limits:
+            {{- toYaml .Values.resources | nindent 12 }}
+          requests:
+            {{- toYaml .Values.resources | nindent 12 }}
+        {{- end }}
+        {{- if .Values.securityContext }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 10 }}
+        {{- end }}
+        volumeMounts:
+        - mountPath: /dev/shm
+          name: shm
+        - mountPath: /root/tests
+          name: test-scripts
+      restartPolicy: Never
+      volumes:
+      - name: test-scripts
+        configMap:
+          name: test-scripts
+      - emptyDir:
+          medium: Memory
+        name: shm
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: task
+                operator: In
+                values:
+                - test
+            topologyKey: kubernetes.io/hostname
+{{- end }}
