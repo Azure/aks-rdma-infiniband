@@ -136,6 +136,20 @@ subsets:
 EOF
 }
 
+function create_topo_configmap() {
+    topo_file_name
+    kubectl create configmap nvidia-topology \
+        --from-file="topo.xml=${SCRIPT_DIR}/nvidia-topology/${TOPO_FILE_NAME}" \
+        --dry-run=client -o yaml | kubectl apply -f -
+}
+
+function mpi_job_number_of_processes() {
+    NUMBER_OF_PROCESSES=$((GPU_PER_NODE_NUMBER * 2))
+    kubectl create configmap mpi-job \
+        --from-literal=NUMBER_OF_PROCESSES="${NUMBER_OF_PROCESSES}" \
+        --dry-run=client -o yaml | kubectl apply -f -
+}
+
 function ipoib_add_nccl_vars() {
     kubectl patch configmap nccl-env-vars \
         --type merge \
