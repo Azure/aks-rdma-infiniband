@@ -148,16 +148,22 @@ function mpi_job_number_of_processes() {
 }
 
 function find_gpu_per_node() {
-    case "${NODE_POOL_VM_SIZE}" in
-    "Standard_ND96asr_v4" | "Standard_ND96amsr_A100_v4")
-        GPU_PER_NODE=eight
-        GPU_PER_NODE_NUMBER=8
-        ;;
-    *)
-        echo "❌ Unknown VM size: $NODE_POOL_VM_SIZE"
+    if [[ -z "$NODE_POOL_VM_SIZE" ]]; then
+        echo "❌ Environment variable NODE_POOL_VM_SIZE not set" >&2
         exit 1
-        ;;
-    esac
+    fi
+
+    GPU_PER_NODE_NUMBER=$(kubectl get nodes -o json |
+        jq -r --arg NODE_TYPE "$NODE_POOL_VM_SIZE" '
+        .items
+        | map(select((.metadata.labels["node.kubernetes.io/instance-type"] | ascii_downcase) == ($NODE_TYPE | ascii_downcase)))
+        | .[0].status.allocatable["nvidia.com/gpu"] // "0"
+      ')
+
+    if [[ "$GPU_PER_NODE_NUMBER" == "0" ]]; then
+        echo "❌ No GPUs found on nodes of type: $NODE_POOL_VM_SIZE" >&2
+        exit 1
+    fi
 }
 
 function cleanup_cm() {
@@ -247,24 +253,24 @@ Usage:
   $1 [command] [subcommand]
 
 Available Commands (GPU):
-  root-nic-policy-gpu             Run a test with no shared device plugin
   sriov-nic-policy-gpu            Run a test with SR-IOV shared device plugin
   rdma-shared-device-plugin-gpu   Run a test with RDMA shared device plugin
   ipoib-nic-policy-gpu            Run a test with IP over IB
+  root-nic-policy-gpu             Run a test with no shared device plugin
 
 Available Commands (non-GPU):
-  root-nic-policy                 Run a test with no shared device plugin without GPU
   sriov-nic-policy                Run a test with SR-IOV shared device plugin without GPU
   rdma-shared-device-plugin       Run a test with RDMA shared device plugin wihtout GPU
   ipoib-nic-policy                Run a test with IP over IB without GPU
+  root-nic-policy                 Run a test with no shared device plugin without GPU
 
 Available Subcommands:
-  sockperf                      Run tests with sockperf utility
-  rdma-test                     Run RDMA tests with IB utility
-  nccl-test-vllm-rdma           Run Python based NCCL tests with vLLM
-  nccl-test-gpudirect-rdma      Run Python based NCCL test to verify GPUDirect RDMA
   mpijob                        Run MPI job to see the total speed
-  debug                         The tests sleep infinitely for debugging
+  rdma-test                     Run RDMA tests with IB utility
+  nccl-test-gpudirect-rdma      Run Python based NCCL test to verify GPUDirect RDMA
+  nccl-test-vllm-rdma           Run Python based NCCL tests with vLLM
+  sockperf                      Run tests with sockperf utility
   all                           Run all tests in the order sockperf, rdma-test and nccl-tests
+  debug                         The tests sleep infinitely for debugging
 EOF
 }

@@ -3,7 +3,8 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-source "${SCRIPT_DIR}/../scenarios/util.sh"
+# shellcheck disable=SC1091
+source "${SCRIPT_DIR}"/../scenarios/util.sh
 
 # Check if the DEBUG env var is set to true
 if [ "${DEBUG:-false}" = "true" ]; then
@@ -54,7 +55,7 @@ function deploy_aks() {
         --location "${AZURE_REGION}" \
         --generate-ssh-keys \
         --admin-username "${USER_NAME}" \
-        --os-sku Ubuntu "$@"
+        --os-sku Ubuntu
 }
 
 # add_nodepool adds a new node pool to the AKS cluster. You can provide additional
@@ -70,11 +71,11 @@ function add_nodepool() {
     az extension update --name aks-preview || true
 
     aks_infiniband_support="az feature show \
-        --namespace "Microsoft.ContainerService" \
+        --namespace Microsoft.ContainerService \
         --name AKSInfinibandSupport -o tsv --query 'properties.state'"
 
     # Until the output of the above command is not "Registered", keep running the command.
-    while [[ "$(eval $aks_infiniband_support)" != "Registered" ]]; do
+    while [[ "$(eval "$aks_infiniband_support")" != "Registered" ]]; do
         az feature register --name AKSInfinibandSupport --namespace Microsoft.ContainerService
         echo "⏳ Waiting for the feature 'AKSInfinibandSupport' to be registered..."
         sleep 10
@@ -114,13 +115,13 @@ function install_network_operator() {
         --wait \
         --create-namespace \
         -n "${network_operator_ns}" \
-        --values ${SCRIPT_DIR}/../../configs/values/network-operator/values.yaml \
+        --values "${SCRIPT_DIR}"/../../configs/values/network-operator/values.yaml \
         network-operator \
         nvidia/network-operator \
         --version v25.1.0
 
-    kubectl apply -f ${SCRIPT_DIR}/network-operator-nfd.yaml
-    kubectl apply -k "${SCRIPT_DIR}/../../configs/nicclusterpolicy/base"
+    kubectl apply -f "${SCRIPT_DIR}"/network-operator-nfd.yaml
+    kubectl apply -k "${SCRIPT_DIR}"/../../configs/nicclusterpolicy/base
     wait_until_mofed_is_ready
 }
 
@@ -137,7 +138,7 @@ function install_gpu_operator() {
         --wait \
         -n "${gpu_operator_ns}" \
         --create-namespace \
-        --values ${SCRIPT_DIR}/../../configs/values/gpu-operator/values.yaml \
+        --values "${SCRIPT_DIR}"/../../configs/values/gpu-operator/values.yaml \
         gpu-operator \
         nvidia/gpu-operator \
         --version "${GPU_OPERATOR_VERSION}"
@@ -183,7 +184,7 @@ function install_kube_prometheus() {
         sleep 5
     done
 
-    kubectl apply -f ${SCRIPT_DIR}/rbac.yaml
+    kubectl apply -f "${SCRIPT_DIR}/rbac.yaml"
 }
 
 function install_mpi_operator() {
