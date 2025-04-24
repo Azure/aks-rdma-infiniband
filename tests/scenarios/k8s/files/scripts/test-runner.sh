@@ -13,12 +13,12 @@ TESTS_DIR="/root/tests"
 
 function sockperf() {
     # Can run on IB interface or regular NICs.
-    bash ${TESTS_DIR}/sockperf-test.sh ${ROLE}
+    bash ${TESTS_DIR}/sockperf-test.sh "${ROLE}"
 }
 
 function rdma_test() {
     # Needs IB devices, doesn't matter if there are GPUs or not.
-    bash ${TESTS_DIR}/rdma_test.sh ${ROLE} leader
+    bash ${TESTS_DIR}/rdma_test.sh "${ROLE}" leader
 }
 
 function _check_if_lspci_available() {
@@ -39,7 +39,7 @@ function nccl_test_vllm_rdma() {
             --nproc-per-node=gpu \
             --rdzv_backend=static \
             --rdzv_endpoint=leader:29500 \
-            --node_rank=${TORCH_RUN_RANK} \
+            --node_rank="${TORCH_RUN_RANK}" \
             ${TESTS_DIR}/vllm-rdma.py
     else
         echo "No NVIDIA GPUs found. Skipping GPU tests."
@@ -56,7 +56,7 @@ function nccl_test_gpudirect_rdma() {
             --nproc-per-node=gpu \
             --rdzv_backend=static \
             --rdzv_endpoint=leader:29500 \
-            --node_rank=${TORCH_RUN_RANK} \
+            --node_rank="${TORCH_RUN_RANK}" \
             ${TESTS_DIR}/verify_gpudirect_rdma.py
     else
         echo "No NVIDIA GPUs found. Skipping GPU tests."

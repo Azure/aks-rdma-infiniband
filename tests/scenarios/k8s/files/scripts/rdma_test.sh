@@ -14,7 +14,6 @@ else
     echo "Debug mode is disabled. Set env var 'DEBUG=true' to enable debug mode."
 fi
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 # Set the RDMA port
 export PORT=18515
 
@@ -117,6 +116,7 @@ elif [[ "$1" == "client" && -n "$2" ]]; then
         check_ib_device_is_active
 
         # Run RDMA ping-pong test
+        echo -e "\nStarting RDMA client 'ibv_rc_pingpong' for $IB_DEVICE (Port $PORT)...\n"
         # Try this command until the server is ready
         until ibv_rc_pingpong --ib-dev "$IB_DEVICE" -p $PORT "$SERVER_IP"; do
             echo "Waiting for 'ibv_rc_pingpong' server to be ready for $IB_DEVICE..."
@@ -124,18 +124,21 @@ elif [[ "$1" == "client" && -n "$2" ]]; then
         done
 
         # Run RDMA latency test
+        echo -e "\nStarting RDMA client 'ib_read_lat' for $IB_DEVICE (Port $PORT)...\n"
         until ib_read_lat --ib-dev "$IB_DEVICE" -p $PORT "$SERVER_IP"; do
             echo "Waiting for 'ib_read_lat' server to be ready for $IB_DEVICE..."
             sleep 2
         done
 
         # Run RDMA bandwidth test
+        echo -e "\nStarting RDMA client 'ib_read_bw' for $IB_DEVICE (Port $PORT)...\n"
         until ib_read_bw --ib-dev "$IB_DEVICE" -p $PORT -n 5000 -a -F --report_gbits -q 1 "$SERVER_IP"; do
             echo "Waiting for 'ib_read_bw' server to be ready for $IB_DEVICE..."
             sleep 2
         done
 
         # Run RDMA write bandwidth test
+        echo -e "\nStarting RDMA client 'ib_write_bw' for $IB_DEVICE (Port $PORT)...\n"
         until ib_write_bw --ib-dev "$IB_DEVICE" -p $PORT -n 5000 -a -F --report_gbits -q 1 "$SERVER_IP"; do
             echo "Waiting for 'ib_write_bw' server to be ready for $IB_DEVICE..."
             sleep 2

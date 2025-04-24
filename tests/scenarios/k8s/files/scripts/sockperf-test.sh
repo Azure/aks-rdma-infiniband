@@ -42,12 +42,12 @@ if [[ "$1" == "server" ]]; then
     if ip addr show net1 2>/dev/null; then
         ipoib_ip=$(ip -j -4 addr show net1 | jq -r '.[0].addr_info[] | select(.family=="inet") | .local')
         echo -e "\nStarting sockperf test server on IPOIB interface...\n\n"
-        sockperf server -i ${ipoib_ip} --port ${IPOIB_PORT} --tcp --msg-size=1472 --daemonize &
+        sockperf server -i "${ipoib_ip}" --port ${IPOIB_PORT} --tcp --msg-size=1472 --daemonize &
     fi
 
     eth0_ip=$(ip -j -4 addr show eth0 | jq -r '.[0].addr_info[] | select(.family=="inet") | .local')
     echo -e "\nStarting sockperf test server on eth0 interface...\n\n"
-    sockperf server -i ${eth0_ip} --port ${ETH0_PORT} --tcp --msg-size=1472 --daemonize &
+    sockperf server -i "${eth0_ip}" --port ${ETH0_PORT} --tcp --msg-size=1472 --daemonize &
 
     # Wait for the exit server to terminate
     wait ${EXIT_SERVER_PID}
