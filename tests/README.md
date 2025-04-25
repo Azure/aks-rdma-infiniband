@@ -86,6 +86,8 @@ Run all the non-GPU tests:
 ./tests/scenarios/test.sh ipoib-nic-policy all
 ```
 
+In this document, you can find the details of each test and what are the ideals results to expect from it.
+
 ## FAQ
 
 ### How do I save the voluminous logs?
