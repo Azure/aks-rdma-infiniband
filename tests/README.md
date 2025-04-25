@@ -86,7 +86,7 @@ Run all the non-GPU tests:
 ./tests/scenarios/test.sh ipoib-nic-policy all
 ```
 
-In this document, you can find the details of each test and what are the ideals results to expect from it.
+In [this document](expected-output.md), you can find the details of each test and what are the ideals results to expect from it.
 
 ## FAQ
 
@@ -113,3 +113,17 @@ ncclEnvVars:
 - `NCCL_DEBUG` controls the verbosity of the NCCL library. This is useful for debugging the NCCL library itself. Valid values are `VERSION`, `WARN`, `INFO`, and `TRACE`.
 - `NCCL_DEBUG_SUBSYS` controls the verbosity of the NCCL library for specific subsystems. For example, `INIT` and `NET` are two subsystems that can be enabled for debugging.
 - `DEBUG` enables the bash scripts to run with `set -x` so as to print each command before executing it. This is useful for debugging the scripts.
+
+### I can't run mpijob tests, because I get an error: `no matches for kind "MPIJob" in version "kubeflow.org/v2beta1"`, what do I do?
+
+This error indicates that the MPI operator is not installed in your cluster. To install the MPI operator, run the following command:
+
+```bash
+./tests/setup-infra/deploy-aks.sh install-mpi-operator
+```
+
+Once done, you can uninstall it by running the following command:
+
+```bash
+./tests/setup-infra/deploy-aks.sh uninstall-mpi-operator
+```
