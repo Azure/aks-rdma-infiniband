@@ -1,0 +1,4 @@
+ncclEnvVars:
+  NCCL_DEBUG: INFO             # Valid values: VERSION, WARN, INFO, TRACE
+  NCCL_DEBUG_SUBSYS: INIT,NET
+  DEBUG: "true"                  # Enable script in verbose mode.
