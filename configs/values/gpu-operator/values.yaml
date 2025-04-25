@@ -16,3 +16,5 @@ sandboxDevicePlugin:
 dcgmExporter:
   serviceMonitor:
     enabled: true
+    additionalLabels:
+      release: kube-prometheus
