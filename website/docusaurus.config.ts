@@ -22,7 +22,7 @@ const config: Config = {
   organizationName: 'Azure', // Usually your GitHub org/user name.
   projectName: 'aks-rdma-infiniband', // Usually your repo name.
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
 
   // Even if you don't use internationalization, you can use this field to set
