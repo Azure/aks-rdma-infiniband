@@ -1,18 +1,10 @@
 ---
-title: GPU Operator
+title: GPU Drivers
 ---
 
-This guide details recommended configurations for GPU Operator to enable GPU workload, with specific settings for GPUDirect RDMA integration.
-
-:::tip
-This guide assumes a basic understanding of GPU Operator and its role in Kubernetes clusters. Readers unfamiliar with GPU Operator are advised to review the official [guide](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html) before proceeding. The concepts and recommended configurations presented here build on that foundation to enable GPU workload and GPUDirect RDMA in AKS.
-:::
+This guide details recommended configurations to enable GPU drivers with specific settings for GPUDirect RDMA integration. Users can choose between AKS-managed GPU drivers or the NVIDIA GPU Operator for driver lifecycle management. The guide also provides examples of how to configure pods to utilize GPUDirect RDMA with different device plugin options.
 
 ## GPU Drivers: AKS-managed vs. GPU Operator-managed
-
-:::danger
-AKS-managed GPU drivers and the NVIDIA GPU Operator managed GPU drivers are **mutually exclusive** and cannot coexist. When you create a nodepool **without** the `--skip-gpu-driver-install` flag, AKS provisions it with a node image that includes pre-installed NVIDIA drivers and the NVIDIA container runtime. Installing GPU Operator subsequently replaces this setup by deploying its own `nvidia-container-toolkit`, overriding the AKS-managed configuration. Upon uninstalling GPU Operator, the toolkit cannot revert to the original AKS containerd configuration, as it lacks awareness of the prior state, potentially disrupting the node’s container runtime and impairing workload execution.
-:::
 
 When provisioning GPU nodepools in an AKS cluster, the cluster administrator has the option to either rely on the default GPU driver installation managed by AKS or via GPU Operator. This decision impacts cluster setup, maintenance, and compatibility.
 
@@ -22,17 +14,35 @@ When provisioning GPU nodepools in an AKS cluster, the cluster administrator has
 | **Complexity** | Simple, no additional components except device plugins                             | More complex, requires GPU Operator and additional components                             |
 | **Support**    | Fully supported by AKS; no preview features                                        | `--skip-gpu-driver-install` is a preview feature; limited support available               |
 
+:::danger
+AKS-managed GPU drivers and the NVIDIA GPU Operator managed GPU drivers are **mutually exclusive** and cannot coexist. When you create a nodepool **without** the `--skip-gpu-driver-install` flag, AKS provisions the nodepool with NVIDIA drivers and the NVIDIA container runtime. Installing GPU Operator subsequently replaces this setup by deploying its own `nvidia-container-toolkit`, overriding the AKS-managed configuration. Upon uninstalling GPU Operator, the toolkit cannot revert to the original AKS containerd configuration, as it lacks awareness of the prior state, potentially disrupting the node’s container runtime and impairing workload execution.
+:::
+
 :::info
 Read more about the GPU driver installation options in AKS and the NVIDIA GPU Operator in the [AKS documentation](https://learn.microsoft.com/en-us/azure/aks/gpu-cluster?tabs=add-ubuntu-gpu-node-pool) and the [GPU Operator documentation](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/microsoft-aks.html).
 :::
 
-## GPU Operator Deployment
+### Option 1: AKS-managed GPU Driver
 
 :::warning
-Please proceed with GPU operator installation only if you have created the nodepool with the `--skip-gpu-driver-install` flag as described in [prerequisites documentation](../getting-started/02-prerequisites.md#nodepool-with-gpus).
+Please proceed with GPU operator installation only if you have created the nodepool **without** the `--skip-gpu-driver-install` flag as described in [prerequisites documentation](../getting-started/02-prerequisites.md#aks-managed-gpu-driver).
 :::
 
-### Operator
+To enable GPUDirect RDMA, the `nvidia-peermem` kernel module must be loaded on the GPU nodes. The AKS-managed GPU driver installation does not load the Nvidia peer memory kernel module automatically. To ensure that this module is loaded on all GPU nodes, run the following command:
+
+```bash
+kubectl apply -k https://github.com/Azure/aks-rdma-infiniband/configs/nvidia-peermem-reloader
+```
+
+### Option 2: GPU Operator Deployment
+
+:::tip
+This section assumes a basic understanding of GPU Operator and its role in Kubernetes clusters. Readers unfamiliar with GPU Operator are advised to review the official [guide](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html) before proceeding. The concepts and recommended configurations presented here build on that foundation to enable GPU workload and GPUDirect RDMA in AKS.
+:::
+
+:::warning
+Please proceed with GPU operator installation only if you have created the nodepool **with** the `--skip-gpu-driver-install` flag as described in [prerequisites documentation](../getting-started/02-prerequisites.md#gpu-operator-managed-gpu-driver).
+:::
 
 GPU Operator is deployed using [Helm](https://helm.sh/), and the [default Helm values](https://github.com/NVIDIA/gpu-operator/blob/v25.3.0/deployments/gpu-operator/values.yaml) are customized to align with the Network Operator and AKS requirements. Key adjustments to the Helm values disable redundant components such as NFD and enable RDMA support.
 
