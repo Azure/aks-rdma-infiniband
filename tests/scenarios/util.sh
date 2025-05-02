@@ -167,7 +167,7 @@ function find_gpu_per_node() {
 }
 
 function cleanup_cm() {
-    kubectl delete configmap nvidia-topology
+    kubectl delete configmap nvidia-topology || true
 }
 
 function topo_file_name() {
