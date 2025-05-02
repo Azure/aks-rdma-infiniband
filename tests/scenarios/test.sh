@@ -313,7 +313,7 @@ nccl_test_gpudirect_rdma | nccl-test-gpudirect-rdma | mpijob | debug | all) ;;
     ;;
 esac
 
-create_topo_configmap
+[[ ${subcmd} == "mpijob" ]] && create_topo_configmap
 trap cleanup_cm EXIT
 
 ${DEPLOY_METHOD_FUNC}

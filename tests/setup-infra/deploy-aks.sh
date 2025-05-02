@@ -198,7 +198,7 @@ deploy-aks | deploy_aks)
     download_aks_credentials --overwrite-existing
     ;;
 add-nodepool | add_nodepool)
-    add_nodepool --skip-gpu-driver-install
+    add_nodepool "${@:2}"
     ;;
 install-network-operator | install_network_operator)
     install_network_operator
