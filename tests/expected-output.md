@@ -84,7 +84,7 @@ Starting RDMA client 'ib_read_lat' for mlx5_0 (Port 18515)...
 ...
 ```
 
-You should see the average time less than 6 usec for 1000 iterations.
+You should see the average time (t_avg) less than 6 usec for 1000 iterations.
 
 - **3. `ib_read_bw`**:
 
@@ -241,6 +241,9 @@ To start a `sockperf` test in a `sriov-nic-policy-gpu` scenario, run the followi
 ```bash
 ./tests/scenarios/test.sh sriov-nic-policy-gpu sockperf
 ```
+
+> [!NOTE]
+> Sometimes `sockperf` may fail with intermittent errors like: `sockperf: '-i/-p': invalid host:port value: Name or service not known`. You can rerun the test until it succeeds.
 
 **Expected output**
 
@@ -552,3 +555,59 @@ Expected values:
 - `throughput`
   - Message Rate: Should be greater than 500,000 msg/sec.
   - Bandwidth: Should be greater than 6000 Mbps.
+
+## 4. sriov-nic-policy
+
+### 4.1. rdma-test
+
+To start a `rdma-test` in a `sriov-nic-policy` scenario, run the following command:
+
+```bash
+./tests/scenarios/test.sh sriov-nic-policy rdma-test
+```
+
+The expected output will be similar to the `rdma-test` output in the `sriov-nic-policy-gpu` scenario, [here](#12-rdma-test).
+
+### 4.2. sockperf
+
+To start a `sockperf` test in a `sriov-nic-policy` scenario, run the following command:
+
+```bash
+./tests/scenarios/test.sh sriov-nic-policy sockperf
+```
+
+The expected output will be similar to the `sockperf` output in the `sriov-nic-policy-gpu` scenario, [here](#15-sockperf).
+
+## 5. rdma-shared-device-plugin
+
+### 5.1. rdma-test
+
+To start a `rdma-test` in a `rdma-shared-device-plugin` scenario, run the following command:
+
+```bash
+./tests/scenarios/test.sh rdma-shared-device-plugin rdma-test
+```
+
+The expected output will be similar to the `rdma-test` output in the `sriov-nic-policy-gpu` scenario, [here](#12-rdma-test).
+
+### 5.2. sockperf
+
+To start a `sockperf` test in a `rdma-shared-device-plugin` scenario, run the following command:
+
+```bash
+./tests/scenarios/test.sh rdma-shared-device-plugin sockperf
+```
+
+The expected output will be similar to the `sockperf` output in the `sriov-nic-policy-gpu` scenario, [here](#15-sockperf).
+
+## 6. ipoib-nic-policy
+
+### 6.1. sockperf
+
+To start a `sockperf` test in a `ipoib-nic-policy` scenario, run the following command:
+
+```bash
+./tests/scenarios/test.sh ipoib-nic-policy sockperf
+```
+
+The expected output will be similar to the `sockperf` output in the `ipoib-nic-policy-gpu` scenario, [here](#34-sockperf).
