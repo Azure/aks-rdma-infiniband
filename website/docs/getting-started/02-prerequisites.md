@@ -62,7 +62,7 @@ az feature show \
 
 #### GPU Operator Managed GPU Driver
 
-To create an AKS nodepool **without** GPU Driver installation by AKS and with [GPU Operator](../configurations/02-gpu-operator.md), use the following command:
+To create an AKS nodepool **without** GPU Driver installation by AKS and with [GPU Operator](../configurations/02-gpu-drivers.md#option-2-gpu-operator-deployment), use the following command:
 
 ```bash
 az extension add -n aks-preview
