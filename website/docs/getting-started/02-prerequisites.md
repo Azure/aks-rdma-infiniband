@@ -65,7 +65,6 @@ az feature show \
 To create an AKS nodepool **without** GPU Driver installation by AKS and with [GPU Operator](../configurations/02-gpu-drivers.md#option-2-gpu-operator-deployment), use the following command:
 
 ```bash
-az extension add -n aks-preview
 az aks nodepool add \
   --resource-group "${AZURE_RESOURCE_GROUP}" \
   --cluster-name "${CLUSTER_NAME}" \
@@ -74,7 +73,7 @@ az aks nodepool add \
   --node-vm-size "${NODEPOOL_VM_SIZE}" \
   --os-sku Ubuntu \
   # highlight-next-line
-  --skip-gpu-driver-install
+  --gpu-driver none
 ```
 
 #### AKS Managed GPU Driver
