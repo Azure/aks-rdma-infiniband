@@ -60,15 +60,12 @@ function deploy_aks() {
 
 # add_nodepool adds a new node pool to the AKS cluster. You can provide additional
 # arguments to the function. For example a call would look like this:
-# `add_nodepool --skip-gpu-driver-install --node-osdisk-size 48`
+# `add_nodepool --gpu-driver none --node-osdisk-size 48`
 function add_nodepool() {
     # Node pool specific variables
     : "${NODE_POOL_VM_SIZE:?Environment variable NODE_POOL_VM_SIZE must be set}"
     : "${NODE_POOL_NAME:=ibnodepool}"
     : "${NODE_POOL_NODE_COUNT:=2}"
-
-    az extension add --name aks-preview || true
-    az extension update --name aks-preview || true
 
     aks_infiniband_support="az feature show \
         --namespace Microsoft.ContainerService \
@@ -220,7 +217,7 @@ all)
     download_aks_credentials --overwrite-existing
     install_kube_prometheus
     install_mpi_operator
-    add_nodepool --skip-gpu-driver-install
+    add_nodepool --gpu-driver=none
     install_network_operator
     ;;
 *)
