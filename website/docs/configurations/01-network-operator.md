@@ -2,10 +2,10 @@
 title: Network Operator
 ---
 
-This guide details recommended configurations for Network Operator v25.1.0 to enable RDMA over InfiniBand, optimized for AKS environments with Mellanox NICs.
+This guide details recommended configurations for Network Operator to enable RDMA over InfiniBand, optimized for AKS environments with Mellanox NICs.
 
 :::tip
-This guide assumes a basic understanding of Network Operator and its role in Kubernetes clusters. Readers unfamiliar with the Network Operator are advised to review the official [Getting Started Guide](https://docs.nvidia.com/networking/display/kubernetes2501/getting-started-kubernetes.html) before proceeding. The concepts and recommended configurations presented here build on that foundation to enable RDMA over InfiniBand in AKS. This documentation is based on Network Operator v25.1.0.
+This guide assumes a basic understanding of Network Operator and its role in Kubernetes clusters. Readers unfamiliar with the Network Operator are advised to review the official [Getting Started Guide](https://docs.nvidia.com/networking/display/kubernetes2501/getting-started-kubernetes.html) before proceeding. The concepts and recommended configurations presented here build on that foundation to enable RDMA over InfiniBand in AKS.
 :::
 
 ## Network Operator Deployment

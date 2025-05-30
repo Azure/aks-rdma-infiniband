@@ -20,6 +20,7 @@ fi
 
 # Versions
 : "${GPU_OPERATOR_VERSION:=v25.3.0}"
+: "${NETWORK_OPERATOR_VERSION:=v25.1.0}"
 : "${MPI_OPERATOR_VERSION:=v0.6.0}" # Latest version: https://github.com/kubeflow/mpi-operator/releases
 
 function check_prereqs() {
@@ -115,7 +116,7 @@ function install_network_operator() {
         --values "${SCRIPT_DIR}"/../../configs/values/network-operator/values.yaml \
         network-operator \
         nvidia/network-operator \
-        --version v25.1.0
+        --version "${NETWORK_OPERATOR_VERSION}"
 
     kubectl apply -f "${SCRIPT_DIR}"/network-operator-nfd.yaml
     kubectl apply -k "${SCRIPT_DIR}"/../../configs/nicclusterpolicy/base
