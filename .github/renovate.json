@@ -49,6 +49,17 @@
                 "https://github.com/Mellanox/network-operator/blob/v(?<currentValue>.*?)/deployment/network-operator/values.yaml",
                 "(?m)^\\s*--version v(?<currentValue>v?[0-9.]+)"
             ]
+        },
+        {
+            "depNameTemplate": "kubeflow/mpi-operator",
+            "datasourceTemplate": "github-releases",
+            "versioningTemplate": "semver",
+            "fileMatch": [
+                "tests/setup-infra/deploy-aks.sh"
+            ],
+            "matchStrings": [
+                ":\\s*\"\\${MPI_OPERATOR_VERSION:=v(?<currentValue>[0-9.]+)}\""
+            ]
         }
     ]
 }
