@@ -9,10 +9,12 @@ HPC workloads, including distributed AI model training and serving require effic
 
 ## Core Components
 
-This guide focuses on two NVIDIA operators that enable these functionalities within AKS clusters: the NVIDIA [Network Operator](https://docs.nvidia.com/networking/display/cokan10/network+operator) and the NVIDIA [GPU Operator](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html). To streamline deployment and ensure optimal performance, this documentation provides recommended configurations and Helm values for both operators, tailored to Azure’s high-performance infrastructure.
+This guide focuses on ways of enabling RDMA over InfiniBand on AKS clusters. To enable this functionality, we recommend using Nvidia [Network Operator](https://docs.nvidia.com/networking/display/cokan10/network+operator). Furthermore, it provides guidance on configuring GPUs using AKS-managed GPU drivers or using the Nvidia [GPU Operator](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html). To streamline deployment and ensure optimal performance, this documentation provides recommended configurations and Helm values for both operators, tailored to Azure’s high-performance infrastructure.
 
 - 🌐 **Network Operator**: Automates the deployment and management of networking components, including Mellanox NICs and drivers, to support RDMA over Infiniband.
-- 🖥️ **GPU Operator**: Facilitates the deployment and management of NVIDIA GPU drivers, container runtimes, and Kubernetes device plugins, ensuring that GPUs are correctly configured for pods. The official [GPU Operator documentation on AKS](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/microsoft-aks.html) is a good starting point for understanding GPU Operator's role in AKS clusters.
+- 🤖 **GPU Drivers**:
+  - **AKS-managed GPU drivers**: These are the default GPU drivers provided by AKS, which can be used without additional configuration.
+  - **GPU Operator**: Facilitates the deployment and management of NVIDIA GPU drivers, container runtimes, and Kubernetes device plugins, ensuring that GPUs are correctly configured for pods. The official [GPU Operator documentation on AKS](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/microsoft-aks.html) is a good starting point for understanding GPU Operator's role in AKS clusters.
 
 These operators integrate with Azure’s HPC virtual machine offerings (e.g., `NDasrA100_v4`, `NDm_A100_v4`) and Mellanox ConnectX NICs to provide a solution for deploying and managing HPC workloads on AKS.
 
