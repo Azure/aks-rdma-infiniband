@@ -9,7 +9,7 @@ HPC workloads, including distributed AI model training and serving require effic
 
 ## Core Components
 
-This guide focuses on ways of enabling RDMA over InfiniBand on AKS clusters. To enable this functionality, we recommend using Nvidia [Network Operator](https://docs.nvidia.com/networking/display/cokan10/network+operator). Furthermore, it provides guidance on configuring GPUs using AKS-managed GPU drivers or using the Nvidia [GPU Operator](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html). To streamline deployment and ensure optimal performance, this documentation provides recommended configurations and Helm values for both operators, tailored to Azure’s high-performance infrastructure.
+This guide focuses on ways of enabling RDMA over InfiniBand on AKS clusters. To enable this functionality in a self-managed fashion, we recommend using NVIDIA [Network Operator](https://docs.nvidia.com/networking/display/cokan10/network+operator). Furthermore, it provides guidance on configuring GPUs using AKS-managed GPU drivers or using the Nvidia [GPU Operator](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html). To streamline deployment and ensure optimal performance, this documentation provides recommended configurations and Helm values for both operators, tailored to Azure’s high-performance infrastructure.
 
 - 🌐 **Network Operator**: Automates the deployment and management of networking components, including Mellanox NICs and drivers, to support RDMA over Infiniband.
 - 🤖 **GPU Drivers**:
