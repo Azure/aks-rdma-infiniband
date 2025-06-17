@@ -1623,7 +1623,7 @@
   resolved "https://registry.yarnpkg.com/@docsearch/css/-/css-3.9.0.tgz#3bc29c96bf024350d73b0cfb7c2a7b71bf251cd5"
   integrity sha512-cQbnVbq0rrBwNAKegIac/t6a8nWoUAn8frnkLFW6YARaRmAQr5/Eoe6Ln2fqkUCZ40KpdrKbpSAmgrkviOxuWA==
 
-"@docsearch/react@^3.8.1", "@docsearch/react@^3.9.0":
+"@docsearch/react@^3.9.0":
   version "3.9.0"
   resolved "https://registry.yarnpkg.com/@docsearch/react/-/react-3.9.0.tgz#d0842b700c3ee26696786f3c8ae9f10c1a3f0db3"
   integrity sha512-mb5FOZYZIkRQ6s/NWnM98k879vu5pscWqTLubLFBO87igYYT4VzVazh4h5o/zCvTIZgEt3PvsCOMOswOUo9yHQ==
@@ -1928,19 +1928,6 @@
     vfile "^6.0.1"
     webpack "^5.88.1"
 
-"@docusaurus/module-type-aliases@3.7.0":
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/@docusaurus/module-type-aliases/-/module-type-aliases-3.7.0.tgz#15c0745b829c6966c5b3b2c2527c72b54830b0e5"
-  integrity sha512-g7WdPqDNaqA60CmBrr0cORTrsOit77hbsTj7xE2l71YhBn79sxdm7WMK7wfhcaafkbpIh7jv5ef5TOpf1Xv9Lg==
-  dependencies:
-    "@docusaurus/types" "3.7.0"
-    "@types/history" "^4.7.11"
-    "@types/react" "*"
-    "@types/react-router-config" "*"
-    "@types/react-router-dom" "*"
-    react-helmet-async "npm:@slorber/react-helmet-async@*"
-    react-loadable "npm:@docusaurus/react-loadable@6.0.0"
-
 "@docusaurus/module-type-aliases@3.8.1":
   version "3.8.1"
   resolved "https://registry.yarnpkg.com/@docusaurus/module-type-aliases/-/module-type-aliases-3.8.1.tgz#454de577bd7f50b5eae16db0f76b49ca5e4e281a"
@@ -1954,50 +1941,27 @@
     react-helmet-async "npm:@slorber/react-helmet-async@1.3.0"
     react-loadable "npm:@docusaurus/react-loadable@6.0.0"
 
-"@docusaurus/plugin-content-blog@3.7.0":
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-content-blog/-/plugin-content-blog-3.7.0.tgz#7bd69de87a1f3adb652e1473ef5b7ccc9468f47e"
-  integrity sha512-EFLgEz6tGHYWdPU0rK8tSscZwx+AsyuBW/r+tNig2kbccHYGUJmZtYN38GjAa3Fda4NU+6wqUO5kTXQSRBQD3g==
+"@docusaurus/plugin-content-blog@3.8.1":
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-content-blog/-/plugin-content-blog-3.8.1.tgz#88d842b562b04cf59df900d9f6984b086f821525"
+  integrity sha512-vNTpMmlvNP9n3hGEcgPaXyvTljanAKIUkuG9URQ1DeuDup0OR7Ltvoc8yrmH+iMZJbcQGhUJF+WjHLwuk8HSdw==
   dependencies:
-    "@docusaurus/core" "3.7.0"
-    "@docusaurus/logger" "3.7.0"
-    "@docusaurus/mdx-loader" "3.7.0"
-    "@docusaurus/theme-common" "3.7.0"
-    "@docusaurus/types" "3.7.0"
-    "@docusaurus/utils" "3.7.0"
-    "@docusaurus/utils-common" "3.7.0"
-    "@docusaurus/utils-validation" "3.7.0"
+    "@docusaurus/core" "3.8.1"
+    "@docusaurus/logger" "3.8.1"
+    "@docusaurus/mdx-loader" "3.8.1"
+    "@docusaurus/theme-common" "3.8.1"
+    "@docusaurus/types" "3.8.1"
+    "@docusaurus/utils" "3.8.1"
+    "@docusaurus/utils-common" "3.8.1"
+    "@docusaurus/utils-validation" "3.8.1"
     cheerio "1.0.0-rc.12"
     feed "^4.2.2"
     fs-extra "^11.1.1"
     lodash "^4.17.21"
-    reading-time "^1.5.0"
+    schema-dts "^1.1.2"
     srcset "^4.0.0"
     tslib "^2.6.0"
     unist-util-visit "^5.0.0"
-    utility-types "^3.10.0"
-    webpack "^5.88.1"
-
-"@docusaurus/plugin-content-docs@3.7.0":
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-content-docs/-/plugin-content-docs-3.7.0.tgz#297a549e926ee2b1147b5242af6f21532c7b107c"
-  integrity sha512-GXg5V7kC9FZE4FkUZA8oo/NrlRb06UwuICzI6tcbzj0+TVgjq/mpUXXzSgKzMS82YByi4dY2Q808njcBCyy6tQ==
-  dependencies:
-    "@docusaurus/core" "3.7.0"
-    "@docusaurus/logger" "3.7.0"
-    "@docusaurus/mdx-loader" "3.7.0"
-    "@docusaurus/module-type-aliases" "3.7.0"
-    "@docusaurus/theme-common" "3.7.0"
-    "@docusaurus/types" "3.7.0"
-    "@docusaurus/utils" "3.7.0"
-    "@docusaurus/utils-common" "3.7.0"
-    "@docusaurus/utils-validation" "3.7.0"
-    "@types/react-router-config" "^5.0.7"
-    combine-promises "^1.1.0"
-    fs-extra "^11.1.1"
-    js-yaml "^4.1.0"
-    lodash "^4.17.21"
-    tslib "^2.6.0"
     utility-types "^3.10.0"
     webpack "^5.88.1"
 
@@ -2025,159 +1989,153 @@
     utility-types "^3.10.0"
     webpack "^5.88.1"
 
-"@docusaurus/plugin-content-pages@3.7.0":
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-content-pages/-/plugin-content-pages-3.7.0.tgz#c4a8f7237872236aacb77665822c474c0a00e91a"
-  integrity sha512-YJSU3tjIJf032/Aeao8SZjFOrXJbz/FACMveSMjLyMH4itQyZ2XgUIzt4y+1ISvvk5zrW4DABVT2awTCqBkx0Q==
+"@docusaurus/plugin-content-pages@3.8.1":
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-content-pages/-/plugin-content-pages-3.8.1.tgz#41b684dbd15390b7bb6a627f78bf81b6324511ac"
+  integrity sha512-a+V6MS2cIu37E/m7nDJn3dcxpvXb6TvgdNI22vJX8iUTp8eoMoPa0VArEbWvCxMY/xdC26WzNv4wZ6y0iIni/w==
   dependencies:
-    "@docusaurus/core" "3.7.0"
-    "@docusaurus/mdx-loader" "3.7.0"
-    "@docusaurus/types" "3.7.0"
-    "@docusaurus/utils" "3.7.0"
-    "@docusaurus/utils-validation" "3.7.0"
+    "@docusaurus/core" "3.8.1"
+    "@docusaurus/mdx-loader" "3.8.1"
+    "@docusaurus/types" "3.8.1"
+    "@docusaurus/utils" "3.8.1"
+    "@docusaurus/utils-validation" "3.8.1"
     fs-extra "^11.1.1"
     tslib "^2.6.0"
     webpack "^5.88.1"
 
-"@docusaurus/plugin-debug@3.7.0":
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-debug/-/plugin-debug-3.7.0.tgz#a4fd45132e40cffe96bb51f48e89982a1cb8e194"
-  integrity sha512-Qgg+IjG/z4svtbCNyTocjIwvNTNEwgRjSXXSJkKVG0oWoH0eX/HAPiu+TS1HBwRPQV+tTYPWLrUypYFepfujZA==
+"@docusaurus/plugin-css-cascade-layers@3.8.1":
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-css-cascade-layers/-/plugin-css-cascade-layers-3.8.1.tgz#cb414b4a82aa60fc64ef2a435ad0105e142a6c71"
+  integrity sha512-VQ47xRxfNKjHS5ItzaVXpxeTm7/wJLFMOPo1BkmoMG4Cuz4nuI+Hs62+RMk1OqVog68Swz66xVPK8g9XTrBKRw==
   dependencies:
-    "@docusaurus/core" "3.7.0"
-    "@docusaurus/types" "3.7.0"
-    "@docusaurus/utils" "3.7.0"
+    "@docusaurus/core" "3.8.1"
+    "@docusaurus/types" "3.8.1"
+    "@docusaurus/utils" "3.8.1"
+    "@docusaurus/utils-validation" "3.8.1"
+    tslib "^2.6.0"
+
+"@docusaurus/plugin-debug@3.8.1":
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-debug/-/plugin-debug-3.8.1.tgz#45b107e46b627caaae66995f53197ace78af3491"
+  integrity sha512-nT3lN7TV5bi5hKMB7FK8gCffFTBSsBsAfV84/v293qAmnHOyg1nr9okEw8AiwcO3bl9vije5nsUvP0aRl2lpaw==
+  dependencies:
+    "@docusaurus/core" "3.8.1"
+    "@docusaurus/types" "3.8.1"
+    "@docusaurus/utils" "3.8.1"
     fs-extra "^11.1.1"
-    react-json-view-lite "^1.2.0"
+    react-json-view-lite "^2.3.0"
     tslib "^2.6.0"
 
-"@docusaurus/plugin-google-analytics@3.7.0":
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-google-analytics/-/plugin-google-analytics-3.7.0.tgz#d20f665e810fb2295d1c1bbfe13398c5ff42eb24"
-  integrity sha512-otIqiRV/jka6Snjf+AqB360XCeSv7lQC+DKYW+EUZf6XbuE8utz5PeUQ8VuOcD8Bk5zvT1MC4JKcd5zPfDuMWA==
+"@docusaurus/plugin-google-analytics@3.8.1":
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-google-analytics/-/plugin-google-analytics-3.8.1.tgz#64a302e62fe5cb6e007367c964feeef7b056764a"
+  integrity sha512-Hrb/PurOJsmwHAsfMDH6oVpahkEGsx7F8CWMjyP/dw1qjqmdS9rcV1nYCGlM8nOtD3Wk/eaThzUB5TSZsGz+7Q==
   dependencies:
-    "@docusaurus/core" "3.7.0"
-    "@docusaurus/types" "3.7.0"
-    "@docusaurus/utils-validation" "3.7.0"
+    "@docusaurus/core" "3.8.1"
+    "@docusaurus/types" "3.8.1"
+    "@docusaurus/utils-validation" "3.8.1"
     tslib "^2.6.0"
 
-"@docusaurus/plugin-google-gtag@3.7.0":
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-google-gtag/-/plugin-google-gtag-3.7.0.tgz#a48638dfd132858060458b875a440b6cbda6bf8f"
-  integrity sha512-M3vrMct1tY65ModbyeDaMoA+fNJTSPe5qmchhAbtqhDD/iALri0g9LrEpIOwNaoLmm6lO88sfBUADQrSRSGSWA==
+"@docusaurus/plugin-google-gtag@3.8.1":
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-google-gtag/-/plugin-google-gtag-3.8.1.tgz#8c76f8a1d96448f2f0f7b10e6bde451c40672b95"
+  integrity sha512-tKE8j1cEZCh8KZa4aa80zpSTxsC2/ZYqjx6AAfd8uA8VHZVw79+7OTEP2PoWi0uL5/1Is0LF5Vwxd+1fz5HlKg==
   dependencies:
-    "@docusaurus/core" "3.7.0"
-    "@docusaurus/types" "3.7.0"
-    "@docusaurus/utils-validation" "3.7.0"
+    "@docusaurus/core" "3.8.1"
+    "@docusaurus/types" "3.8.1"
+    "@docusaurus/utils-validation" "3.8.1"
     "@types/gtag.js" "^0.0.12"
     tslib "^2.6.0"
 
-"@docusaurus/plugin-google-tag-manager@3.7.0":
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-google-tag-manager/-/plugin-google-tag-manager-3.7.0.tgz#0a4390f4b0e760d073bdb1905436bfa7bd71356b"
-  integrity sha512-X8U78nb8eiMiPNg3jb9zDIVuuo/rE1LjGDGu+5m5CX4UBZzjMy+klOY2fNya6x8ACyE/L3K2erO1ErheP55W/w==
+"@docusaurus/plugin-google-tag-manager@3.8.1":
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-google-tag-manager/-/plugin-google-tag-manager-3.8.1.tgz#88241ffd06369f4a4d5fb982ff3ac2777561ae37"
+  integrity sha512-iqe3XKITBquZq+6UAXdb1vI0fPY5iIOitVjPQ581R1ZKpHr0qe+V6gVOrrcOHixPDD/BUKdYwkxFjpNiEN+vBw==
   dependencies:
-    "@docusaurus/core" "3.7.0"
-    "@docusaurus/types" "3.7.0"
-    "@docusaurus/utils-validation" "3.7.0"
+    "@docusaurus/core" "3.8.1"
+    "@docusaurus/types" "3.8.1"
+    "@docusaurus/utils-validation" "3.8.1"
     tslib "^2.6.0"
 
-"@docusaurus/plugin-sitemap@3.7.0":
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-sitemap/-/plugin-sitemap-3.7.0.tgz#2c1bf9de26aeda455df6f77748e5887ace39b2d7"
-  integrity sha512-bTRT9YLZ/8I/wYWKMQke18+PF9MV8Qub34Sku6aw/vlZ/U+kuEuRpQ8bTcNOjaTSfYsWkK4tTwDMHK2p5S86cA==
+"@docusaurus/plugin-sitemap@3.8.1":
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-sitemap/-/plugin-sitemap-3.8.1.tgz#3aebd39186dc30e53023f1aab44625bc0bdac892"
+  integrity sha512-+9YV/7VLbGTq8qNkjiugIelmfUEVkTyLe6X8bWq7K5qPvGXAjno27QAfFq63mYfFFbJc7z+pudL63acprbqGzw==
   dependencies:
-    "@docusaurus/core" "3.7.0"
-    "@docusaurus/logger" "3.7.0"
-    "@docusaurus/types" "3.7.0"
-    "@docusaurus/utils" "3.7.0"
-    "@docusaurus/utils-common" "3.7.0"
-    "@docusaurus/utils-validation" "3.7.0"
+    "@docusaurus/core" "3.8.1"
+    "@docusaurus/logger" "3.8.1"
+    "@docusaurus/types" "3.8.1"
+    "@docusaurus/utils" "3.8.1"
+    "@docusaurus/utils-common" "3.8.1"
+    "@docusaurus/utils-validation" "3.8.1"
     fs-extra "^11.1.1"
     sitemap "^7.1.1"
     tslib "^2.6.0"
 
-"@docusaurus/plugin-svgr@3.7.0":
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-svgr/-/plugin-svgr-3.7.0.tgz#018e89efd615d5fde77b891a8c2aadf203013f5d"
-  integrity sha512-HByXIZTbc4GV5VAUkZ2DXtXv1Qdlnpk3IpuImwSnEzCDBkUMYcec5282hPjn6skZqB25M1TYCmWS91UbhBGxQg==
+"@docusaurus/plugin-svgr@3.8.1":
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-svgr/-/plugin-svgr-3.8.1.tgz#6f340be8eae418a2cce540d8ece096ffd9c9b6ab"
+  integrity sha512-rW0LWMDsdlsgowVwqiMb/7tANDodpy1wWPwCcamvhY7OECReN3feoFwLjd/U4tKjNY3encj0AJSTxJA+Fpe+Gw==
   dependencies:
-    "@docusaurus/core" "3.7.0"
-    "@docusaurus/types" "3.7.0"
-    "@docusaurus/utils" "3.7.0"
-    "@docusaurus/utils-validation" "3.7.0"
+    "@docusaurus/core" "3.8.1"
+    "@docusaurus/types" "3.8.1"
+    "@docusaurus/utils" "3.8.1"
+    "@docusaurus/utils-validation" "3.8.1"
     "@svgr/core" "8.1.0"
     "@svgr/webpack" "^8.1.0"
     tslib "^2.6.0"
     webpack "^5.88.1"
 
-"@docusaurus/preset-classic@3.7.0":
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/@docusaurus/preset-classic/-/preset-classic-3.7.0.tgz#f6656a04ae6a4877523dbd04f7c491632e4003b9"
-  integrity sha512-nPHj8AxDLAaQXs+O6+BwILFuhiWbjfQWrdw2tifOClQoNfuXDjfjogee6zfx6NGHWqshR23LrcN115DmkHC91Q==
+"@docusaurus/preset-classic@3.8.1":
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/@docusaurus/preset-classic/-/preset-classic-3.8.1.tgz#bb79fd12f3211363720c569a526c7e24d3aa966b"
+  integrity sha512-yJSjYNHXD8POMGc2mKQuj3ApPrN+eG0rO1UPgSx7jySpYU+n4WjBikbrA2ue5ad9A7aouEtMWUoiSRXTH/g7KQ==
   dependencies:
-    "@docusaurus/core" "3.7.0"
-    "@docusaurus/plugin-content-blog" "3.7.0"
-    "@docusaurus/plugin-content-docs" "3.7.0"
-    "@docusaurus/plugin-content-pages" "3.7.0"
-    "@docusaurus/plugin-debug" "3.7.0"
-    "@docusaurus/plugin-google-analytics" "3.7.0"
-    "@docusaurus/plugin-google-gtag" "3.7.0"
-    "@docusaurus/plugin-google-tag-manager" "3.7.0"
-    "@docusaurus/plugin-sitemap" "3.7.0"
-    "@docusaurus/plugin-svgr" "3.7.0"
-    "@docusaurus/theme-classic" "3.7.0"
-    "@docusaurus/theme-common" "3.7.0"
-    "@docusaurus/theme-search-algolia" "3.7.0"
-    "@docusaurus/types" "3.7.0"
+    "@docusaurus/core" "3.8.1"
+    "@docusaurus/plugin-content-blog" "3.8.1"
+    "@docusaurus/plugin-content-docs" "3.8.1"
+    "@docusaurus/plugin-content-pages" "3.8.1"
+    "@docusaurus/plugin-css-cascade-layers" "3.8.1"
+    "@docusaurus/plugin-debug" "3.8.1"
+    "@docusaurus/plugin-google-analytics" "3.8.1"
+    "@docusaurus/plugin-google-gtag" "3.8.1"
+    "@docusaurus/plugin-google-tag-manager" "3.8.1"
+    "@docusaurus/plugin-sitemap" "3.8.1"
+    "@docusaurus/plugin-svgr" "3.8.1"
+    "@docusaurus/theme-classic" "3.8.1"
+    "@docusaurus/theme-common" "3.8.1"
+    "@docusaurus/theme-search-algolia" "3.8.1"
+    "@docusaurus/types" "3.8.1"
 
-"@docusaurus/theme-classic@3.7.0":
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/@docusaurus/theme-classic/-/theme-classic-3.7.0.tgz#b483bd8e2923b6994b5f47238884b9f8984222c5"
-  integrity sha512-MnLxG39WcvLCl4eUzHr0gNcpHQfWoGqzADCly54aqCofQX6UozOS9Th4RK3ARbM9m7zIRv3qbhggI53dQtx/hQ==
+"@docusaurus/theme-classic@3.8.1":
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/@docusaurus/theme-classic/-/theme-classic-3.8.1.tgz#1e45c66d89ded359225fcd29bf3258d9205765c1"
+  integrity sha512-bqDUCNqXeYypMCsE1VcTXSI1QuO4KXfx8Cvl6rYfY0bhhqN6d2WZlRkyLg/p6pm+DzvanqHOyYlqdPyP0iz+iw==
   dependencies:
-    "@docusaurus/core" "3.7.0"
-    "@docusaurus/logger" "3.7.0"
-    "@docusaurus/mdx-loader" "3.7.0"
-    "@docusaurus/module-type-aliases" "3.7.0"
-    "@docusaurus/plugin-content-blog" "3.7.0"
-    "@docusaurus/plugin-content-docs" "3.7.0"
-    "@docusaurus/plugin-content-pages" "3.7.0"
-    "@docusaurus/theme-common" "3.7.0"
-    "@docusaurus/theme-translations" "3.7.0"
-    "@docusaurus/types" "3.7.0"
-    "@docusaurus/utils" "3.7.0"
-    "@docusaurus/utils-common" "3.7.0"
-    "@docusaurus/utils-validation" "3.7.0"
+    "@docusaurus/core" "3.8.1"
+    "@docusaurus/logger" "3.8.1"
+    "@docusaurus/mdx-loader" "3.8.1"
+    "@docusaurus/module-type-aliases" "3.8.1"
+    "@docusaurus/plugin-content-blog" "3.8.1"
+    "@docusaurus/plugin-content-docs" "3.8.1"
+    "@docusaurus/plugin-content-pages" "3.8.1"
+    "@docusaurus/theme-common" "3.8.1"
+    "@docusaurus/theme-translations" "3.8.1"
+    "@docusaurus/types" "3.8.1"
+    "@docusaurus/utils" "3.8.1"
+    "@docusaurus/utils-common" "3.8.1"
+    "@docusaurus/utils-validation" "3.8.1"
     "@mdx-js/react" "^3.0.0"
     clsx "^2.0.0"
     copy-text-to-clipboard "^3.2.0"
     infima "0.2.0-alpha.45"
     lodash "^4.17.21"
     nprogress "^0.2.0"
-    postcss "^8.4.26"
+    postcss "^8.5.4"
     prism-react-renderer "^2.3.0"
     prismjs "^1.29.0"
     react-router-dom "^5.3.4"
     rtlcss "^4.1.0"
-    tslib "^2.6.0"
-    utility-types "^3.10.0"
-
-"@docusaurus/theme-common@3.7.0":
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/@docusaurus/theme-common/-/theme-common-3.7.0.tgz#18bf5c6b149a701f4bd865715ee8b595aa40b354"
-  integrity sha512-8eJ5X0y+gWDsURZnBfH0WabdNm8XMCXHv8ENy/3Z/oQKwaB/EHt5lP9VsTDTf36lKEp0V6DjzjFyFIB+CetL0A==
-  dependencies:
-    "@docusaurus/mdx-loader" "3.7.0"
-    "@docusaurus/module-type-aliases" "3.7.0"
-    "@docusaurus/utils" "3.7.0"
-    "@docusaurus/utils-common" "3.7.0"
-    "@types/history" "^4.7.11"
-    "@types/react" "*"
-    "@types/react-router-config" "*"
-    clsx "^2.0.0"
-    parse-numeric-range "^1.3.0"
-    prism-react-renderer "^2.3.0"
     tslib "^2.6.0"
     utility-types "^3.10.0"
 
@@ -2199,29 +2157,7 @@
     tslib "^2.6.0"
     utility-types "^3.10.0"
 
-"@docusaurus/theme-search-algolia@3.7.0":
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/@docusaurus/theme-search-algolia/-/theme-search-algolia-3.7.0.tgz#2108ddf0b300b82de7c2b9ff9fcf62121b66ea37"
-  integrity sha512-Al/j5OdzwRU1m3falm+sYy9AaB93S1XF1Lgk9Yc6amp80dNxJVplQdQTR4cYdzkGtuQqbzUA8+kaoYYO0RbK6g==
-  dependencies:
-    "@docsearch/react" "^3.8.1"
-    "@docusaurus/core" "3.7.0"
-    "@docusaurus/logger" "3.7.0"
-    "@docusaurus/plugin-content-docs" "3.7.0"
-    "@docusaurus/theme-common" "3.7.0"
-    "@docusaurus/theme-translations" "3.7.0"
-    "@docusaurus/utils" "3.7.0"
-    "@docusaurus/utils-validation" "3.7.0"
-    algoliasearch "^5.17.1"
-    algoliasearch-helper "^3.22.6"
-    clsx "^2.0.0"
-    eta "^2.2.0"
-    fs-extra "^11.1.1"
-    lodash "^4.17.21"
-    tslib "^2.6.0"
-    utility-types "^3.10.0"
-
-"@docusaurus/theme-search-algolia@^3.7.0":
+"@docusaurus/theme-search-algolia@3.8.1", "@docusaurus/theme-search-algolia@^3.7.0":
   version "3.8.1"
   resolved "https://registry.yarnpkg.com/@docusaurus/theme-search-algolia/-/theme-search-algolia-3.8.1.tgz#3aa3d99c35cc2d4b709fcddd4df875a9b536e29b"
   integrity sha512-NBFH5rZVQRAQM087aYSRKQ9yGEK9eHd+xOxQjqNpxMiV85OhJDD4ZGz6YJIod26Fbooy54UWVdzNU0TFeUUUzQ==
@@ -2242,14 +2178,6 @@
     lodash "^4.17.21"
     tslib "^2.6.0"
     utility-types "^3.10.0"
-
-"@docusaurus/theme-translations@3.7.0":
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/@docusaurus/theme-translations/-/theme-translations-3.7.0.tgz#0891aedc7c7040afcb3a1b34051d3a69096d0d25"
-  integrity sha512-Ewq3bEraWDmienM6eaNK7fx+/lHMtGDHQyd1O+4+3EsDxxUmrzPkV7Ct3nBWTuE0MsoZr3yNwQVKjllzCMuU3g==
-  dependencies:
-    fs-extra "^11.1.1"
-    tslib "^2.6.0"
 
 "@docusaurus/theme-translations@3.8.1":
   version "3.8.1"
@@ -8176,7 +8104,7 @@ react-fast-compare@^3.2.0:
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-3.2.2.tgz#929a97a532304ce9fee4bcae44234f1ce2c21d49"
   integrity sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==
 
-"react-helmet-async@npm:@slorber/react-helmet-async@*", "react-helmet-async@npm:@slorber/react-helmet-async@1.3.0":
+"react-helmet-async@npm:@slorber/react-helmet-async@1.3.0":
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/@slorber/react-helmet-async/-/react-helmet-async-1.3.0.tgz#11fbc6094605cf60aa04a28c17e0aab894b4ecff"
   integrity sha512-e9/OK8VhwUSc67diWI8Rb3I0YgI9/SBQtnhe9aEuK6MhZm7ntZZimXgwXnd8W96YTmSOb9M4d8LwhRZyhWr/1A==
@@ -8192,10 +8120,10 @@ react-is@^16.13.1, react-is@^16.6.0, react-is@^16.7.0:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
-react-json-view-lite@^1.2.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/react-json-view-lite/-/react-json-view-lite-1.5.0.tgz#377cc302821717ac79a1b6d099e1891df54c8662"
-  integrity sha512-nWqA1E4jKPklL2jvHWs6s+7Na0qNgw9HCP6xehdQJeg6nPBTFZgGwyko9Q0oj+jQWKTTVRS30u0toM5wiuL3iw==
+react-json-view-lite@^2.3.0:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/react-json-view-lite/-/react-json-view-lite-2.4.1.tgz#0d06696a06aaf4a74e890302b76cf8cddcc45d60"
+  integrity sha512-fwFYknRIBxjbFm0kBDrzgBy1xa5tDg2LyXXBepC5f1b+MY3BUClMCsvanMPn089JbV1Eg3nZcrp0VCuH43aXnA==
 
 react-loadable-ssr-addon-v5-slorber@^1.0.1:
   version "1.0.1"
@@ -8279,11 +8207,6 @@ readdirp@~3.6.0:
   integrity sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==
   dependencies:
     picomatch "^2.2.1"
-
-reading-time@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/reading-time/-/reading-time-1.5.0.tgz#d2a7f1b6057cb2e169beaf87113cc3411b5bc5bb"
-  integrity sha512-onYyVhBNr4CmAxFsKS7bz+uTLRakypIe4R+5A824vBSkQy/hB3fZepoVEf8OVAxzLvK+H/jm9TzpI3ETSm64Kg==
 
 rechoir@^0.6.2:
   version "0.6.2"
