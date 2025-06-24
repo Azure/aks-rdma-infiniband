@@ -8,7 +8,7 @@ This section details the prerequisites for deploying an AKS cluster with support
 
 An active AKS cluster is required as the foundation for deploying RDMA over InfiniBand capabilities. The cluster serves as the Kubernetes environment where Network Operator and GPU Operator (if using GPUDirect RDMA) will be installed.
 
-- **Requirement**: Create an AKS cluster using the [Azure Portal](https://portal.azure.com) or [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest). Ensure the cluster is running a supported Kubernetes version compatible with [Network Operator](https://docs.nvidia.com/networking/display/kubernetes2501/platform-support.html) and / or [GPU Operator](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/platform-support.html).
+- **Requirement**: Create an AKS cluster using the [Azure Portal](https://portal.azure.com) or [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest). Ensure the cluster is running a supported Kubernetes version compatible with [Network Operator](https://docs.nvidia.com/networking/display/kubernetes2540/platform-support.html) and / or [GPU Operator](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/platform-support.html).
 - **Configuration**: The cluster must be deployed in a region that supports the required VM sizes with RDMA over InfiniBand capabilities.
 
 To create an AKS cluster, use the following Azure CLI command as a starting point:

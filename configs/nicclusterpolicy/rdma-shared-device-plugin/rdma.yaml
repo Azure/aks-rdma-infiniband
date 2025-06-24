@@ -8,7 +8,7 @@ spec:
     repository: ghcr.io/mellanox
     image: k8s-rdma-shared-dev-plugin
     # Latest tag: https://github.com/mellanox/k8s-rdma-shared-dev-plugin/pkgs/container/k8s-rdma-shared-dev-plugin
-    version: v1.5.2
+    version: v1.5.3
     # The config below directly propagates to k8s-rdma-shared-device-plugin configuration.
     # Replace 'devices' with your (RDMA capable) netdevice name.
     # 15b3 is the vendor id for Nvidia NIC by Mellanox: https://admin.pci-ids.ucw.cz/read/PC/15b3
