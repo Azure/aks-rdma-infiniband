@@ -5,7 +5,7 @@ title: Network Operator
 This guide details recommended configurations for Network Operator to enable RDMA over InfiniBand, optimized for AKS environments with Mellanox NICs.
 
 :::tip
-This guide assumes a basic understanding of Network Operator and its role in Kubernetes clusters. Readers unfamiliar with the Network Operator are advised to review the official [Getting Started Guide](https://docs.nvidia.com/networking/display/kubernetes2501/getting-started-kubernetes.html) before proceeding. The concepts and recommended configurations presented here build on that foundation to enable RDMA over InfiniBand in AKS.
+This guide assumes a basic understanding of Network Operator and its role in Kubernetes clusters. Readers unfamiliar with the Network Operator are advised to review the official [Getting Started Guide](https://docs.nvidia.com/networking/display/kubernetes2540/getting-started-kubernetes.html) before proceeding. The concepts and recommended configurations presented here build on that foundation to enable RDMA over InfiniBand in AKS.
 :::
 
 ## Network Operator Deployment
@@ -211,4 +211,4 @@ The installation process follows this sequence:
 
 RDMA over InfiniBand operates below the TCP/IP stack, relying on direct memory access rather than IP-based networking. Tools like [Multus](https://github.com/k8snetworkplumbingwg/multus-cni) and [whereabouts](https://github.com/k8snetworkplumbingwg/whereabouts) for secondary network attachment and IPAM are not strictly required for RDMA over InfiniBand in AKS, as Device Plugins directly expose InfiniBand resources to pods.
 
-If you wish to operate in the TCP/IP stack over the InfiniBand network, refer to the [NVIDIA Getting Started Guide for Kubernetes](https://docs.nvidia.com/networking/display/kubernetes2501/getting-started-kubernetes.html) for detailed instructions.
+If you wish to operate in the TCP/IP stack over the InfiniBand network, refer to the [NVIDIA Getting Started Guide for Kubernetes](https://docs.nvidia.com/networking/display/kubernetes2540/getting-started-kubernetes.html) for detailed instructions.

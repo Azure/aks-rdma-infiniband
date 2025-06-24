@@ -9,7 +9,7 @@ spec:
       repository: ghcr.io/k8snetworkplumbingwg
       image: plugins
       # Latest tag: https://github.com/k8snetworkplumbingwg/plugins/pkgs/container/plugins
-      version: v1.5.0
+      version: v1.6.2-update.1
 
     multus:
       repository: ghcr.io/k8snetworkplumbingwg
@@ -21,7 +21,7 @@ spec:
       repository: ghcr.io/mellanox
       image: ipoib-cni
       # Latest tag: https://github.com/mellanox/ipoib-cni/pkgs/container/ipoib-cni
-      version: v1.2.1
+      version: v1.2.2
 
     ipamPlugin:
       repository: ghcr.io/k8snetworkplumbingwg
