@@ -12,7 +12,7 @@ This guide assumes a basic understanding of Network Operator and its role in Kub
 
 ### Operator
 
-Network Operator is deployed using [Helm](https://helm.sh/), and the [default Helm values](https://github.com/Mellanox/network-operator/blob/v25.4.0/deployment/network-operator/values.yaml) are recommended unless specific customizations are required. These defaults include [Node Feature Discovery (NFD)](https://kubernetes-sigs.github.io/node-feature-discovery/stable/get-started/index.html), a critical dependency that labels nodes with hardware details (e.g., Mellanox NIC presence) for pod scheduling.
+Network Operator is deployed using [Helm](https://helm.sh/), and the [default Helm values](https://github.com/Mellanox/network-operator/blob/v25.7.0/deployment/network-operator/values.yaml) are recommended unless specific customizations are required. These defaults include [Node Feature Discovery (NFD)](https://kubernetes-sigs.github.io/node-feature-discovery/stable/get-started/index.html), a critical dependency that labels nodes with hardware details (e.g., Mellanox NIC presence) for pod scheduling.
 
 Network operator deploys pods that require privileged access to the host system. To ensure proper operation, the `network-operator` namespace must be labeled with `pod-security.kubernetes.io/enforce=privileged`.
 
@@ -37,7 +37,7 @@ helm upgrade --install \
   --create-namespace -n network-operator \
   network-operator nvidia/network-operator \
   -f values.yaml \
-  --version v25.4.0
+  --version v25.7.0
 ```
 
 ### Node Feature Rule
