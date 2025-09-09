@@ -118,7 +118,7 @@ function ipoib_add_ep_ip() {
 
         # Break only if ep_ip is not empty
         if [[ -n "${ep_ip}" ]]; then
-            echo "✅ Found leader pod Infiniband IP: ${ep_ip}".
+            echo "✅ Found leader pod Infiniband IP: ${ep_ip}"
             break
         fi
         echo "⏳ Waiting for leader pod to be ready..."
