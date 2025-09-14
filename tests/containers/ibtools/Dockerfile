@@ -25,7 +25,7 @@ RUN curl -LO https://github.com/Mellanox/sockperf/archive/refs/heads/sockperf_v2
     ./autogen.sh && ./configure && make && make install && \
     cd -
 
-FROM vllm/vllm-openai:v0.10.0
+FROM vllm/vllm-openai:v0.10.2
 
 # Copy the sockperf binary from the build stage
 COPY --from=build-stage /usr/local/bin/sockperf /usr/local/bin/sockperf
