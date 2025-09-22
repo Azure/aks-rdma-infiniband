@@ -27,7 +27,7 @@ function root_nic_policy() {
     deploy_root_nic_policy
 
     if [[ ${subcmd} != "mpijob" ]]; then
-        $HELM_INSTALL_CMD "${TEST_DEBUG_FLAGS[@]}" \
+        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
             --set securityContext.privileged=true \
             --set job.enabled=true \
             --set job.testFunctionName="${subcmd}"
@@ -55,7 +55,7 @@ function root_nic_policy_gpu() {
     )
 
     if [[ ${subcmd} != "mpijob" ]]; then
-        $HELM_INSTALL_CMD "${TEST_DEBUG_FLAGS[@]}" \
+        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
             "${test_flags[@]}" \
             --set job.enabled=true \
             --set job.testFunctionName="${subcmd}"
@@ -63,7 +63,7 @@ function root_nic_policy_gpu() {
         fail_on_job_failure "role=leader" "default"
         fail_on_job_failure "role=worker" "default"
     else
-        $HELM_INSTALL_CMD "${TEST_DEBUG_FLAGS[@]}" \
+        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
             "${test_flags[@]}" \
             --set mpiJob.enabled=true \
             --set mpiJob.numberOfProcesses="${NUMBER_OF_PROCESSES}"
@@ -90,7 +90,7 @@ function sriov_nic_policy() {
     )
 
     if [[ ${subcmd} != "mpijob" ]]; then
-        $HELM_INSTALL_CMD "${TEST_DEBUG_FLAGS[@]}" \
+        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
             "${test_flags[@]}" \
             --set job.enabled=true \
             --set job.testFunctionName="${subcmd}"
@@ -119,7 +119,7 @@ function sriov_nic_policy_gpu() {
     )
 
     if [[ ${subcmd} != "mpijob" ]]; then
-        $HELM_INSTALL_CMD "${TEST_DEBUG_FLAGS[@]}" \
+        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
             "${test_flags[@]}" \
             --set job.enabled=true \
             --set job.testFunctionName="${subcmd}"
@@ -127,7 +127,7 @@ function sriov_nic_policy_gpu() {
         fail_on_job_failure "role=leader" "default"
         fail_on_job_failure "role=worker" "default"
     else
-        $HELM_INSTALL_CMD "${TEST_DEBUG_FLAGS[@]}" \
+        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
             "${test_flags[@]}" \
             --set mpiJob.enabled=true \
             --set mpiJob.numberOfProcesses="${NUMBER_OF_PROCESSES}"
@@ -154,7 +154,7 @@ function ipoib_nic_policy() {
     )
 
     if [[ ${subcmd} != "mpijob" ]]; then
-        $HELM_INSTALL_CMD "${TEST_DEBUG_FLAGS[@]}" \
+        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
             "${test_flags[@]}" \
             --set job.enabled=true \
             --set job.testFunctionName="${subcmd}"
@@ -184,7 +184,7 @@ function ipoib_nic_policy_gpu() {
     )
 
     if [[ ${subcmd} != "mpijob" ]]; then
-        $HELM_INSTALL_CMD "${TEST_DEBUG_FLAGS[@]}" \
+        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
             "${test_flags[@]}" \
             --set job.enabled=true \
             --set job.testFunctionName="${subcmd}"
@@ -193,7 +193,7 @@ function ipoib_nic_policy_gpu() {
         fail_on_job_failure "role=leader" "default"
         fail_on_job_failure "role=worker" "default"
     else
-        $HELM_INSTALL_CMD "${TEST_DEBUG_FLAGS[@]}" \
+        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
             "${test_flags[@]}" \
             --set mpiJob.enabled=true \
             --set mpiJob.numberOfProcesses="${NUMBER_OF_PROCESSES}"
@@ -220,7 +220,7 @@ function rdma_shared_device_plugin() {
     )
 
     if [[ ${subcmd} != "mpijob" ]]; then
-        $HELM_INSTALL_CMD "${TEST_DEBUG_FLAGS[@]}" \
+        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
             "${test_flags[@]}" \
             --set job.enabled=true \
             --set job.testFunctionName="${subcmd}"
@@ -249,7 +249,7 @@ function rdma_shared_device_plugin_gpu() {
     )
 
     if [[ ${subcmd} != "mpijob" ]]; then
-        $HELM_INSTALL_CMD "${TEST_DEBUG_FLAGS[@]}" \
+        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
             "${test_flags[@]}" \
             --set job.enabled=true \
             --set job.testFunctionName="${subcmd}"
@@ -257,7 +257,7 @@ function rdma_shared_device_plugin_gpu() {
         fail_on_job_failure "role=leader" "default"
         fail_on_job_failure "role=worker" "default"
     else
-        $HELM_INSTALL_CMD "${TEST_DEBUG_FLAGS[@]}" \
+        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
             "${test_flags[@]}" \
             --set mpiJob.enabled=true \
             --set mpiJob.numberOfProcesses="${NUMBER_OF_PROCESSES}"
