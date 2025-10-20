@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkaks_rdma_infiniband=globalThis.webpackChunkaks_rdma_infiniband||[]).push([[647],{7121:(a,s,e)=>{e.r(s),e.d(s,{default:()=>l});e(6540);var n=e(4164),r=e(7559),i=e(5500),d=e(2831),u=e(1656),c=e(4848);function l(a){return(0,c.jsx)(i.e3,{className:(0,n.A)(r.G.wrapper.docsPages),children:(0,c.jsx)(u.A,{children:(0,d.v)(a.route.routes)})})}}}]);
