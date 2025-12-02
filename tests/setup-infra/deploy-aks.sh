@@ -20,7 +20,7 @@ fi
 
 # Versions
 : "${GPU_OPERATOR_VERSION:=v25.10.0}"
-: "${NETWORK_OPERATOR_VERSION:=v25.4.0}"
+: "${NETWORK_OPERATOR_VERSION:=v25.7.0}"
 : "${MPI_OPERATOR_VERSION:=v0.7.0}" # Latest version: https://github.com/kubeflow/mpi-operator/releases
 
 function check_prereqs() {
