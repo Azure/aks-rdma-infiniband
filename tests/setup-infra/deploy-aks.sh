@@ -19,7 +19,7 @@ fi
 : "${USER_NAME:=azureuser}"
 
 # Versions
-: "${GPU_OPERATOR_VERSION:=v25.10.0}"
+: "${GPU_OPERATOR_VERSION:=v25.10.1}"
 : "${NETWORK_OPERATOR_VERSION:=v25.7.0}"
 : "${MPI_OPERATOR_VERSION:=v0.7.0}" # Latest version: https://github.com/kubeflow/mpi-operator/releases
 

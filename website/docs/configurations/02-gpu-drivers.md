@@ -44,7 +44,7 @@ This section assumes a basic understanding of GPU Operator and its role in Kuber
 Please proceed with GPU operator installation only if you have created the nodepool **with** the `--gpu-driver` field set to `none` as described in [prerequisites documentation](../getting-started/02-prerequisites.md#gpu-operator-managed-gpu-driver).
 :::
 
-GPU Operator is deployed using [Helm](https://helm.sh/), and the [default Helm values](https://github.com/NVIDIA/gpu-operator/blob/v25.10.0/deployments/gpu-operator/values.yaml) are customized to align with the Network Operator and AKS requirements. Key adjustments to the Helm values disable redundant components such as NFD and enable RDMA support.
+GPU Operator is deployed using [Helm](https://helm.sh/), and the [default Helm values](https://github.com/NVIDIA/gpu-operator/blob/v25.10.1/deployments/gpu-operator/values.yaml) are customized to align with the Network Operator and AKS requirements. Key adjustments to the Helm values disable redundant components such as NFD and enable RDMA support.
 
 GPU operator deploys pods that require privileged access to the host system. To ensure proper operation, the `gpu-operator` namespace must be labeled with `pod-security.kubernetes.io/enforce=privileged`.
 
@@ -69,7 +69,7 @@ helm upgrade --install \
   --create-namespace -n gpu-operator \
   gpu-operator nvidia/gpu-operator \
   -f values.yaml \
-  --version v25.10.0
+  --version v25.10.1
 ```
 
 ## Usage of GPUDirect RDMA
