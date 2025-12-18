@@ -43,8 +43,9 @@ RUN apt-get -qq update && \
     rm -rf /var/lib/apt/lists/*
 
 # NCCL Tests: https://github.com/NVIDIA/nccl-tests
-# This commit corresponds to the release v2.14.1
-ENV NCCL_TESTS_COMMIT_SHA=b4300cc
+# This commit corresponds to the release v2.17.6
+# Works with NCCL 2.25.1+cuda12.8 (included in the CUDA 12.8.1 base image)
+ENV NCCL_TESTS_COMMIT_SHA=da0b547
 # Support for Hopper (H100/H200) - compute_90 and Blackwell (GB200/GB300) - compute_100
 ENV CUDA12_GENCODE='-gencode=arch=compute_90,code=sm_90 -gencode=arch=compute_100,code=sm_100'
 ENV CUDA12_PTX='-gencode=arch=compute_90,code=compute_90 -gencode=arch=compute_100,code=compute_100'
