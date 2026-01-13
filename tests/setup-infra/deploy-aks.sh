@@ -47,6 +47,12 @@ function deploy_aks() {
         --name "${AZURE_RESOURCE_GROUP}" \
         --location "${AZURE_REGION}"
 
+    extra_args=()
+    # Add any extra args if provided via env vars
+    if [ -n "${SYSTEM_POOL_VM_SIZE:-}" ]; then
+        extra_args+=(--node-vm-size "${SYSTEM_POOL_VM_SIZE}")
+    fi
+
     az aks create \
         --resource-group "${AZURE_RESOURCE_GROUP}" \
         --name "${CLUSTER_NAME}" \
@@ -57,7 +63,9 @@ function deploy_aks() {
         --location "${AZURE_REGION}" \
         --generate-ssh-keys \
         --admin-username "${USER_NAME}" \
-        --os-sku "${CLUSTER_OS}"
+        --os-sku "${CLUSTER_OS}" \
+        "${extra_args[@]}"
+
 }
 
 # add_nodepool adds a new node pool to the AKS cluster. You can provide additional
