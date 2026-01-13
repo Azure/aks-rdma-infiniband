@@ -17,6 +17,7 @@ fi
 # AKS specific variables
 : "${CLUSTER_NAME:=ib-aks-cluster}"
 : "${USER_NAME:=azureuser}"
+: "${CLUSTER_OS:=Ubuntu}"
 
 # Versions
 : "${GPU_OPERATOR_VERSION:=v25.10.1}"
@@ -56,7 +57,7 @@ function deploy_aks() {
         --location "${AZURE_REGION}" \
         --generate-ssh-keys \
         --admin-username "${USER_NAME}" \
-        --os-sku Ubuntu
+        --os-sku "${CLUSTER_OS}"
 }
 
 # add_nodepool adds a new node pool to the AKS cluster. You can provide additional
@@ -84,7 +85,8 @@ function add_nodepool() {
         --resource-group "${AZURE_RESOURCE_GROUP}" \
         --cluster-name "${CLUSTER_NAME}" \
         --node-count "${NODE_POOL_NODE_COUNT}" \
-        --node-vm-size "${NODE_POOL_VM_SIZE}" "$@"
+        --node-vm-size "${NODE_POOL_VM_SIZE}" \
+        --os-sku "${CLUSTER_OS}" "$@"
 }
 
 # download_aks_credentials downloads the AKS credentials to the local machine. You
