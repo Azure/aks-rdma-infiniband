@@ -20,7 +20,7 @@ spec:
     image: doca-driver
     # Latest tag: https://catalog.ngc.nvidia.com/orgs/nvidia/teams/mellanox/containers/doca-driver/tags
     # When this is deployed a suffix is added in the format "-<os><os version>-<cpu arch>" for e.g.: "-ubuntu22.04-amd64".
-    version: 25.04-0.6.1.0-2
+    version: doca3.2.0-25.10-1.2.8.0-2
 
     env:
     # TODO: Temporary fix to avoid race condition where the kernel module fails to load.
@@ -49,4 +49,4 @@ spec:
   docaTelemetryService:
     repository: nvcr.io/nvidia/doca
     image: doca_telemetry
-    version: 1.16.5-doca2.6.0-host
+    version: 1.22.5-doca3.1.0-host
