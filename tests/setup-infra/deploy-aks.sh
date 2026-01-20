@@ -52,6 +52,10 @@ function deploy_aks() {
     if [ -n "${SYSTEM_POOL_VM_SIZE:-}" ]; then
         extra_args+=(--node-vm-size "${SYSTEM_POOL_VM_SIZE}")
     fi
+    # Allow specifying K8s version via env var
+    if [ -n "${K8S_VERSION:-}" ]; then
+        extra_args+=(--kubernetes-version "${K8S_VERSION}")
+    fi
 
     az aks create \
         --resource-group "${AZURE_RESOURCE_GROUP}" \
