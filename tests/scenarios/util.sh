@@ -167,6 +167,9 @@ function find_gpu_per_node() {
 }
 
 function cleanup_cm() {
+    if [ "${SKIP_CLEANUP:-false}" = "true" ]; then
+        return
+    fi
     kubectl delete configmap nvidia-topology || true
 }
 
@@ -257,12 +260,14 @@ Available Commands (GPU):
   rdma-shared-device-plugin-gpu   Run a test with RDMA shared device plugin
   ipoib-nic-policy-gpu            Run a test with IP over IB
   root-nic-policy-gpu             Run a test with no shared device plugin
+  dranet-gpu                      Run a test with DRANET (DRA) for RDMA NICs via Resource Claims
 
 Available Commands (non-GPU):
   sriov-nic-policy                Run a test with SR-IOV shared device plugin without GPU
   rdma-shared-device-plugin       Run a test with RDMA shared device plugin wihtout GPU
   ipoib-nic-policy                Run a test with IP over IB without GPU
   root-nic-policy                 Run a test with no shared device plugin without GPU
+  dranet                          Run a test with DRANET (DRA) for RDMA NICs via Resource Claims
 
 Available Subcommands:
   mpijob                        Run MPI job to see the total speed
@@ -272,5 +277,13 @@ Available Subcommands:
   sockperf                      Run tests with sockperf utility
   all                           Run all tests in the order sockperf, rdma-test and nccl-tests
   debug                         The tests sleep infinitely for debugging
+
+Environment Variables:
+  DEBUG=true                    Enable verbose debug output
+  SKIP_CLEANUP=true             Skip cleanup after test (keep resources for debugging)
+  NODE_POOL_VM_SIZE             Required for GPU tests (e.g., Standard_ND96isr_H100_v5)
+
+Note: DRANET requires Kubernetes with DRA (Dynamic Resource Allocation) enabled.
+      See: https://kubernetes.io/docs/concepts/scheduling-eviction/dynamic-resource-allocation/
 EOF
 }

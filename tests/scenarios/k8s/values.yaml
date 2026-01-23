@@ -2,6 +2,7 @@ mpiJob:
   enabled: false
   image: ghcr.io/azure/aks-rdma-infiniband/nccl-tests
   numberOfProcesses: 0
+  cleanPodPolicy: Running  # Options: Running, All, None
 
 job:
   enabled: false
@@ -21,11 +22,22 @@ job:
 
 ipoib: false
 
+# DRANET (DRA) Configuration for RDMA NICs via Resource Claims
+# Enable this to use Dynamic Resource Allocation instead of device plugin
+dranet:
+  enabled: false
+  # DeviceClass name for RDMA NICs
+  deviceClassName: dranet-rdma
+  # ResourceClaimTemplate name
+  resourceClaimTemplateName: rdma-nic-template
+  # Number of RDMA NICs to request per pod
+  nicCount: 8
+
 # --------------------------------------------------------------------
 # Below this point it is gonna be constant for all the tests
 ncclEnvVars:
   NCCL_NET_GDR_LEVEL: SYS        # Needed for MPI Job.
-  NCCL_IB_DISABLE: "0"             # Force NCCL to use Infiniband.
+  NCCL_IB_DISABLE: "0"           # Force NCCL to use Infiniband.
   # NCCL_DEBUG: INFO             # Valid values: VERSION, WARN, INFO, TRACE
   # NCCL_DEBUG_SUBSYS: INIT,NET
   # DEBUG: true                  # Enable script in verbose mode.

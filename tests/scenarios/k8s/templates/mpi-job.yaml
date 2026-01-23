@@ -8,7 +8,7 @@ metadata:
 spec:
   slotsPerWorker: 8
   runPolicy:
-    cleanPodPolicy: Running
+    cleanPodPolicy: {{ .Values.mpiJob.cleanPodPolicy | default "Running" }}
   mpiReplicaSpecs:
     Launcher:
       replicas: 1
@@ -76,6 +76,11 @@ spec:
           labels:
             task: test
         spec:
+          {{- if .Values.dranet.enabled }}
+          resourceClaims:
+          - name: rdma-nic
+            resourceClaimTemplateName: {{ .Values.dranet.resourceClaimTemplateName | default "rdma-nic-template" }}
+          {{- end }}
           containers:
           - image: {{ .Values.mpiJob.image }}
             name: nccl
@@ -118,3 +123,4 @@ spec:
           enableServiceLinks: false
           automountServiceAccountToken: false
 {{- end }}
+

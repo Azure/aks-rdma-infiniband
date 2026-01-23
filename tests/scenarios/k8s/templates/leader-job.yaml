@@ -17,6 +17,11 @@ spec:
       labels:
         role: leader
     spec:
+      {{- if .Values.dranet.enabled }}
+      resourceClaims:
+      - name: rdma-nic
+        resourceClaimTemplateName: {{ .Values.dranet.resourceClaimTemplateName | default "rdma-nic-template" }}
+      {{- end }}
       containers:
       - name: runner
         image: {{ .Values.job.image }}

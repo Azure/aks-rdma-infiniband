@@ -1,0 +1,30 @@
+{{- if .Values.dranet.enabled }}
+# ResourceClaimTemplate for requesting RDMA NICs via DRA
+apiVersion: resource.k8s.io/v1
+kind: ResourceClaimTemplate
+metadata:
+  name: {{ .Values.dranet.resourceClaimTemplateName | default "rdma-nic-template" }}
+spec:
+  spec:
+    devices:
+      requests:
+      - name: rdma-nic
+        exactly:
+          deviceClassName: {{ .Values.dranet.deviceClassName | default "dranet-rdma" }}
+          count: {{ .Values.dranet.nicCount | default 1 }}
+          {{- if .Values.dranet.selectors }}
+          selectors:
+          {{- range .Values.dranet.selectors }}
+          - cel:
+              expression: {{ . | quote }}
+          {{- end }}
+          {{- end }}
+      {{- if .Values.dranet.interfaceConfig }}
+      config:
+      - opaque:
+          driver: dra.net
+          parameters:
+            interface:
+              {{- toYaml .Values.dranet.interfaceConfig | nindent 14 }}
+      {{- end }}
+{{- end }}

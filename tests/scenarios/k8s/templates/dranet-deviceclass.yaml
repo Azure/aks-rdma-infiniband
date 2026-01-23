@@ -1,0 +1,13 @@
+{{- if .Values.dranet.enabled }}
+# DeviceClass for DRANET - selects RDMA-capable NICs managed by DRANET
+apiVersion: resource.k8s.io/v1
+kind: DeviceClass
+metadata:
+  name: {{ .Values.dranet.deviceClassName | default "dranet-rdma" }}
+spec:
+  selectors:
+    - cel:
+        expression: device.driver == "dra.net"
+    - cel:
+        expression: device.attributes["dra.net"].rdma == true
+{{- end }}
