@@ -203,6 +203,11 @@ function install_mpi_operator() {
     kubectl apply --server-side -f "https://raw.githubusercontent.com/kubeflow/mpi-operator/${MPI_OPERATOR_VERSION}/deploy/v2beta1/mpi-operator.yaml"
 }
 
+function install_dranet() {
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/dranet/refs/heads/main/install.yaml
+    kubectl -n kube-system set image ds/dranet dranet=registry.k8s.io/networking/dranet:latest
+}
+
 PARAM="${1:-}"
 case $PARAM in
 deploy-aks | deploy_aks)
@@ -227,6 +232,9 @@ install-mpi-operator | install_mpi_operator)
 uninstall-mpi-operator | uninstall_mpi_operator)
     kubectl delete --server-side -f "https://raw.githubusercontent.com/kubeflow/mpi-operator/${MPI_OPERATOR_VERSION}/deploy/v2beta1/mpi-operator.yaml"
     ;;
+install-dranet | install_dranet)
+    install_dranet
+    ;;
 all)
     deploy_aks
     download_aks_credentials --overwrite-existing
@@ -236,7 +244,7 @@ all)
     install_network_operator
     ;;
 *)
-    echo "🛠️ Usage: $0 deploy-aks | add-nodepool | install-network-operator | install-gpu-operator | install-kube-prometheus | install-mpi-operator | uninstall-mpi-operator | all"
+    echo "🛠️ Usage: $0 deploy-aks | add-nodepool | install-network-operator | install-gpu-operator | install-kube-prometheus | install-mpi-operator | uninstall-mpi-operator | install-dranet | all"
     exit 1
     ;;
 esac
