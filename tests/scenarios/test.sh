@@ -18,14 +18,7 @@ if [ "${DEBUG:-false}" = "true" ]; then
     )
 fi
 
-function deploy_root_nic_policy() {
-    kubectl apply -k "${SCRIPT_DIR}/../../configs/nicclusterpolicy/base"
-    wait_until_mofed_is_ready
-}
-
 function root_nic_policy() {
-    deploy_root_nic_policy
-
     if [[ ${subcmd} != "mpijob" ]]; then
         $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
             --set securityContext.privileged=true \
@@ -44,8 +37,6 @@ function root_nic_policy() {
 }
 
 function root_nic_policy_gpu() {
-    deploy_root_nic_policy
-
     find_gpu_per_node
     mpi_job_number_of_processes
 
@@ -77,7 +68,6 @@ function root_nic_policy_gpu() {
 
 function deploy_sriov_nic_policy() {
     kubectl apply -k "${SCRIPT_DIR}/../../configs/nicclusterpolicy/sriov-device-plugin"
-    wait_until_mofed_is_ready
     wait_until_sriov_is_ready
 }
 
@@ -141,7 +131,6 @@ function sriov_nic_policy_gpu() {
 
 function deploy_ipoib_nic_policy() {
     kubectl apply -k "${SCRIPT_DIR}/../../configs/nicclusterpolicy/ipoib"
-    wait_until_mofed_is_ready
     wait_until_ipoib_is_ready
 }
 
@@ -207,7 +196,6 @@ function ipoib_nic_policy_gpu() {
 
 function deploy_rdma_shared_device_plugin() {
     kubectl apply -k "${SCRIPT_DIR}/../../configs/nicclusterpolicy/rdma-shared-device-plugin"
-    wait_until_mofed_is_ready
     wait_until_rdma_is_ready
 }
 
