@@ -153,7 +153,7 @@ function install_gpu_operator() {
         --values "${SCRIPT_DIR}"/../../configs/values/gpu-operator/values.yaml \
         gpu-operator \
         nvidia/gpu-operator \
-        --version "${GPU_OPERATOR_VERSION}"
+        --version "${GPU_OPERATOR_VERSION}" "$@"
 
     cuda_validator_label="app=nvidia-cuda-validator"
 
@@ -216,7 +216,7 @@ install-network-operator | install_network_operator)
     install_network_operator
     ;;
 install-gpu-operator | install_gpu_operator)
-    install_gpu_operator
+    install_gpu_operator "${@:2}"
     ;;
 install-kube-prometheus | install_kube_prometheus)
     install_kube_prometheus
