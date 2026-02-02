@@ -205,7 +205,8 @@ function install_mpi_operator() {
 
 function install_dranet() {
     kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/dranet/refs/heads/main/install.yaml
-    kubectl -n kube-system set image ds/dranet dranet=registry.k8s.io/networking/dranet:latest
+    # Uncomment this when  kubernetes-sigs/dranet issues 53 is resolved
+    # kubectl -n kube-system set image ds/dranet dranet=registry.k8s.io/networking/dranet:latest
 }
 
 PARAM="${1:-}"
