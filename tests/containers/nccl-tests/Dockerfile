@@ -1,4 +1,4 @@
-FROM nvidia/cuda:12.8.1-devel-ubuntu24.04 as base
+FROM nvidia/cuda:13.1.1-devel-ubuntu24.04 as base
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get -qq update && \
