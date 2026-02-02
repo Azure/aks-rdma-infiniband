@@ -1,6 +1,4 @@
-ARG CUDA_VERSION_MINOR=12.8.1
-ARG BASE_IMAGE=nvidia/cuda:${CUDA_VERSION_MINOR}-devel-ubuntu24.04
-FROM ${BASE_IMAGE} as base
+FROM nvidia/cuda:12.8.1-devel-ubuntu24.04 as base
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get -qq update && \
