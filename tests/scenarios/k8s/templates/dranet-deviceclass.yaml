@@ -10,4 +10,5 @@ spec:
         expression: device.driver == "dra.net"
     - cel:
         expression: device.attributes["dra.net"].rdma == true
+        expression: device.attributes["dra.net"].encapsulation == "infiniband"
 {{- end }}

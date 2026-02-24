@@ -302,7 +302,7 @@ function install_dranet() {
 function deploy_dranet() {
     kubectl apply -k "${SCRIPT_DIR}/../../configs/nicclusterpolicy/base"
     wait_until_mofed_is_ready
-    install_dranet
+    #install_dranet
 }
 
 function dranet_nic_policy() {
