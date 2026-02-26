@@ -68,7 +68,7 @@ function deploy_aks() {
         --generate-ssh-keys \
         --admin-username "${USER_NAME}" \
         --os-sku "${CLUSTER_OS}" \
-        "${extra_args[@]}"
+        "${extra_args[@]+${extra_args[@]}}"
 
 }
 
