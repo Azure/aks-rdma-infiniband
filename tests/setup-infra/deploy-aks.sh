@@ -20,7 +20,7 @@ fi
 : "${CLUSTER_OS:=Ubuntu}"
 
 # Versions
-: "${GPU_OPERATOR_VERSION:=v25.10.1}"
+: "${GPU_OPERATOR_VERSION:=v26.3.0}"
 : "${NETWORK_OPERATOR_VERSION:=v26.1.0}"
 : "${MPI_OPERATOR_VERSION:=v0.8.0}" # Latest version: https://github.com/kubeflow/mpi-operator/releases
 
