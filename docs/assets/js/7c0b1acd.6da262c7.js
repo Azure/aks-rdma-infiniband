@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkaks_rdma_infiniband=globalThis.webpackChunkaks_rdma_infiniband||[]).push([[848],{7144(a){a.exports=JSON.parse('{"metadata":{"permalink":"/aks-rdma-infiniband/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":0,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);
