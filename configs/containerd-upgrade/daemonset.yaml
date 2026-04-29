@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: update-containerd
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: update-containerd
+  template:
+    metadata:
+      labels:
+        app: update-containerd
+    spec:
+      hostIPC: true
+      hostNetwork: true
+      hostPID: true
+      nodeSelector:
+        agentpool: user
+
+      containers:
+      - command:
+        - /tmp/install-containerd.sh
+        image: ubuntu
+        imagePullPolicy: Always
+        name: update-containerd
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /host
+          name: host-root
+        - mountPath: /tmp/install-containerd.sh
+          name: install-script
+          subPath: install-script.sh
+      volumes:
+      - hostPath:
+          path: /
+          type: ""
+        name: host-root
+      - configMap:
+          name: install-script
+          defaultMode: 0755
+        name: install-script

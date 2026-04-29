@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: install-amdgpu-driver
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: install-amdgpu-driver
+  template:
+    metadata:
+      labels:
+        app: install-amdgpu-driver
+    spec:
+      hostIPC: true
+      hostNetwork: true
+      hostPID: true
+      nodeSelector:
+        agentpool: gpu
+      containers:
+      - command:
+        - /tmp/install-driver.sh
+        image: ubuntu
+        imagePullPolicy: Always
+        name: install-amdgpu-driver
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /host
+          name: host-root
+        - mountPath: /tmp/install-driver.sh
+          name: install-script
+          subPath: install-driver.sh
+      volumes:
+      - hostPath:
+          path: /
+          type: ""
+        name: host-root
+      - configMap:
+          name: install-amdgpu-driver
+          defaultMode: 0755
+        name: install-script

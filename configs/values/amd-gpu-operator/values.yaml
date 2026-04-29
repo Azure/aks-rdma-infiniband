@@ -1,0 +1,7 @@
+node-feature-discovery:
+  enabled: true
+kmm:
+  enabled: true  # CRDs required by GPU operator controller even when driver is disabled
+crds:
+  defaultCR:
+    install: false
