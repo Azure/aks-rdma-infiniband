@@ -211,36 +211,6 @@ function install_dranet() {
     # kubectl -n kube-system set image ds/dranet dranet=registry.k8s.io/networking/dranet:latest
 }
 
-# upgrade_containerd upgrades containerd to a version with NRI/CDI support on
-# GPU nodes via a DaemonSet. The AMD GPU Operator and the DRA drivers both
-# require a newer containerd than the default on AKS GPU node pools.
-function upgrade_containerd() {
-    kubectl apply -f "${SCRIPT_DIR}"/../../configs/containerd-upgrade/
-    kubectl rollout status daemonset/update-containerd -n kube-system --timeout=300s
-
-    sleep 10
-    for pod in $(kubectl get pods -n kube-system -l app=update-containerd -o jsonpath='{.items[*].metadata.name}'); do
-        node=$(kubectl get pod "${pod}" -n kube-system -o jsonpath='{.spec.nodeName}')
-        max_retries=5
-        retry=0
-        version=""
-        while (( retry < max_retries )); do
-            version=$(kubectl exec -n kube-system "${pod}" -- chroot /host containerd -version 2>/dev/null || true)
-            if [[ "${version}" == *"2.2.1"* ]]; then
-                break
-            fi
-            retry=$((retry + 1))
-            echo "⏳ ${node}: retry ${retry}/${max_retries} (got: ${version})"
-            sleep 5
-        done
-        echo "  ${node}: ${version}"
-        if [[ "${version}" != *"2.2.1"* ]]; then
-            echo "❌ ${node} has unexpected containerd version after ${max_retries} retries: ${version}"
-            exit 1
-        fi
-    done
-}
-
 # install_amdgpu_driver installs the amdgpu kernel driver on GPU nodes via a
 # DaemonSet that pulls the driver package from the ROCm apt repository and
 # runs modprobe. Required before the AMD GPU Operator / KMM can deploy the
@@ -341,9 +311,6 @@ uninstall-mpi-operator | uninstall_mpi_operator)
 install-dranet | install_dranet)
     install_dranet
     ;;
-upgrade-containerd | upgrade_containerd)
-    upgrade_containerd
-    ;;
 install-amdgpu-driver | install_amdgpu_driver)
     install_amdgpu_driver
     ;;
@@ -366,13 +333,12 @@ all-amd)
     download_aks_credentials --overwrite-existing
     install_mpi_operator
     add_nodepool --gpu-driver=none
-    upgrade_containerd
     install_amdgpu_driver
     install_cert_manager
     install_amd_gpu_operator
     ;;
 *)
-    echo "🛠️ Usage: $0 deploy-aks | add-nodepool | install-network-operator | install-gpu-operator | install-kube-prometheus | install-mpi-operator | uninstall-mpi-operator | install-dranet | upgrade-containerd | install-amdgpu-driver | install-cert-manager | install-amd-gpu-operator | all | all-amd"
+    echo "🛠️ Usage: $0 deploy-aks | add-nodepool | install-network-operator | install-gpu-operator | install-kube-prometheus | install-mpi-operator | uninstall-mpi-operator | install-dranet | install-amdgpu-driver | install-cert-manager | install-amd-gpu-operator | all | all-amd"
     exit 1
     ;;
 esac

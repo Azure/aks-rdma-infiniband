@@ -29,7 +29,7 @@ Install the GPU operator, only if your nodes are GPU enabled, by running the fol
 
 ### AMD GPU Nodes (MI300X)
 
-For AMD GPU node pools (e.g. `Standard_ND96isr_MI300X_v5`), NVIDIA GPU Operator is replaced with the ROCm AMD GPU Operator and an out-of-tree `amdgpu` driver installer. The AMD stack also requires a newer containerd than the AKS default on GPU nodes.
+For AMD GPU node pools (e.g. `Standard_ND96isr_MI300X_v5`), NVIDIA GPU Operator is replaced with the ROCm AMD GPU Operator and an out-of-tree `amdgpu` driver installer.
 
 Provision everything end-to-end:
 
@@ -43,7 +43,6 @@ export NODE_POOL_VM_SIZE="Standard_ND96isr_MI300X_v5"
 Or run the individual steps:
 
 ```bash
-./tests/setup-infra/deploy-aks.sh upgrade-containerd         # containerd v2.2.1 on GPU nodes
 ./tests/setup-infra/deploy-aks.sh install-amdgpu-driver      # loads amdgpu kernel module
 ./tests/setup-infra/deploy-aks.sh install-cert-manager       # AMD GPU Operator dependency
 ./tests/setup-infra/deploy-aks.sh install-amd-gpu-operator   # KMM + NFD + device plugin (namespace: kube-amd-gpu)
