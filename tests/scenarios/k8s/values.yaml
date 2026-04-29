@@ -3,6 +3,12 @@ mpiJob:
   image: ghcr.io/azure/aks-rdma-infiniband/nccl-tests
   numberOfProcesses: 0
 
+rcclJob:
+  enabled: false
+  image: ghcr.io/azure/aks-rdma-infiniband/rccl-tests:latest
+  numberOfProcesses: 0
+  slotsPerWorker: 8
+
 job:
   enabled: false
   image: ghcr.io/azure/aks-rdma-infiniband/ibtools:latest

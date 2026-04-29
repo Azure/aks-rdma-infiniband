@@ -23,6 +23,8 @@ fi
 : "${GPU_OPERATOR_VERSION:=v26.3.0}"
 : "${NETWORK_OPERATOR_VERSION:=v26.1.0}"
 : "${MPI_OPERATOR_VERSION:=v0.8.0}" # Latest version: https://github.com/kubeflow/mpi-operator/releases
+: "${AMD_GPU_OPERATOR_VERSION:=v1.4.1}" # https://github.com/ROCm/gpu-operator/releases
+: "${CERT_MANAGER_VERSION:=v1.15.1}" # Required by AMD GPU Operator
 
 function check_prereqs() {
     local prereqs=("kubectl" "helm" "az" "jq")
@@ -209,6 +211,109 @@ function install_dranet() {
     # kubectl -n kube-system set image ds/dranet dranet=registry.k8s.io/networking/dranet:latest
 }
 
+# upgrade_containerd upgrades containerd to a version with NRI/CDI support on
+# GPU nodes via a DaemonSet. The AMD GPU Operator and the DRA drivers both
+# require a newer containerd than the default on AKS GPU node pools.
+function upgrade_containerd() {
+    kubectl apply -f "${SCRIPT_DIR}"/../../configs/containerd-upgrade/
+    kubectl rollout status daemonset/update-containerd -n kube-system --timeout=300s
+
+    sleep 10
+    for pod in $(kubectl get pods -n kube-system -l app=update-containerd -o jsonpath='{.items[*].metadata.name}'); do
+        node=$(kubectl get pod "${pod}" -n kube-system -o jsonpath='{.spec.nodeName}')
+        max_retries=5
+        retry=0
+        version=""
+        while (( retry < max_retries )); do
+            version=$(kubectl exec -n kube-system "${pod}" -- chroot /host containerd -version 2>/dev/null || true)
+            if [[ "${version}" == *"2.2.1"* ]]; then
+                break
+            fi
+            retry=$((retry + 1))
+            echo "⏳ ${node}: retry ${retry}/${max_retries} (got: ${version})"
+            sleep 5
+        done
+        echo "  ${node}: ${version}"
+        if [[ "${version}" != *"2.2.1"* ]]; then
+            echo "❌ ${node} has unexpected containerd version after ${max_retries} retries: ${version}"
+            exit 1
+        fi
+    done
+}
+
+# install_amdgpu_driver installs the amdgpu kernel driver on GPU nodes via a
+# DaemonSet that pulls the driver package from the ROCm apt repository and
+# runs modprobe. Required before the AMD GPU Operator / KMM can deploy the
+# device plugin.
+function install_amdgpu_driver() {
+    kubectl apply -f "${SCRIPT_DIR}"/../../configs/amd-driver-installer/
+    kubectl rollout status daemonset/install-amdgpu-driver -n kube-system --timeout=600s
+
+    echo "⏳ Verifying amdgpu driver on GPU nodes ..."
+    for pod in $(kubectl get pods -n kube-system -l app=install-amdgpu-driver -o jsonpath='{.items[*].metadata.name}'); do
+        node=$(kubectl get pod "${pod}" -n kube-system -o jsonpath='{.spec.nodeName}')
+        max_retries=20
+        retry=0
+        while (( retry < max_retries )); do
+            if kubectl exec -n kube-system "${pod}" -- chroot /host modinfo amdgpu &>/dev/null; then
+                echo "  ${node}: amdgpu driver loaded"
+                break
+            fi
+            retry=$((retry + 1))
+            echo "⏳ ${node}: waiting for driver (${retry}/${max_retries}) ..."
+            sleep 30
+        done
+        if (( retry == max_retries )); then
+            echo "❌ amdgpu driver not loaded on ${node} after ${max_retries} retries"
+            exit 1
+        fi
+    done
+}
+
+# install_cert_manager installs cert-manager, a dependency of the AMD GPU
+# Operator.
+function install_cert_manager() {
+    helm repo add jetstack https://charts.jetstack.io --force-update
+    helm upgrade --install cert-manager jetstack/cert-manager \
+      --namespace cert-manager \
+      --create-namespace \
+      --version "${CERT_MANAGER_VERSION}" \
+      --set crds.enabled=true \
+      --wait
+}
+
+# install_amd_gpu_operator installs the ROCm AMD GPU Operator (KMM + NFD +
+# device plugin) and applies the DeviceConfig CR so the device plugin rolls
+# out on AMD GPU nodes.
+function install_amd_gpu_operator() {
+    amd_gpu_operator_ns="kube-amd-gpu"
+
+    helm repo add rocm https://rocm.github.io/gpu-operator
+    helm repo update
+
+    helm upgrade -i \
+        --wait \
+        --create-namespace \
+        -n "${amd_gpu_operator_ns}" \
+        --values "${SCRIPT_DIR}"/../../configs/values/amd-gpu-operator/values.yaml \
+        amd-gpu-operator \
+        rocm/gpu-operator-charts \
+        --version "${AMD_GPU_OPERATOR_VERSION}"
+
+    kubectl apply -f "${SCRIPT_DIR}"/../../configs/amd-device-config/
+
+    echo "⏳ Waiting for AMD device-plugin pods to be ready ..."
+    kubectl wait --for=condition=ready pod \
+        -l daemonset-name=gpu-operator \
+        -n "${amd_gpu_operator_ns}" \
+        --timeout=600s
+
+    echo -e '\n🤖 AMD GPUs on nodes:\n'
+    gpu_on_nodes_cmd="kubectl get nodes -o json | jq -r '.items[] | {name: .metadata.name, \"amd.com/gpu\": .status.allocatable[\"amd.com/gpu\"]}'"
+    echo "$ ${gpu_on_nodes_cmd}"
+    eval "${gpu_on_nodes_cmd}"
+}
+
 PARAM="${1:-}"
 case $PARAM in
 deploy-aks | deploy_aks)
@@ -236,6 +341,18 @@ uninstall-mpi-operator | uninstall_mpi_operator)
 install-dranet | install_dranet)
     install_dranet
     ;;
+upgrade-containerd | upgrade_containerd)
+    upgrade_containerd
+    ;;
+install-amdgpu-driver | install_amdgpu_driver)
+    install_amdgpu_driver
+    ;;
+install-cert-manager | install_cert_manager)
+    install_cert_manager
+    ;;
+install-amd-gpu-operator | install_amd_gpu_operator)
+    install_amd_gpu_operator
+    ;;
 all)
     deploy_aks
     download_aks_credentials --overwrite-existing
@@ -244,8 +361,18 @@ all)
     add_nodepool --gpu-driver=none
     install_network_operator
     ;;
+all-amd)
+    deploy_aks
+    download_aks_credentials --overwrite-existing
+    install_mpi_operator
+    add_nodepool --gpu-driver=none
+    upgrade_containerd
+    install_amdgpu_driver
+    install_cert_manager
+    install_amd_gpu_operator
+    ;;
 *)
-    echo "🛠️ Usage: $0 deploy-aks | add-nodepool | install-network-operator | install-gpu-operator | install-kube-prometheus | install-mpi-operator | uninstall-mpi-operator | install-dranet | all"
+    echo "🛠️ Usage: $0 deploy-aks | add-nodepool | install-network-operator | install-gpu-operator | install-kube-prometheus | install-mpi-operator | uninstall-mpi-operator | install-dranet | upgrade-containerd | install-amdgpu-driver | install-cert-manager | install-amd-gpu-operator | all | all-amd"
     exit 1
     ;;
 esac

@@ -1,0 +1,114 @@
+{{- if .Values.rcclJob.enabled }}
+apiVersion: kubeflow.org/v2beta1
+kind: MPIJob
+metadata:
+  name: rccl-tests
+  labels:
+    app: rccl-tests
+spec:
+  slotsPerWorker: {{ .Values.rcclJob.slotsPerWorker }}
+  sshAuthMountPath: /root/.ssh
+  runPolicy:
+    cleanPodPolicy: Running
+  mpiReplicaSpecs:
+    Launcher:
+      replicas: 1
+      template:
+        metadata:
+          {{- if .Values.ipoib }}
+          annotations:
+            k8s.v1.cni.cncf.io/networks: aks-infiniband
+          {{- end }}
+          labels:
+            app: rccl-tests
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - image: {{ .Values.rcclJob.image }}
+            name: rccl
+            env:
+            - name: OMPI_ALLOW_RUN_AS_ROOT
+              value: "1"
+            - name: OMPI_ALLOW_RUN_AS_ROOT_CONFIRM
+              value: "1"
+            - name: NUMBER_OF_PROCESSES
+              value: "{{ .Values.rcclJob.numberOfProcesses }}"
+            envFrom:
+            - configMapRef:
+                name: nccl-env-vars
+            command:
+            - /bin/bash
+            - -c
+            args:
+            - |
+              set -xe
+              until mpirun -np ${NUMBER_OF_PROCESSES} --allow-run-as-root -bind-to none -mca plm_rsh_args "-o StrictHostKeyChecking=no" -x LD_LIBRARY_PATH=/opt/rocm/lib /opt/rocm/bin/rocm-smi 2>/dev/null; do sleep 5; done
+              mpirun \
+                -np ${NUMBER_OF_PROCESSES} \
+                --allow-run-as-root \
+                -bind-to none \
+                -mca plm_rsh_args "-o StrictHostKeyChecking=no" \
+                -x LD_LIBRARY_PATH=/opt/rocm/lib \
+                -x NCCL_DEBUG=${NCCL_DEBUG} \
+                -x NCCL_DEBUG_SUBSYS=${NCCL_DEBUG_SUBSYS} \
+                -x NCCL_IB_DISABLE=${NCCL_IB_DISABLE} \
+                -x NCCL_NET_GDR_LEVEL=${NCCL_NET_GDR_LEVEL} \
+                -x NCCL_SOCKET_IFNAME=${NCCL_SOCKET_IFNAME} \
+                -x RCCL_MSCCL_ENABLE=0 \
+                  /opt/rccl-tests/build/all_reduce_perf \
+                    -c 0 \
+                    -b 512M \
+                    -e 8G \
+                    -f 2 \
+                    -g 1
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+          enableServiceLinks: false
+          automountServiceAccountToken: false
+    Worker:
+      replicas: 2
+      template:
+        metadata:
+          {{- if .Values.ipoib }}
+          annotations:
+            k8s.v1.cni.cncf.io/networks: aks-infiniband
+          {{- end }}
+          labels:
+            task: test
+        spec:
+          containers:
+          - image: {{ .Values.rcclJob.image }}
+            name: rccl
+            {{- if .Values.resources }}
+            resources:
+              limits:
+                {{- toYaml .Values.resources | nindent 16 }}
+              requests:
+                {{- toYaml .Values.resources | nindent 16 }}
+            {{- end }}
+            {{- if .Values.securityContext }}
+            securityContext:
+              {{- toYaml .Values.securityContext | nindent 14 }}
+            {{- end }}
+            volumeMounts:
+            - name: shm
+              mountPath: /dev/shm
+          volumes:
+          - name: shm
+            emptyDir:
+              medium: Memory
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchExpressions:
+                  - key: task
+                    operator: In
+                    values:
+                    - test
+                topologyKey: kubernetes.io/hostname
+          enableServiceLinks: false
+          automountServiceAccountToken: false
+{{- end }}
