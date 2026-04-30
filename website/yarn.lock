@@ -1926,26 +1926,26 @@
     tslib "^2.6.0"
     webpack "^5.88.1"
 
-"@docusaurus/preset-classic@3.10.0":
-  version "3.10.0"
-  resolved "https://registry.yarnpkg.com/@docusaurus/preset-classic/-/preset-classic-3.10.0.tgz#74b6facdaf568bcd41ec90cae9aebb7ca0ac8619"
-  integrity sha512-kw/Ye02Hc6xP1OdTswy8yxQEHg0fdPpyWAQRxr5b2x3h7LlG2Zgbb5BDFROnXDDMpUxB7YejlocJIE5HIEfpNA==
+"@docusaurus/preset-classic@3.10.1":
+  version "3.10.1"
+  resolved "https://registry.yarnpkg.com/@docusaurus/preset-classic/-/preset-classic-3.10.1.tgz#faf330d96aedc9083a59bec09d966ae4dfc8b2fb"
+  integrity sha512-YO/FL8v1zmbxoTso6mjMz/RDjhaTJxb1UpFFTDdY5847LLDCeyYiYlrhyTbgN1RIN3xnkLKZ9Lj1x8hUzI4JOg==
   dependencies:
-    "@docusaurus/core" "3.10.0"
-    "@docusaurus/plugin-content-blog" "3.10.0"
-    "@docusaurus/plugin-content-docs" "3.10.0"
-    "@docusaurus/plugin-content-pages" "3.10.0"
-    "@docusaurus/plugin-css-cascade-layers" "3.10.0"
-    "@docusaurus/plugin-debug" "3.10.0"
-    "@docusaurus/plugin-google-analytics" "3.10.0"
-    "@docusaurus/plugin-google-gtag" "3.10.0"
-    "@docusaurus/plugin-google-tag-manager" "3.10.0"
-    "@docusaurus/plugin-sitemap" "3.10.0"
-    "@docusaurus/plugin-svgr" "3.10.0"
-    "@docusaurus/theme-classic" "3.10.0"
-    "@docusaurus/theme-common" "3.10.0"
-    "@docusaurus/theme-search-algolia" "3.10.0"
-    "@docusaurus/types" "3.10.0"
+    "@docusaurus/core" "3.10.1"
+    "@docusaurus/plugin-content-blog" "3.10.1"
+    "@docusaurus/plugin-content-docs" "3.10.1"
+    "@docusaurus/plugin-content-pages" "3.10.1"
+    "@docusaurus/plugin-css-cascade-layers" "3.10.1"
+    "@docusaurus/plugin-debug" "3.10.1"
+    "@docusaurus/plugin-google-analytics" "3.10.1"
+    "@docusaurus/plugin-google-gtag" "3.10.1"
+    "@docusaurus/plugin-google-tag-manager" "3.10.1"
+    "@docusaurus/plugin-sitemap" "3.10.1"
+    "@docusaurus/plugin-svgr" "3.10.1"
+    "@docusaurus/theme-classic" "3.10.1"
+    "@docusaurus/theme-common" "3.10.1"
+    "@docusaurus/theme-search-algolia" "3.10.1"
+    "@docusaurus/types" "3.10.1"
 
 "@docusaurus/theme-classic@3.10.0":
   version "3.10.0"
