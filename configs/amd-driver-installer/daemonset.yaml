@@ -16,7 +16,7 @@ spec:
       hostNetwork: true
       hostPID: true
       nodeSelector:
-        agentpool: gpu
+        kubernetes.azure.com/accelerator: amd
       containers:
       - command:
         - /tmp/install-driver.sh

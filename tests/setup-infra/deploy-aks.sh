@@ -220,7 +220,12 @@ function install_amdgpu_driver() {
     kubectl rollout status daemonset/install-amdgpu-driver -n kube-system --timeout=600s
 
     echo "⏳ Verifying amdgpu driver on GPU nodes ..."
-    for pod in $(kubectl get pods -n kube-system -l app=install-amdgpu-driver -o jsonpath='{.items[*].metadata.name}'); do
+    installer_pods=$(kubectl get pods -n kube-system -l app=install-amdgpu-driver -o jsonpath='{.items[*].metadata.name}')
+    if [ -z "${installer_pods}" ]; then
+        echo "❌ No install-amdgpu-driver pods scheduled. Check the DaemonSet's nodeSelector matches your AMD GPU nodes."
+        exit 1
+    fi
+    for pod in ${installer_pods}; do
         node=$(kubectl get pod "${pod}" -n kube-system -o jsonpath='{.spec.nodeName}')
         max_retries=20
         retry=0
@@ -333,6 +338,7 @@ all-amd)
     download_aks_credentials --overwrite-existing
     install_mpi_operator
     add_nodepool --gpu-driver=none
+    install_network_operator
     install_amdgpu_driver
     install_cert_manager
     install_amd_gpu_operator
