@@ -1,0 +1,65 @@
+apiVersion: kubeflow.org/v2beta1
+kind: MPIJob
+metadata:
+  name: rccl-test
+  labels:
+    app: rccl-test
+spec:
+  slotsPerWorker: 8
+  sshAuthMountPath: /root/.ssh
+  runPolicy:
+    cleanPodPolicy: Running
+  mpiReplicaSpecs:
+    Launcher:
+      replicas: 1
+      template:
+        metadata:
+          labels:
+            app: rccl-test
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: rccl
+            image: ghcr.io/azure/aks-rdma-infiniband/rccl-tests:latest
+            command: ["/bin/bash", "-c"]
+            args:
+            - |
+              sleep 10
+              mpirun -np 16 \
+                --allow-run-as-root \
+                -bind-to none \
+                -mca plm_rsh_args "-o StrictHostKeyChecking=no" \
+                -x LD_LIBRARY_PATH=/opt/rocm/lib \
+                -x NCCL_DEBUG=INFO \
+                -x NCCL_SOCKET_IFNAME=eth0 \
+                -x RCCL_MSCCL_ENABLE=0 \
+                /opt/rccl-tests/build/all_reduce_perf -b 512M -e 8G -f 2 -g 1 -c 0
+          enableServiceLinks: false
+          automountServiceAccountToken: false
+    Worker:
+      replicas: 2
+      template:
+        metadata:
+          labels:
+            app: rccl-test
+        spec:
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchLabels:
+                    training.kubeflow.org/job-name: rccl-test
+                    training.kubeflow.org/job-role: worker
+                topologyKey: kubernetes.io/hostname
+          enableServiceLinks: false
+          automountServiceAccountToken: false
+          containers:
+          - name: rccl
+            image: ghcr.io/azure/aks-rdma-infiniband/rccl-tests:latest
+            resources:
+              limits:
+                amd.com/gpu: 8
+              requests:
+                amd.com/gpu: 8
+            securityContext:
+              privileged: true

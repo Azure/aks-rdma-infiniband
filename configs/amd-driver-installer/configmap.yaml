@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: install-amdgpu-driver
+  namespace: kube-system
+data:
+  install-driver.sh: |
+    #!/usr/bin/env bash
+
+    set -euo pipefail
+    set -x
+
+    DRIVERS_VERSION="30.20.1"
+
+    # Check if amdgpu module is already loaded with correct version
+    if chroot /host modinfo amdgpu 2>/dev/null | grep -q "${DRIVERS_VERSION}"; then
+      echo "amdgpu driver ${DRIVERS_VERSION} already installed"
+      sleep infinity
+    fi
+
+    # Install prerequisites
+    apt-get update -y
+    apt-get install -y wget gnupg
+
+    # Add AMD GPU driver repository
+    mkdir -p /host/etc/apt/keyrings
+    wget https://repo.radeon.com/rocm/rocm.gpg.key -O - | \
+      gpg --dearmor | tee /host/etc/apt/keyrings/rocm.gpg > /dev/null
+
+    chroot /host bash -c "echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/rocm.gpg] https://repo.radeon.com/amdgpu/${DRIVERS_VERSION}/ubuntu noble main' > /etc/apt/sources.list.d/amdgpu.list"
+    chroot /host bash -c "apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get install -y amdgpu-dkms"
+    chroot /host bash -c "modprobe amdgpu"
+
+    echo "amdgpu driver installed successfully"
+    chroot /host modinfo amdgpu
+    sleep infinity

@@ -37,15 +37,41 @@ function root_nic_policy() {
 }
 
 function root_nic_policy_gpu() {
-    find_gpu_per_node
+    if [[ ${subcmd} == "rccl" ]]; then
+        find_amd_gpu_per_node
+    else
+        find_gpu_per_node
+    fi
     mpi_job_number_of_processes
+
+    local gpu_resource_key
+    if [[ ${subcmd} == "rccl" ]]; then
+        gpu_resource_key="amd\.com/gpu"
+    else
+        gpu_resource_key="nvidia\.com/gpu"
+    fi
 
     local test_flags=(
         --set "securityContext.privileged=true"
-        --set "resources.nvidia\.com/gpu=${GPU_PER_NODE_NUMBER}"
+        --set "resources.${gpu_resource_key}=${GPU_PER_NODE_NUMBER}"
     )
 
-    if [[ ${subcmd} != "mpijob" ]]; then
+    if [[ ${subcmd} == "mpijob" ]]; then
+        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
+            "${test_flags[@]}" \
+            --set mpiJob.enabled=true \
+            --set mpiJob.numberOfProcesses="${NUMBER_OF_PROCESSES}"
+
+        fail_on_job_failure "app=nccl-tests" "default"
+    elif [[ ${subcmd} == "rccl" ]]; then
+        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
+            "${test_flags[@]}" \
+            --set rcclJob.enabled=true \
+            --set rcclJob.numberOfProcesses="${NUMBER_OF_PROCESSES}" \
+            --set rcclJob.slotsPerWorker="${GPU_PER_NODE_NUMBER}"
+
+        fail_on_job_failure "app=rccl-tests" "default"
+    else
         $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
             "${test_flags[@]}" \
             --set job.enabled=true \
@@ -53,13 +79,6 @@ function root_nic_policy_gpu() {
 
         fail_on_job_failure "role=leader" "default"
         fail_on_job_failure "role=worker" "default"
-    else
-        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
-            "${test_flags[@]}" \
-            --set mpiJob.enabled=true \
-            --set mpiJob.numberOfProcesses="${NUMBER_OF_PROCESSES}"
-
-        fail_on_job_failure "app=nccl-tests" "default"
     fi
 
     echo "🧹 Cleaning up..."
@@ -99,16 +118,42 @@ function sriov_nic_policy() {
 function sriov_nic_policy_gpu() {
     deploy_sriov_nic_policy
 
-    find_gpu_per_node
+    if [[ ${subcmd} == "rccl" ]]; then
+        find_amd_gpu_per_node
+    else
+        find_gpu_per_node
+    fi
     mpi_job_number_of_processes
+
+    local gpu_resource_key
+    if [[ ${subcmd} == "rccl" ]]; then
+        gpu_resource_key="amd\.com/gpu"
+    else
+        gpu_resource_key="nvidia\.com/gpu"
+    fi
 
     local test_flags=(
         --set "securityContext.capabilities.add={IPC_LOCK}"
-        --set "resources.nvidia\.com/gpu=${GPU_PER_NODE_NUMBER}"
+        --set "resources.${gpu_resource_key}=${GPU_PER_NODE_NUMBER}"
         --set "resources.rdma/ib=${GPU_PER_NODE_NUMBER}"
     )
 
-    if [[ ${subcmd} != "mpijob" ]]; then
+    if [[ ${subcmd} == "mpijob" ]]; then
+        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
+            "${test_flags[@]}" \
+            --set mpiJob.enabled=true \
+            --set mpiJob.numberOfProcesses="${NUMBER_OF_PROCESSES}"
+
+        fail_on_job_failure "app=nccl-tests" "default"
+    elif [[ ${subcmd} == "rccl" ]]; then
+        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
+            "${test_flags[@]}" \
+            --set rcclJob.enabled=true \
+            --set rcclJob.numberOfProcesses="${NUMBER_OF_PROCESSES}" \
+            --set rcclJob.slotsPerWorker="${GPU_PER_NODE_NUMBER}"
+
+        fail_on_job_failure "app=rccl-tests" "default"
+    else
         $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
             "${test_flags[@]}" \
             --set job.enabled=true \
@@ -116,13 +161,6 @@ function sriov_nic_policy_gpu() {
 
         fail_on_job_failure "role=leader" "default"
         fail_on_job_failure "role=worker" "default"
-    else
-        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
-            "${test_flags[@]}" \
-            --set mpiJob.enabled=true \
-            --set mpiJob.numberOfProcesses="${NUMBER_OF_PROCESSES}"
-
-        fail_on_job_failure "app=nccl-tests" "default"
     fi
 
     echo "🧹 Cleaning up..."
@@ -163,16 +201,42 @@ function ipoib_nic_policy() {
 function ipoib_nic_policy_gpu() {
     deploy_ipoib_nic_policy
 
-    find_gpu_per_node
+    if [[ ${subcmd} == "rccl" ]]; then
+        find_amd_gpu_per_node
+    else
+        find_gpu_per_node
+    fi
     mpi_job_number_of_processes
 
+    local gpu_resource_key
+    if [[ ${subcmd} == "rccl" ]]; then
+        gpu_resource_key="amd\.com/gpu"
+    else
+        gpu_resource_key="nvidia\.com/gpu"
+    fi
+
     local test_flags=(
-        --set "resources.nvidia\.com/gpu=${GPU_PER_NODE_NUMBER}"
+        --set "resources.${gpu_resource_key}=${GPU_PER_NODE_NUMBER}"
         --set "ipoib=true"
         --set "ncclEnvVars.NCCL_SOCKET_IFNAME=net1"
     )
 
-    if [[ ${subcmd} != "mpijob" ]]; then
+    if [[ ${subcmd} == "mpijob" ]]; then
+        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
+            "${test_flags[@]}" \
+            --set mpiJob.enabled=true \
+            --set mpiJob.numberOfProcesses="${NUMBER_OF_PROCESSES}"
+
+        fail_on_job_failure "app=nccl-tests" "default"
+    elif [[ ${subcmd} == "rccl" ]]; then
+        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
+            "${test_flags[@]}" \
+            --set rcclJob.enabled=true \
+            --set rcclJob.numberOfProcesses="${NUMBER_OF_PROCESSES}" \
+            --set rcclJob.slotsPerWorker="${GPU_PER_NODE_NUMBER}"
+
+        fail_on_job_failure "app=rccl-tests" "default"
+    else
         $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
             "${test_flags[@]}" \
             --set job.enabled=true \
@@ -181,13 +245,6 @@ function ipoib_nic_policy_gpu() {
 
         fail_on_job_failure "role=leader" "default"
         fail_on_job_failure "role=worker" "default"
-    else
-        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
-            "${test_flags[@]}" \
-            --set mpiJob.enabled=true \
-            --set mpiJob.numberOfProcesses="${NUMBER_OF_PROCESSES}"
-
-        fail_on_job_failure "app=nccl-tests" "default"
     fi
 
     echo "🧹 Cleaning up..."
@@ -227,16 +284,42 @@ function rdma_shared_device_plugin() {
 function rdma_shared_device_plugin_gpu() {
     deploy_rdma_shared_device_plugin
 
-    find_gpu_per_node
+    if [[ ${subcmd} == "rccl" ]]; then
+        find_amd_gpu_per_node
+    else
+        find_gpu_per_node
+    fi
     mpi_job_number_of_processes
+
+    local gpu_resource_key
+    if [[ ${subcmd} == "rccl" ]]; then
+        gpu_resource_key="amd\.com/gpu"
+    else
+        gpu_resource_key="nvidia\.com/gpu"
+    fi
 
     local test_flags=(
         --set "securityContext.capabilities.add={IPC_LOCK}"
-        --set "resources.nvidia\.com/gpu=${GPU_PER_NODE_NUMBER}"
+        --set "resources.${gpu_resource_key}=${GPU_PER_NODE_NUMBER}"
         --set "resources.rdma/shared_ib=1"
     )
 
-    if [[ ${subcmd} != "mpijob" ]]; then
+    if [[ ${subcmd} == "mpijob" ]]; then
+        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
+            "${test_flags[@]}" \
+            --set mpiJob.enabled=true \
+            --set mpiJob.numberOfProcesses="${NUMBER_OF_PROCESSES}"
+
+        fail_on_job_failure "app=nccl-tests" "default"
+    elif [[ ${subcmd} == "rccl" ]]; then
+        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
+            "${test_flags[@]}" \
+            --set rcclJob.enabled=true \
+            --set rcclJob.numberOfProcesses="${NUMBER_OF_PROCESSES}" \
+            --set rcclJob.slotsPerWorker="${GPU_PER_NODE_NUMBER}"
+
+        fail_on_job_failure "app=rccl-tests" "default"
+    else
         $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
             "${test_flags[@]}" \
             --set job.enabled=true \
@@ -244,13 +327,6 @@ function rdma_shared_device_plugin_gpu() {
 
         fail_on_job_failure "role=leader" "default"
         fail_on_job_failure "role=worker" "default"
-    else
-        $HELM_INSTALL_CMD ${TEST_DEBUG_FLAGS[@]+"${TEST_DEBUG_FLAGS[@]}"} \
-            "${test_flags[@]}" \
-            --set mpiJob.enabled=true \
-            --set mpiJob.numberOfProcesses="${NUMBER_OF_PROCESSES}"
-
-        fail_on_job_failure "app=nccl-tests" "default"
     fi
 
     echo "🧹 Cleaning up..."
@@ -293,7 +369,7 @@ esac
 subcmd="${2:-}"
 case $subcmd in
 sockperf | rdma_test | rdma-test | nccl_test_vllm_rdma | nccl-test-vllm-rdma) ;;
-nccl_test_gpudirect_rdma | nccl-test-gpudirect-rdma | mpijob | debug | all) ;;
+nccl_test_gpudirect_rdma | nccl-test-gpudirect-rdma | mpijob | rccl | debug | all) ;;
 *)
     echo "Unknown subcommand: ${subcmd}"
     print_help $0

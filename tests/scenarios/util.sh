@@ -166,6 +166,25 @@ function find_gpu_per_node() {
     fi
 }
 
+function find_amd_gpu_per_node() {
+    if [[ -z "$NODE_POOL_VM_SIZE" ]]; then
+        echo "❌ Environment variable NODE_POOL_VM_SIZE not set" >&2
+        exit 1
+    fi
+
+    GPU_PER_NODE_NUMBER=$(kubectl get nodes -o json |
+        jq -r --arg NODE_TYPE "$NODE_POOL_VM_SIZE" '
+        .items
+        | map(select((.metadata.labels["node.kubernetes.io/instance-type"] | ascii_downcase) == ($NODE_TYPE | ascii_downcase)))
+        | .[0].status.allocatable["amd.com/gpu"] // "0"
+      ')
+
+    if [[ "$GPU_PER_NODE_NUMBER" == "0" ]]; then
+        echo "❌ No AMD GPUs found on nodes of type: $NODE_POOL_VM_SIZE" >&2
+        exit 1
+    fi
+}
+
 function cleanup_cm() {
     kubectl delete configmap nvidia-topology || true
 }
@@ -265,7 +284,8 @@ Available Commands (non-GPU):
   root-nic-policy                 Run a test with no shared device plugin without GPU
 
 Available Subcommands:
-  mpijob                        Run MPI job to see the total speed
+  mpijob                        Run MPI job to see the total speed (NCCL on NVIDIA GPUs)
+  rccl                          Run RCCL all_reduce_perf MPI job on AMD GPUs
   rdma-test                     Run RDMA tests with IB utility
   nccl-test-gpudirect-rdma      Run Python based NCCL test to verify GPUDirect RDMA
   nccl-test-vllm-rdma           Run Python based NCCL tests with vLLM
