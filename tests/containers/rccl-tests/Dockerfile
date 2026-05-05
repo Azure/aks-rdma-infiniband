@@ -1,4 +1,4 @@
-FROM rocm/dev-ubuntu-24.04:6.3.4 AS builder
+FROM rocm/dev-ubuntu-24.04:7.2.3 AS builder
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     git make g++ libopenmpi-dev openmpi-bin libibverbs-dev librdmacm-dev rccl-dev && \
@@ -8,7 +8,7 @@ RUN git clone --depth 1 https://github.com/ROCm/rccl-tests.git /rccl-tests && \
     cd /rccl-tests && \
     make MPI=1 HIP_HOME=/opt/rocm RCCL_HOME=/opt/rocm MPI_HOME=/usr/lib/x86_64-linux-gnu/openmpi GPU_TARGETS=gfx942
 
-FROM rocm/dev-ubuntu-24.04:6.3.4
+FROM rocm/dev-ubuntu-24.04:7.2.3
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     openssh-server openssh-client openmpi-bin libopenmpi-dev \
