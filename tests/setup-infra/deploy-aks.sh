@@ -21,7 +21,7 @@ fi
 
 # Versions
 : "${GPU_OPERATOR_VERSION:=v26.3.3}"
-: "${NETWORK_OPERATOR_VERSION:=v26.1.1}"
+: "${NETWORK_OPERATOR_VERSION:=v26.4.0}"
 : "${MPI_OPERATOR_VERSION:=v0.8.2}" # Latest version: https://github.com/kubeflow/mpi-operator/releases
 : "${AMD_GPU_OPERATOR_VERSION:=v1.4.1}" # https://github.com/ROCm/gpu-operator/releases
 : "${CERT_MANAGER_VERSION:=v1.15.1}" # Required by AMD GPU Operator
