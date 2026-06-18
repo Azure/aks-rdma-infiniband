@@ -186,6 +186,7 @@ function install_kube_prometheus() {
     helm repo update
     kube_prometheus_install="helm upgrade -i \
         --wait \
+        --timeout 10m \
         -n monitoring \
         --create-namespace \
         kube-prometheus \
